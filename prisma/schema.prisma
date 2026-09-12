@@ -62,6 +62,13 @@ enum Role {
     APPRENANT
 }
 
+enum StatutFormateur {
+    ACTIF
+    INACTIF
+    SUSPENDU
+    ARCHIVE
+}
+
 enum Sexe {
     HOMME
     FEMME
@@ -463,6 +470,7 @@ model Formateur {
 
     specialite String?
     biographie String?
+    statut StatutFormateur @default(ACTIF)
 
     centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
     utilisateur Utilisateur?    @relation(fields: [utilisateurId], references: [id])

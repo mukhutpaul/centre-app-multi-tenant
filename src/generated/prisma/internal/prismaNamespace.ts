@@ -3772,6 +3772,7 @@ export const FormateurScalarFieldEnum = {
   telephone: 'telephone',
   specialite: 'specialite',
   biographie: 'biographie',
+  statut: 'statut',
   creeLe: 'creeLe',
   modifieLe: 'modifieLe'
 } as const
@@ -4486,6 +4487,13 @@ export type EnumSexeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'StatutApprenant'
  */
 export type EnumStatutApprenantFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatutApprenant'>
+    
+
+
+/**
+ * Reference to a field of type 'StatutFormateur'
+ */
+export type EnumStatutFormateurFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatutFormateur'>
     
 
 

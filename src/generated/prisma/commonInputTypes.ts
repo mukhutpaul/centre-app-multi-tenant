@@ -250,6 +250,23 @@ export type EnumStatutApprenantWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumStatutApprenantFilter<$PrismaModel>
 }
 
+export type EnumStatutFormateurFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatutFormateur | Prisma.EnumStatutFormateurFieldRefInput<$PrismaModel>
+  in?: $Enums.StatutFormateur[]
+  notIn?: $Enums.StatutFormateur[]
+  not?: Prisma.NestedEnumStatutFormateurFilter<$PrismaModel> | $Enums.StatutFormateur
+}
+
+export type EnumStatutFormateurWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatutFormateur | Prisma.EnumStatutFormateurFieldRefInput<$PrismaModel>
+  in?: $Enums.StatutFormateur[]
+  notIn?: $Enums.StatutFormateur[]
+  not?: Prisma.NestedEnumStatutFormateurWithAggregatesFilter<$PrismaModel> | $Enums.StatutFormateur
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatutFormateurFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatutFormateurFilter<$PrismaModel>
+}
+
 export type EnumTypeFormationFilter<$PrismaModel = never> = {
   equals?: $Enums.TypeFormation | Prisma.EnumTypeFormationFieldRefInput<$PrismaModel>
   in?: $Enums.TypeFormation[]
@@ -1030,6 +1047,23 @@ export type NestedEnumStatutApprenantWithAggregatesFilter<$PrismaModel = never> 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStatutApprenantFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStatutApprenantFilter<$PrismaModel>
+}
+
+export type NestedEnumStatutFormateurFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatutFormateur | Prisma.EnumStatutFormateurFieldRefInput<$PrismaModel>
+  in?: $Enums.StatutFormateur[]
+  notIn?: $Enums.StatutFormateur[]
+  not?: Prisma.NestedEnumStatutFormateurFilter<$PrismaModel> | $Enums.StatutFormateur
+}
+
+export type NestedEnumStatutFormateurWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatutFormateur | Prisma.EnumStatutFormateurFieldRefInput<$PrismaModel>
+  in?: $Enums.StatutFormateur[]
+  notIn?: $Enums.StatutFormateur[]
+  not?: Prisma.NestedEnumStatutFormateurWithAggregatesFilter<$PrismaModel> | $Enums.StatutFormateur
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatutFormateurFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatutFormateurFilter<$PrismaModel>
 }
 
 export type NestedEnumTypeFormationFilter<$PrismaModel = never> = {

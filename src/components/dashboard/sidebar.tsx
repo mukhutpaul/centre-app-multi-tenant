@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+
 import {
   BarChart3,
   BookOpen,
@@ -10,6 +11,7 @@ import {
   LayoutDashboard,
   Settings,
   Users,
+  UserCog,
   ClipboardCheck,
   UserRoundCheck,
   Building2,
@@ -34,6 +36,7 @@ const menuSections = [
       },
     ],
   },
+
   {
     title: "GESTION",
     items: [
@@ -42,16 +45,25 @@ const menuSections = [
         href: "/centres",
         icon: Building2,
       },
+
+      {
+        label: "Utilisateurs",
+        href: "/utilisateurs",
+        icon: UserCog,
+      },
+
       {
         label: "Apprenants",
         href: "/apprenants",
         icon: GraduationCap,
       },
+
       {
         label: "Formateurs",
         href: "/formateurs",
         icon: Users,
       },
+
       {
         label: "Formations",
         href: "/formations",
@@ -59,6 +71,7 @@ const menuSections = [
       },
     ],
   },
+
   {
     title: "PLANIFICATION",
     items: [
@@ -67,6 +80,7 @@ const menuSections = [
         href: "/sessions",
         icon: CalendarDays,
       },
+
       {
         label: "Calendrier",
         href: "/calendrier",
@@ -74,6 +88,7 @@ const menuSections = [
       },
     ],
   },
+
   {
     title: "SUIVI",
     items: [
@@ -82,16 +97,19 @@ const menuSections = [
         href: "/inscriptions",
         icon: FileText,
       },
+
       {
         label: "Présences",
         href: "/presences",
         icon: UserRoundCheck,
       },
+
       {
         label: "Paiements",
         href: "/paiements",
         icon: CreditCard,
       },
+
       {
         label: "Conventions",
         href: "/conventions",
@@ -99,6 +117,7 @@ const menuSections = [
       },
     ],
   },
+
   {
     title: "ÉVALUATION",
     items: [
@@ -107,11 +126,13 @@ const menuSections = [
         href: "/evaluations",
         icon: ClipboardCheck,
       },
+
       {
         label: "Jurys",
         href: "/jury",
         icon: Scale,
       },
+
       {
         label: "Résultats",
         href: "/resultats",
@@ -121,7 +142,10 @@ const menuSections = [
   },
 ];
 
-export function Sidebar({ mobile = false, onClose }: SidebarProps) {
+export function Sidebar({
+  mobile = false,
+  onClose,
+}: SidebarProps) {
   return (
     <aside
       className={`
@@ -138,9 +162,21 @@ export function Sidebar({ mobile = false, onClose }: SidebarProps) {
         ${mobile ? "" : "hidden lg:flex"}
       `}
     >
-      {/* Logo */}
+      {/* =====================================================
+          LOGO
+      ====================================================== */}
+
       <div className="flex h-20 shrink-0 items-center justify-between border-b border-white/10 px-6">
-        <Link href="/dashboard" className="flex items-center gap-3">
+
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3"
+          onClick={
+            mobile
+              ? onClose
+              : undefined
+          }
+        >
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#0f2747]">
             <GraduationCap size={24} />
           </div>
@@ -158,6 +194,7 @@ export function Sidebar({ mobile = false, onClose }: SidebarProps) {
 
         {mobile && (
           <button
+            type="button"
             onClick={onClose}
             className="btn btn-ghost btn-sm text-white hover:bg-white/10"
             aria-label="Fermer le menu"
@@ -165,55 +202,90 @@ export function Sidebar({ mobile = false, onClose }: SidebarProps) {
             <X size={20} />
           </button>
         )}
+
       </div>
 
-      {/* Navigation */}
-      <div className="flex-1 px-4 py-5">
-        {menuSections.map((section) => (
-          <div key={section.title} className="mb-6">
-            <p className="mb-2 px-3 text-[10px] font-bold tracking-[0.15em] text-white/40">
-              {section.title}
-            </p>
+      {/* =====================================================
+          NAVIGATION
+      ====================================================== */}
 
-            <nav className="space-y-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
+      <div className="flex-1 overflow-y-auto px-4 py-5">
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={mobile ? onClose : undefined}
-                    className="
-                      flex
-                      items-center
-                      gap-3
-                      rounded-xl
-                      px-3
-                      py-2.5
-                      text-sm
-                      text-white/75
-                      transition
-                      duration-200
-                      hover:bg-white/10
-                      hover:text-white
-                    "
-                  >
-                    <Icon size={18} strokeWidth={1.8} />
+        {menuSections.map(
+          (section) => (
+            <div
+              key={section.title}
+              className="mb-6"
+            >
 
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        ))}
+              <p className="mb-2 px-3 text-[10px] font-bold tracking-[0.15em] text-white/40">
+                {section.title}
+              </p>
+
+              <nav className="space-y-1">
+
+                {section.items.map(
+                  (item) => {
+                    const Icon =
+                      item.icon;
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={
+                          mobile
+                            ? onClose
+                            : undefined
+                        }
+                        className="
+                          flex
+                          items-center
+                          gap-3
+                          rounded-xl
+                          px-3
+                          py-2.5
+                          text-sm
+                          text-white/75
+                          transition
+                          duration-200
+                          hover:bg-white/10
+                          hover:text-white
+                        "
+                      >
+                        <Icon
+                          size={18}
+                          strokeWidth={1.8}
+                        />
+
+                        <span>
+                          {item.label}
+                        </span>
+                      </Link>
+                    );
+                  },
+                )}
+
+              </nav>
+            </div>
+          ),
+        )}
+
       </div>
 
-      {/* Paramètres */}
+      {/* =====================================================
+          PARAMÈTRES
+      ====================================================== */}
+
       <div className="shrink-0 border-t border-white/10 p-4">
+
         <Link
           href="/parametres"
+          onClick={
+            mobile
+              ? onClose
+              : undefined
+          }
           className="
             flex
             items-center
@@ -229,9 +301,14 @@ export function Sidebar({ mobile = false, onClose }: SidebarProps) {
           "
         >
           <Settings size={18} />
-          <span>Paramètres</span>
+
+          <span>
+            Paramètres
+          </span>
         </Link>
+
       </div>
+
     </aside>
   );
 }

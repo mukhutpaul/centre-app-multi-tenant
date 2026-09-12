@@ -60,6 +60,16 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
+export const StatutFormateur = {
+  ACTIF: 'ACTIF',
+  INACTIF: 'INACTIF',
+  SUSPENDU: 'SUSPENDU',
+  ARCHIVE: 'ARCHIVE'
+} as const
+
+export type StatutFormateur = (typeof StatutFormateur)[keyof typeof StatutFormateur]
+
+
 export const Sexe = {
   HOMME: 'HOMME',
   FEMME: 'FEMME',

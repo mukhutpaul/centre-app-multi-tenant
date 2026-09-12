@@ -204,6 +204,7 @@ export const FormateurScalarFieldEnum = {
   telephone: 'telephone',
   specialite: 'specialite',
   biographie: 'biographie',
+  statut: 'statut',
   creeLe: 'creeLe',
   modifieLe: 'modifieLe'
 } as const

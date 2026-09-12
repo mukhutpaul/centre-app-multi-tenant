@@ -34,6 +34,7 @@ export type FormateurMinAggregateOutputType = {
   telephone: string | null
   specialite: string | null
   biographie: string | null
+  statut: $Enums.StatutFormateur | null
   creeLe: Date | null
   modifieLe: Date | null
 }
@@ -48,6 +49,7 @@ export type FormateurMaxAggregateOutputType = {
   telephone: string | null
   specialite: string | null
   biographie: string | null
+  statut: $Enums.StatutFormateur | null
   creeLe: Date | null
   modifieLe: Date | null
 }
@@ -62,6 +64,7 @@ export type FormateurCountAggregateOutputType = {
   telephone: number
   specialite: number
   biographie: number
+  statut: number
   creeLe: number
   modifieLe: number
   _all: number
@@ -78,6 +81,7 @@ export type FormateurMinAggregateInputType = {
   telephone?: true
   specialite?: true
   biographie?: true
+  statut?: true
   creeLe?: true
   modifieLe?: true
 }
@@ -92,6 +96,7 @@ export type FormateurMaxAggregateInputType = {
   telephone?: true
   specialite?: true
   biographie?: true
+  statut?: true
   creeLe?: true
   modifieLe?: true
 }
@@ -106,6 +111,7 @@ export type FormateurCountAggregateInputType = {
   telephone?: true
   specialite?: true
   biographie?: true
+  statut?: true
   creeLe?: true
   modifieLe?: true
   _all?: true
@@ -193,6 +199,7 @@ export type FormateurGroupByOutputType = {
   telephone: string | null
   specialite: string | null
   biographie: string | null
+  statut: $Enums.StatutFormateur
   creeLe: Date
   modifieLe: Date
   _count: FormateurCountAggregateOutputType | null
@@ -228,6 +235,7 @@ export type FormateurWhereInput = {
   telephone?: Prisma.StringNullableFilter<"Formateur"> | string | null
   specialite?: Prisma.StringNullableFilter<"Formateur"> | string | null
   biographie?: Prisma.StringNullableFilter<"Formateur"> | string | null
+  statut?: Prisma.EnumStatutFormateurFilter<"Formateur"> | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFilter<"Formateur"> | Date | string
   modifieLe?: Prisma.DateTimeFilter<"Formateur"> | Date | string
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
@@ -247,6 +255,7 @@ export type FormateurOrderByWithRelationInput = {
   telephone?: Prisma.SortOrderInput | Prisma.SortOrder
   specialite?: Prisma.SortOrderInput | Prisma.SortOrder
   biographie?: Prisma.SortOrderInput | Prisma.SortOrder
+  statut?: Prisma.SortOrder
   creeLe?: Prisma.SortOrder
   modifieLe?: Prisma.SortOrder
   centre?: Prisma.CentreFormationOrderByWithRelationInput
@@ -269,6 +278,7 @@ export type FormateurWhereUniqueInput = Prisma.AtLeast<{
   telephone?: Prisma.StringNullableFilter<"Formateur"> | string | null
   specialite?: Prisma.StringNullableFilter<"Formateur"> | string | null
   biographie?: Prisma.StringNullableFilter<"Formateur"> | string | null
+  statut?: Prisma.EnumStatutFormateurFilter<"Formateur"> | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFilter<"Formateur"> | Date | string
   modifieLe?: Prisma.DateTimeFilter<"Formateur"> | Date | string
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
@@ -288,6 +298,7 @@ export type FormateurOrderByWithAggregationInput = {
   telephone?: Prisma.SortOrderInput | Prisma.SortOrder
   specialite?: Prisma.SortOrderInput | Prisma.SortOrder
   biographie?: Prisma.SortOrderInput | Prisma.SortOrder
+  statut?: Prisma.SortOrder
   creeLe?: Prisma.SortOrder
   modifieLe?: Prisma.SortOrder
   _count?: Prisma.FormateurCountOrderByAggregateInput
@@ -308,6 +319,7 @@ export type FormateurScalarWhereWithAggregatesInput = {
   telephone?: Prisma.StringNullableWithAggregatesFilter<"Formateur"> | string | null
   specialite?: Prisma.StringNullableWithAggregatesFilter<"Formateur"> | string | null
   biographie?: Prisma.StringNullableWithAggregatesFilter<"Formateur"> | string | null
+  statut?: Prisma.EnumStatutFormateurWithAggregatesFilter<"Formateur"> | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeWithAggregatesFilter<"Formateur"> | Date | string
   modifieLe?: Prisma.DateTimeWithAggregatesFilter<"Formateur"> | Date | string
 }
@@ -320,6 +332,7 @@ export type FormateurCreateInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFormateursInput
@@ -339,6 +352,7 @@ export type FormateurUncheckedCreateInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   sessions?: Prisma.FormateurSessionUncheckedCreateNestedManyWithoutFormateurInput
@@ -354,6 +368,7 @@ export type FormateurUpdateInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFormateursNestedInput
@@ -373,6 +388,7 @@ export type FormateurUncheckedUpdateInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.FormateurSessionUncheckedUpdateManyWithoutFormateurNestedInput
@@ -390,6 +406,7 @@ export type FormateurCreateManyInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
 }
@@ -402,6 +419,7 @@ export type FormateurUpdateManyMutationInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -416,6 +434,7 @@ export type FormateurUncheckedUpdateManyInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -445,6 +464,7 @@ export type FormateurCountOrderByAggregateInput = {
   telephone?: Prisma.SortOrder
   specialite?: Prisma.SortOrder
   biographie?: Prisma.SortOrder
+  statut?: Prisma.SortOrder
   creeLe?: Prisma.SortOrder
   modifieLe?: Prisma.SortOrder
 }
@@ -459,6 +479,7 @@ export type FormateurMaxOrderByAggregateInput = {
   telephone?: Prisma.SortOrder
   specialite?: Prisma.SortOrder
   biographie?: Prisma.SortOrder
+  statut?: Prisma.SortOrder
   creeLe?: Prisma.SortOrder
   modifieLe?: Prisma.SortOrder
 }
@@ -473,6 +494,7 @@ export type FormateurMinOrderByAggregateInput = {
   telephone?: Prisma.SortOrder
   specialite?: Prisma.SortOrder
   biographie?: Prisma.SortOrder
+  statut?: Prisma.SortOrder
   creeLe?: Prisma.SortOrder
   modifieLe?: Prisma.SortOrder
 }
@@ -556,6 +578,10 @@ export type FormateurUncheckedUpdateOneWithoutUtilisateurNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FormateurUpdateToOneWithWhereWithoutUtilisateurInput, Prisma.FormateurUpdateWithoutUtilisateurInput>, Prisma.FormateurUncheckedUpdateWithoutUtilisateurInput>
 }
 
+export type EnumStatutFormateurFieldUpdateOperationsInput = {
+  set?: $Enums.StatutFormateur
+}
+
 export type FormateurCreateNestedOneWithoutSessionsInput = {
   create?: Prisma.XOR<Prisma.FormateurCreateWithoutSessionsInput, Prisma.FormateurUncheckedCreateWithoutSessionsInput>
   connectOrCreate?: Prisma.FormateurCreateOrConnectWithoutSessionsInput
@@ -608,6 +634,7 @@ export type FormateurCreateWithoutCentreInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   utilisateur?: Prisma.UtilisateurCreateNestedOneWithoutFormateurInput
@@ -625,6 +652,7 @@ export type FormateurUncheckedCreateWithoutCentreInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   sessions?: Prisma.FormateurSessionUncheckedCreateNestedManyWithoutFormateurInput
@@ -670,6 +698,7 @@ export type FormateurScalarWhereInput = {
   telephone?: Prisma.StringNullableFilter<"Formateur"> | string | null
   specialite?: Prisma.StringNullableFilter<"Formateur"> | string | null
   biographie?: Prisma.StringNullableFilter<"Formateur"> | string | null
+  statut?: Prisma.EnumStatutFormateurFilter<"Formateur"> | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFilter<"Formateur"> | Date | string
   modifieLe?: Prisma.DateTimeFilter<"Formateur"> | Date | string
 }
@@ -682,6 +711,7 @@ export type FormateurCreateWithoutUtilisateurInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFormateursInput
@@ -699,6 +729,7 @@ export type FormateurUncheckedCreateWithoutUtilisateurInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   sessions?: Prisma.FormateurSessionUncheckedCreateNestedManyWithoutFormateurInput
@@ -730,6 +761,7 @@ export type FormateurUpdateWithoutUtilisateurInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFormateursNestedInput
@@ -747,6 +779,7 @@ export type FormateurUncheckedUpdateWithoutUtilisateurInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.FormateurSessionUncheckedUpdateManyWithoutFormateurNestedInput
@@ -762,6 +795,7 @@ export type FormateurCreateWithoutSessionsInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFormateursInput
@@ -780,6 +814,7 @@ export type FormateurUncheckedCreateWithoutSessionsInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   modules?: Prisma.FormateurModuleSessionUncheckedCreateNestedManyWithoutFormateurInput
@@ -810,6 +845,7 @@ export type FormateurUpdateWithoutSessionsInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFormateursNestedInput
@@ -828,6 +864,7 @@ export type FormateurUncheckedUpdateWithoutSessionsInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modules?: Prisma.FormateurModuleSessionUncheckedUpdateManyWithoutFormateurNestedInput
@@ -842,6 +879,7 @@ export type FormateurCreateWithoutModulesInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFormateursInput
@@ -860,6 +898,7 @@ export type FormateurUncheckedCreateWithoutModulesInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   sessions?: Prisma.FormateurSessionUncheckedCreateNestedManyWithoutFormateurInput
@@ -890,6 +929,7 @@ export type FormateurUpdateWithoutModulesInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFormateursNestedInput
@@ -908,6 +948,7 @@ export type FormateurUncheckedUpdateWithoutModulesInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.FormateurSessionUncheckedUpdateManyWithoutFormateurNestedInput
@@ -922,6 +963,7 @@ export type FormateurCreateWithoutEvaluationsInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFormateursInput
@@ -940,6 +982,7 @@ export type FormateurUncheckedCreateWithoutEvaluationsInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
   sessions?: Prisma.FormateurSessionUncheckedCreateNestedManyWithoutFormateurInput
@@ -970,6 +1013,7 @@ export type FormateurUpdateWithoutEvaluationsInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFormateursNestedInput
@@ -988,6 +1032,7 @@ export type FormateurUncheckedUpdateWithoutEvaluationsInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.FormateurSessionUncheckedUpdateManyWithoutFormateurNestedInput
@@ -1003,6 +1048,7 @@ export type FormateurCreateManyCentreInput = {
   telephone?: string | null
   specialite?: string | null
   biographie?: string | null
+  statut?: $Enums.StatutFormateur
   creeLe?: Date | string
   modifieLe?: Date | string
 }
@@ -1015,6 +1061,7 @@ export type FormateurUpdateWithoutCentreInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   utilisateur?: Prisma.UtilisateurUpdateOneWithoutFormateurNestedInput
@@ -1032,6 +1079,7 @@ export type FormateurUncheckedUpdateWithoutCentreInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.FormateurSessionUncheckedUpdateManyWithoutFormateurNestedInput
@@ -1048,6 +1096,7 @@ export type FormateurUncheckedUpdateManyWithoutCentreInput = {
   telephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biographie?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  statut?: Prisma.EnumStatutFormateurFieldUpdateOperationsInput | $Enums.StatutFormateur
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1111,6 +1160,7 @@ export type FormateurSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   telephone?: boolean
   specialite?: boolean
   biographie?: boolean
+  statut?: boolean
   creeLe?: boolean
   modifieLe?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
@@ -1131,6 +1181,7 @@ export type FormateurSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   telephone?: boolean
   specialite?: boolean
   biographie?: boolean
+  statut?: boolean
   creeLe?: boolean
   modifieLe?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
@@ -1147,6 +1198,7 @@ export type FormateurSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   telephone?: boolean
   specialite?: boolean
   biographie?: boolean
+  statut?: boolean
   creeLe?: boolean
   modifieLe?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
@@ -1163,11 +1215,12 @@ export type FormateurSelectScalar = {
   telephone?: boolean
   specialite?: boolean
   biographie?: boolean
+  statut?: boolean
   creeLe?: boolean
   modifieLe?: boolean
 }
 
-export type FormateurOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "utilisateurId" | "prenom" | "nom" | "email" | "telephone" | "specialite" | "biographie" | "creeLe" | "modifieLe", ExtArgs["result"]["formateur"]>
+export type FormateurOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "utilisateurId" | "prenom" | "nom" | "email" | "telephone" | "specialite" | "biographie" | "statut" | "creeLe" | "modifieLe", ExtArgs["result"]["formateur"]>
 export type FormateurInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
   utilisateur?: boolean | Prisma.Formateur$utilisateurArgs<ExtArgs>
@@ -1204,6 +1257,7 @@ export type $FormateurPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     telephone: string | null
     specialite: string | null
     biographie: string | null
+    statut: $Enums.StatutFormateur
     creeLe: Date
     modifieLe: Date
   }, ExtArgs["result"]["formateur"]>
@@ -1643,6 +1697,7 @@ export interface FormateurFieldRefs {
   readonly telephone: Prisma.FieldRef<"Formateur", 'String'>
   readonly specialite: Prisma.FieldRef<"Formateur", 'String'>
   readonly biographie: Prisma.FieldRef<"Formateur", 'String'>
+  readonly statut: Prisma.FieldRef<"Formateur", 'StatutFormateur'>
   readonly creeLe: Prisma.FieldRef<"Formateur", 'DateTime'>
   readonly modifieLe: Prisma.FieldRef<"Formateur", 'DateTime'>
 }
