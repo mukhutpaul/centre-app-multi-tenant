@@ -1,0 +1,1703 @@
+// ============================================================
+// CENTRE DE FORMATION SaaS
+// Prisma 7
+// SQLite en développement
+// PostgreSQL recommandé en production
+// ============================================================
+
+// ============================================================
+// GENERATOR
+// ============================================================
+
+generator client {
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
+}
+
+// ============================================================
+// DATABASE
+// ============================================================
+
+datasource db {
+    provider = "sqlite"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum StatutCentre {
+    ESSAI
+    ACTIF
+    SUSPENDU
+    RESILIE
+}
+
+enum RoleSysteme {
+    SUPER_ADMIN
+    UTILISATEUR
+}
+
+enum StatutUtilisateur {
+    ACTIF
+    INACTIF
+    SUSPENDU
+}
+
+enum StatutMembre {
+    INVITE
+    ACTIF
+    SUSPENDU
+    RETIRE
+}
+
+enum Role {
+    PROPRIETAIRE
+    ADMINISTRATEUR
+    RESPONSABLE
+    SECRETAIRE
+    COMPTABLE
+    FORMATEUR
+    JURY
+    APPRENANT
+}
+
+enum Sexe {
+    HOMME
+    FEMME
+    AUTRE
+}
+
+enum StatutApprenant {
+    ACTIF
+    INACTIF
+    DIPLOME
+    SUSPENDU
+    ARCHIVE
+}
+
+enum StatutFormation {
+    BROUILLON
+    ACTIVE
+    ARCHIVEE
+}
+
+enum TypeFormation {
+    PRESENTIEL
+    DISTANCIEL
+    HYBRIDE
+}
+
+enum StatutSession {
+    PLANIFIEE
+    INSCRIPTIONS_OUVERTES
+    INSCRIPTIONS_FERMEES
+    EN_COURS
+    TERMINEE
+    ANNULEE
+    SUSPENDUE
+}
+
+enum StatutInscription {
+    BROUILLON
+    EN_ATTENTE
+    CONFIRMEE
+    ACTIVE
+    TERMINEE
+    ANNULEE
+    SUSPENDUE
+}
+
+enum TypeFinancement {
+    AUTO_FINANCEMENT
+    ENTREPRISE
+    ETAT
+    PARTENAIRE
+    BOURSE
+    AUTRE
+}
+
+enum StatutPresence {
+    PRESENT
+    ABSENT
+    RETARD
+    EXCUSE
+}
+
+enum StatutEvaluation {
+    BROUILLON
+    SOUMISE
+    VALIDEE
+    REJETEE
+}
+
+enum ResultatEvaluation {
+    NON_EVALUE
+    ECHEC
+    REUSSITE
+    REUSSITE_SOUS_CONDITION
+}
+
+enum StatutJury {
+    PLANIFIE
+    EN_COURS
+    TERMINE
+    ANNULE
+}
+
+enum RoleMembreJury {
+    PRESIDENT
+    MEMBRE
+    OBSERVATEUR
+}
+
+enum DecisionJury {
+    ADMIS
+    ADMIS_SOUS_CONDITION
+    AJOURNE
+    ECHEC
+}
+
+enum StatutConvention {
+    BROUILLON
+    EN_ATTENTE
+    SIGNEE
+    ACTIVE
+    TERMINEE
+    ANNULEE
+    EXPIREE
+}
+
+enum StatutFacture {
+    BROUILLON
+    EMISE
+    PARTIELLEMENT_PAYEE
+    PAYEE
+    EN_RETARD
+    ANNULEE
+}
+
+enum ModePaiement {
+    ESPECES
+    VIREMENT
+    MOBILE_MONEY
+    CARTE
+    CHEQUE
+    AUTRE
+}
+
+enum StatutPaiement {
+    EN_ATTENTE
+    EFFECTUE
+    ECHEC
+    ANNULE
+    REMBOURSE
+}
+
+enum StatutEcheance {
+    EN_ATTENTE
+    PARTIELLE
+    PAYEE
+    EN_RETARD
+    ANNULEE
+}
+
+enum StatutCertification {
+    BROUILLON
+    PRETE
+    DELIVREE
+    ANNULEE
+}
+
+enum TypeDocument {
+    PHOTO
+    PIECE_IDENTITE
+    CV
+    DIPLOME
+    CONVENTION
+    FACTURE
+    RECU
+    CERTIFICAT
+    ATTESTATION
+    RELEVE_NOTES
+    RAPPORT_PRESENCE
+    RAPPORT_EVALUATION
+    RAPPORT_JURY
+    AUTRE
+}
+
+enum TypeNotification {
+    SYSTEME
+    PAIEMENT
+    PRESENCE
+    EVALUATION
+    JURY
+    SESSION
+    INSCRIPTION
+    GENERAL
+}
+
+enum TypePlanSaaS {
+    ESSAI
+    MENSUEL
+    ANNUEL
+}
+
+enum StatutAbonnement {
+    ESSAI
+    ACTIF
+    EN_RETARD
+    SUSPENDU
+    RESILIE
+    EXPIRE
+}
+
+enum StatutFactureSaaS {
+    BROUILLON
+    EMISE
+    PAYEE
+    EN_RETARD
+    ANNULEE
+}
+
+enum ModePaiementSaaS {
+    CARTE
+    VIREMENT
+    MOBILE_MONEY
+    AUTRE
+}
+
+enum StatutPaiementSaaS {
+    EN_ATTENTE
+    EFFECTUE
+    ECHEC
+    ANNULE
+    REMBOURSE
+}
+
+// ============================================================
+// CENTRE DE FORMATION
+// ============================================================
+
+model CentreFormation {
+    id     String       @id @default(cuid())
+    nom    String
+    slug   String       @unique
+    code   String       @unique
+    statut StatutCentre @default(ESSAI)
+
+    email     String?
+    telephone String?
+    siteWeb   String?
+
+    adresse    String?
+    ville      String?
+    pays       String?
+    codePostal String?
+
+    logoUrl String?
+
+    devise        String @default("XAF")
+    fuseauHoraire String @default("Africa/Douala")
+
+    dateCreation   DateTime  @default(now())
+    dateActivation DateTime?
+
+    membres           Membre[]
+    apprenants        Apprenant[]
+    formateurs        Formateur[]
+    formations        Formation[]
+    sessions          SessionFormation[]
+    salles            Salle[]
+    conventions       Convention[]
+    tarifs            TarifFormation[]
+    factures          Facture[]
+    paiements         Paiement[]
+    echeances         EcheancePaiement[]
+    certifications    Certification[]
+    modelesEvaluation ModeleEvaluation[]
+    jurys             Jury[]
+    documents         Document[]
+    invitations       InvitationUtilisateur[]
+    notifications     Notification[]
+    journauxAudit     JournalAudit[]
+    abonnements       AbonnementSaaS[]
+    parametres        ParametreCentre?
+    campagnes         CampagneFormation[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([statut])
+}
+
+// ============================================================
+// UTILISATEUR
+// ============================================================
+
+model Utilisateur {
+    id String @id @default(cuid())
+
+    email      String  @unique
+    motDePasse String?
+
+    prenom    String?
+    nom       String?
+    telephone String?
+
+    roleSysteme RoleSysteme @default(UTILISATEUR)
+
+    statut StatutUtilisateur @default(ACTIF)
+
+    avatarUrl         String?
+    derniereConnexion DateTime?
+
+    membres           Membre[]
+    formateur         Formateur?
+    notifications     Notification[]
+    journauxAudit     JournalAudit[]
+    sessionsConnexion SessionUtilisateur[]
+    invitations       InvitationUtilisateur[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+}
+
+// ============================================================
+// MEMBRE DU CENTRE
+// ============================================================
+
+model Membre {
+    id String @id @default(cuid())
+
+    utilisateurId String
+    centreId      String
+
+    role   Role
+    statut StatutMembre @default(INVITE)
+
+    dateInvitation DateTime?
+    dateActivation DateTime?
+
+    utilisateur Utilisateur     @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([utilisateurId, centreId])
+    @@index([centreId])
+    @@index([centreId, role])
+}
+
+// ============================================================
+// APPRENANT
+// ============================================================
+
+model Apprenant {
+    id String @id @default(cuid())
+
+    centreId String
+
+    numero String?
+
+    prenom String
+    nom    String
+
+    email     String?
+    telephone String?
+
+    dateNaissance DateTime?
+    lieuNaissance String?
+
+    sexe        Sexe?
+    nationalite String?
+
+    adresse String?
+    ville   String?
+    pays    String?
+
+    profession String?
+
+    contactUrgenceNom       String?
+    contactUrgenceTelephone String?
+
+    statut StatutApprenant @default(ACTIF)
+
+    notes String?
+
+    centre CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+    inscriptions        Inscription[]
+    paiements           Paiement[]
+    evaluations         EvaluationResultat[]
+    evaluationsJury     EvaluationJury[]
+    certifications      Certification[]
+    documents           Document[]
+    resultatsFormations ResultatFormation[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, numero])
+    @@index([centreId])
+    @@index([centreId, nom])
+    @@index([centreId, email])
+}
+
+// ============================================================
+// FORMATEUR
+// ============================================================
+
+model Formateur {
+    id String @id @default(cuid())
+
+    centreId      String
+    utilisateurId String? @unique
+
+    prenom String
+    nom    String
+
+    email     String?
+    telephone String?
+
+    specialite String?
+    biographie String?
+
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    utilisateur Utilisateur?    @relation(fields: [utilisateurId], references: [id])
+
+    sessions    FormateurSession[]
+    modules     FormateurModuleSession[]
+    evaluations EvaluationResultat[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([centreId])
+}
+
+// ============================================================
+// FORMATION
+// ============================================================
+
+model Formation {
+    id String @id @default(cuid())
+
+    centreId String
+
+    code String
+    nom  String
+
+    description String?
+    objectifs   String?
+    prerequis   String?
+
+    type TypeFormation @default(PRESENTIEL)
+
+    dureeHeures Decimal?
+
+    nombreModules Int @default(0)
+
+    statut StatutFormation @default(BROUILLON)
+
+    centre CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+    modules           ModuleFormation[]
+    sessions          SessionFormation[]
+    tarifs            TarifFormation[]
+    modelesEvaluation ModeleEvaluation[]
+    certifications    Certification[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, code])
+    @@index([centreId])
+    @@index([centreId, statut])
+}
+
+// ============================================================
+// MODULE DE FORMATION
+// ============================================================
+
+model ModuleFormation {
+    id String @id @default(cuid())
+
+    formationId String
+
+    code String
+    nom  String
+
+    description String?
+
+    position Int
+
+    dureeHeures Decimal?
+    coefficient Decimal  @default(1)
+
+    formation Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+
+    competences       Competence[]
+    modulesSessions   ModuleSession[]
+    modelesEvaluation ModeleEvaluation[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([formationId, code])
+    @@unique([formationId, position])
+    @@index([formationId])
+}
+
+// ============================================================
+// COMPETENCE
+// ============================================================
+
+model Competence {
+    id String @id @default(cuid())
+
+    moduleId String
+
+    code String
+    nom  String
+
+    description String?
+    position    Int
+
+    module ModuleFormation @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+    criteresEvaluation CritereEvaluation[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([moduleId, code])
+    @@index([moduleId])
+}
+
+// ============================================================
+// SESSION DE FORMATION
+// ============================================================
+
+model SessionFormation {
+    id String @id @default(cuid())
+
+    centreId    String
+    formationId String
+
+    code String
+    nom  String?
+
+    dateDebut DateTime
+    dateFin   DateTime
+
+    capacite Int?
+
+    statut StatutSession @default(PLANIFIEE)
+
+    ouvertureInscriptions DateTime?
+    fermetureInscriptions DateTime?
+
+    notes String?
+
+    centre    CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    formation Formation       @relation(fields: [formationId], references: [id])
+
+    modules             ModuleSession[]
+    formateurs          FormateurSession[]
+    inscriptions        Inscription[]
+    planning            Planning[]
+    jurys               Jury[]
+    resultatsFormations ResultatFormation[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, code])
+    @@index([centreId])
+    @@index([centreId, statut])
+    @@index([formationId])
+}
+
+// ============================================================
+// MODULE D'UNE SESSION
+// ============================================================
+
+model ModuleSession {
+    id String @id @default(cuid())
+
+    sessionId String
+    moduleId  String
+
+    position Int
+
+    dateDebut DateTime?
+    dateFin   DateTime?
+
+    session SessionFormation @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    module  ModuleFormation  @relation(fields: [moduleId], references: [id])
+
+    formateurs  FormateurModuleSession[]
+    evaluations EvaluationResultat[]
+
+    @@unique([sessionId, moduleId])
+    @@unique([sessionId, position])
+    @@index([sessionId])
+    @@index([moduleId])
+}
+
+// ============================================================
+// FORMATEUR / SESSION
+// ============================================================
+
+model FormateurSession {
+    id String @id @default(cuid())
+
+    sessionId   String
+    formateurId String
+
+    session   SessionFormation @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    formateur Formateur        @relation(fields: [formateurId], references: [id])
+
+    creeLe DateTime @default(now())
+
+    @@unique([sessionId, formateurId])
+    @@index([sessionId])
+    @@index([formateurId])
+}
+
+// ============================================================
+// FORMATEUR / MODULE SESSION
+// ============================================================
+
+model FormateurModuleSession {
+    id String @id @default(cuid())
+
+    moduleSessionId String
+    formateurId     String
+
+    moduleSession ModuleSession @relation(fields: [moduleSessionId], references: [id], onDelete: Cascade)
+    formateur     Formateur     @relation(fields: [formateurId], references: [id])
+
+    creeLe DateTime @default(now())
+
+    @@unique([moduleSessionId, formateurId])
+    @@index([formateurId])
+}
+
+// ============================================================
+// SALLE
+// ============================================================
+
+model Salle {
+    id String @id @default(cuid())
+
+    centreId String
+
+    nom  String
+    code String
+
+    capacite     Int?
+    localisation String?
+
+    centre CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+    planning Planning[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, code])
+    @@index([centreId])
+}
+
+// ============================================================
+// PLANNING
+// ============================================================
+
+model Planning {
+    id String @id @default(cuid())
+
+    sessionId String
+    salleId   String?
+
+    titre String?
+
+    debut DateTime
+    fin   DateTime
+
+    description String?
+
+    session SessionFormation @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    salle   Salle?           @relation(fields: [salleId], references: [id])
+
+    presences Presence[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([sessionId, debut])
+    @@index([salleId, debut])
+}
+
+// ============================================================
+// INSCRIPTION
+// ============================================================
+
+model Inscription {
+    id String @id @default(cuid())
+
+    apprenantId String
+    sessionId   String
+
+    numero String
+
+    statut StatutInscription @default(BROUILLON)
+
+    typeFinancement TypeFinancement @default(AUTO_FINANCEMENT)
+
+    dateInscription DateTime @default(now())
+
+    montantConvenu Decimal @default(0)
+
+    notes String?
+
+    apprenant Apprenant        @relation(fields: [apprenantId], references: [id])
+    session   SessionFormation @relation(fields: [sessionId], references: [id])
+
+    convention        Convention?
+    factures          Facture[]
+    paiements         Paiement[]
+    echeances         EcheancePaiement[]
+    presences         Presence[]
+    evaluations       EvaluationResultat[]
+    evaluationsJury   EvaluationJury[]
+    resultatFormation ResultatFormation?
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([apprenantId, sessionId])
+    @@unique([sessionId, numero])
+    @@index([apprenantId])
+    @@index([sessionId])
+    @@index([sessionId, statut])
+}
+
+// ============================================================
+// PRESENCE
+// ============================================================
+
+model Presence {
+    id String @id @default(cuid())
+
+    planningId    String
+    inscriptionId String
+
+    statut StatutPresence
+
+    heureArrivee DateTime?
+    heureDepart  DateTime?
+
+    minutesRetard Int?
+
+    motif       String?
+    commentaire String?
+
+    planning    Planning    @relation(fields: [planningId], references: [id], onDelete: Cascade)
+    inscription Inscription @relation(fields: [inscriptionId], references: [id], onDelete: Cascade)
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([planningId, inscriptionId])
+    @@index([planningId])
+    @@index([inscriptionId])
+}
+
+// ============================================================
+// TARIF FORMATION
+// ============================================================
+
+model TarifFormation {
+    id String @id @default(cuid())
+
+    centreId    String
+    formationId String
+
+    nom         String
+    description String?
+
+    montant Decimal
+    devise  String  @default("XAF")
+
+    actif Boolean @default(true)
+
+    centre    CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    formation Formation       @relation(fields: [formationId], references: [id])
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([centreId])
+    @@index([formationId])
+}
+
+// ============================================================
+// MODELE EVALUATION
+// ============================================================
+
+model ModeleEvaluation {
+    id String @id @default(cuid())
+
+    centreId String
+
+    formationId String?
+    moduleId    String?
+
+    nom         String
+    description String?
+
+    noteMaximale Decimal  @default(20)
+    notePassage  Decimal?
+
+    coefficient Decimal @default(1)
+
+    actif Boolean @default(true)
+
+    centre    CentreFormation  @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    formation Formation?       @relation(fields: [formationId], references: [id])
+    module    ModuleFormation? @relation(fields: [moduleId], references: [id])
+
+    criteres  CritereEvaluation[]
+    resultats EvaluationResultat[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([centreId])
+    @@index([formationId])
+    @@index([moduleId])
+}
+
+// ============================================================
+// CRITERE EVALUATION
+// ============================================================
+
+model CritereEvaluation {
+    id String @id @default(cuid())
+
+    modeleId     String
+    competenceId String?
+
+    nom         String
+    description String?
+
+    noteMaximale Decimal @default(20)
+    coefficient  Decimal @default(1)
+
+    position Int
+
+    modele     ModeleEvaluation @relation(fields: [modeleId], references: [id], onDelete: Cascade)
+    competence Competence?      @relation(fields: [competenceId], references: [id])
+
+    notes NoteCritere[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([modeleId])
+    @@index([competenceId])
+}
+
+// ============================================================
+// RESULTAT EVALUATION
+// ============================================================
+
+model EvaluationResultat {
+    id String @id @default(cuid())
+
+    inscriptionId   String
+    moduleSessionId String
+
+    modeleId     String?
+    evaluateurId String?
+
+    apprenantId String
+
+    note         Decimal?
+    noteMaximale Decimal?
+
+    statut   StatutEvaluation   @default(BROUILLON)
+    resultat ResultatEvaluation @default(NON_EVALUE)
+
+    commentaire String?
+
+    dateEvaluation DateTime?
+
+    inscription   Inscription       @relation(fields: [inscriptionId], references: [id], onDelete: Cascade)
+    moduleSession ModuleSession     @relation(fields: [moduleSessionId], references: [id])
+    modele        ModeleEvaluation? @relation(fields: [modeleId], references: [id])
+    evaluateur    Formateur?        @relation(fields: [evaluateurId], references: [id])
+    apprenant     Apprenant         @relation(fields: [apprenantId], references: [id])
+
+    notesCriteres NoteCritere[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([inscriptionId, moduleSessionId])
+    @@index([inscriptionId])
+    @@index([moduleSessionId])
+    @@index([evaluateurId])
+    @@index([apprenantId])
+}
+
+// ============================================================
+// NOTE CRITERE
+// ============================================================
+
+model NoteCritere {
+    id String @id @default(cuid())
+
+    evaluationId String
+    critereId    String
+
+    note        Decimal?
+    commentaire String?
+
+    evaluation EvaluationResultat @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+    critere    CritereEvaluation  @relation(fields: [critereId], references: [id])
+
+    @@unique([evaluationId, critereId])
+    @@index([critereId])
+}
+
+// ============================================================
+// RESULTAT GLOBAL FORMATION
+// ============================================================
+
+model ResultatFormation {
+    id String @id @default(cuid())
+
+    apprenantId String
+    sessionId   String
+
+    inscriptionId String @unique
+
+    moyenneGenerale Decimal?
+    tauxPresence    Decimal?
+
+    nombreModules  Int @default(0)
+    modulesReussis Int @default(0)
+    modulesEchoues Int @default(0)
+
+    resultat ResultatEvaluation @default(NON_EVALUE)
+
+    commentaire String?
+    dateCalcul  DateTime?
+
+    apprenant   Apprenant        @relation(fields: [apprenantId], references: [id])
+    session     SessionFormation @relation(fields: [sessionId], references: [id])
+    inscription Inscription      @relation(fields: [inscriptionId], references: [id])
+
+    certification Certification?
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([apprenantId, sessionId])
+    @@index([sessionId])
+    @@index([apprenantId])
+}
+
+// ============================================================
+// CONVENTION
+// ============================================================
+
+model Convention {
+    id String @id @default(cuid())
+
+    centreId      String
+    inscriptionId String @unique
+
+    numero String
+
+    nomOrganisme String
+
+    emailOrganisme     String?
+    telephoneOrganisme String?
+    adresseOrganisme   String?
+
+    nomContact String?
+
+    dateDebut DateTime?
+    dateFin   DateTime?
+
+    montant Decimal @default(0)
+
+    statut StatutConvention @default(BROUILLON)
+
+    dateSignature DateTime?
+
+    observations String?
+
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    inscription Inscription     @relation(fields: [inscriptionId], references: [id])
+
+    documents Document[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, numero])
+    @@index([centreId])
+    @@index([centreId, statut])
+}
+
+// ============================================================
+// FACTURE
+// ============================================================
+
+model Facture {
+    id String @id @default(cuid())
+
+    centreId      String
+    inscriptionId String?
+
+    numero String
+
+    dateEmission DateTime  @default(now())
+    dateEcheance DateTime?
+
+    sousTotal Decimal @default(0)
+    remise    Decimal @default(0)
+    taxe      Decimal @default(0)
+
+    total Decimal @default(0)
+
+    montantPaye Decimal @default(0)
+    montantDu   Decimal @default(0)
+
+    statut StatutFacture @default(BROUILLON)
+
+    notes String?
+
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    inscription Inscription?    @relation(fields: [inscriptionId], references: [id])
+
+    lignes    LigneFacture[]
+    paiements Paiement[]
+    echeances EcheancePaiement[]
+    documents Document[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, numero])
+    @@index([centreId])
+    @@index([centreId, statut])
+    @@index([inscriptionId])
+}
+
+// ============================================================
+// LIGNE FACTURE
+// ============================================================
+
+model LigneFacture {
+    id String @id @default(cuid())
+
+    factureId String
+
+    description String
+
+    quantite     Decimal @default(1)
+    prixUnitaire Decimal @default(0)
+
+    total Decimal @default(0)
+
+    facture Facture @relation(fields: [factureId], references: [id], onDelete: Cascade)
+
+    @@index([factureId])
+}
+
+// ============================================================
+// ECHEANCE PAIEMENT
+// ============================================================
+
+model EcheancePaiement {
+    id String @id @default(cuid())
+
+    centreId String
+
+    inscriptionId String?
+    factureId     String?
+
+    numero Int
+
+    dateEcheance DateTime
+
+    montant     Decimal
+    montantPaye Decimal @default(0)
+    montantDu   Decimal @default(0)
+
+    statut StatutEcheance @default(EN_ATTENTE)
+
+    notes String?
+
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    inscription Inscription?    @relation(fields: [inscriptionId], references: [id])
+    facture     Facture?        @relation(fields: [factureId], references: [id])
+
+    paiements Paiement[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([centreId])
+    @@index([inscriptionId])
+    @@index([factureId])
+    @@index([dateEcheance])
+}
+
+// ============================================================
+// PAIEMENT
+// ============================================================
+
+model Paiement {
+    id String @id @default(cuid())
+
+    centreId String
+
+    apprenantId   String?
+    inscriptionId String?
+    factureId     String?
+    echeanceId    String?
+
+    reference String
+
+    montant Decimal
+
+    mode ModePaiement
+
+    statut StatutPaiement @default(EN_ATTENTE)
+
+    datePaiement DateTime?
+
+    referenceTransaction String?
+
+    notes String?
+
+    centre      CentreFormation   @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    apprenant   Apprenant?        @relation(fields: [apprenantId], references: [id])
+    inscription Inscription?      @relation(fields: [inscriptionId], references: [id])
+    facture     Facture?          @relation(fields: [factureId], references: [id])
+    echeance    EcheancePaiement? @relation(fields: [echeanceId], references: [id])
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, reference])
+    @@index([centreId])
+    @@index([apprenantId])
+    @@index([inscriptionId])
+    @@index([factureId])
+    @@index([echeanceId])
+}
+
+// ============================================================
+// JURY
+// ============================================================
+
+model Jury {
+    id String @id @default(cuid())
+
+    centreId  String
+    sessionId String
+
+    nom String
+
+    datePrevue DateTime?
+    lieu       String?
+
+    statut StatutJury @default(PLANIFIE)
+
+    decision DecisionJury?
+
+    notesDeliberation String?
+
+    centre  CentreFormation  @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    session SessionFormation @relation(fields: [sessionId], references: [id])
+
+    membres     MembreJury[]
+    evaluations EvaluationJury[]
+    documents   Document[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([centreId])
+    @@index([sessionId])
+}
+
+// ============================================================
+// MEMBRE JURY
+// ============================================================
+
+model MembreJury {
+    id String @id @default(cuid())
+
+    juryId String
+
+    prenom String
+    nom    String
+
+    email     String?
+    telephone String?
+    organisme String?
+
+    role RoleMembreJury @default(MEMBRE)
+
+    jury Jury @relation(fields: [juryId], references: [id], onDelete: Cascade)
+
+    evaluations EvaluationJury[]
+
+    creeLe DateTime @default(now())
+
+    @@index([juryId])
+}
+
+// ============================================================
+// EVALUATION JURY
+// ============================================================
+
+model EvaluationJury {
+    id String @id @default(cuid())
+
+    juryId String
+
+    inscriptionId String
+    apprenantId   String
+    membreJuryId  String
+
+    note Decimal?
+
+    decision DecisionJury?
+
+    commentaire String?
+
+    jury        Jury        @relation(fields: [juryId], references: [id], onDelete: Cascade)
+    inscription Inscription @relation(fields: [inscriptionId], references: [id])
+    apprenant   Apprenant   @relation(fields: [apprenantId], references: [id])
+    membreJury  MembreJury  @relation(fields: [membreJuryId], references: [id])
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([juryId, inscriptionId, membreJuryId])
+    @@index([inscriptionId])
+    @@index([apprenantId])
+}
+
+// ============================================================
+// CERTIFICATION
+// ============================================================
+
+model Certification {
+    id String @id @default(cuid())
+
+    centreId String
+
+    apprenantId String
+    formationId String
+
+    resultatFormationId String @unique
+
+    numero String
+
+    intitule String
+
+    dateObtention  DateTime?
+    dateExpiration DateTime?
+
+    statut StatutCertification @default(BROUILLON)
+
+    mention      String?
+    observations String?
+
+    centre            CentreFormation   @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    apprenant         Apprenant         @relation(fields: [apprenantId], references: [id])
+    formation         Formation         @relation(fields: [formationId], references: [id])
+    resultatFormation ResultatFormation @relation(fields: [resultatFormationId], references: [id])
+
+    documents Document[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@unique([centreId, numero])
+    @@index([centreId])
+    @@index([apprenantId])
+    @@index([formationId])
+}
+
+// ============================================================
+// DOCUMENT
+// ============================================================
+
+model Document {
+    id String @id @default(cuid())
+
+    centreId String
+
+    apprenantId     String?
+    conventionId    String?
+    factureId       String?
+    juryId          String?
+    certificationId String?
+
+    type TypeDocument
+
+    nom String
+
+    urlFichier String
+
+    typeMime String?
+    taille   Int?
+
+    centre        CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    apprenant     Apprenant?      @relation(fields: [apprenantId], references: [id])
+    convention    Convention?     @relation(fields: [conventionId], references: [id])
+    facture       Facture?        @relation(fields: [factureId], references: [id])
+    jury          Jury?           @relation(fields: [juryId], references: [id])
+    certification Certification?  @relation(fields: [certificationId], references: [id])
+
+    creeLe DateTime @default(now())
+
+    @@index([centreId])
+    @@index([apprenantId])
+    @@index([conventionId])
+    @@index([factureId])
+    @@index([juryId])
+    @@index([certificationId])
+}
+
+// ============================================================
+// CAMPAGNE / ANNEE DE FORMATION
+// ============================================================
+
+model CampagneFormation {
+    id String @id @default(cuid())
+
+    centreId String
+
+    nom String
+
+    dateDebut DateTime
+    dateFin   DateTime
+
+    active Boolean @default(false)
+
+    centre CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([centreId])
+    @@index([centreId, active])
+}
+
+// ============================================================
+// PARAMETRES CENTRE
+// ============================================================
+
+model ParametreCentre {
+    id String @id @default(cuid())
+
+    centreId String @unique
+
+    nomResponsable String?
+
+    emailContact     String?
+    telephoneContact String?
+
+    prefixeApprenant     String @default("APP")
+    prefixeInscription   String @default("INS")
+    prefixeFacture       String @default("FAC")
+    prefixeConvention    String @default("CON")
+    prefixeCertification String @default("CERT")
+
+    conditionsPaiement  String?
+    piedDePageDocuments String?
+
+    centre CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+}
+
+// ============================================================
+// NOTIFICATION
+// ============================================================
+
+model Notification {
+    id String @id @default(cuid())
+
+    centreId      String
+    utilisateurId String
+
+    type TypeNotification
+
+    titre   String
+    message String
+
+    lueLe DateTime?
+
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    utilisateur Utilisateur     @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+    creeLe DateTime @default(now())
+
+    @@index([centreId])
+    @@index([utilisateurId, lueLe])
+}
+
+// ============================================================
+// INVITATION UTILISATEUR
+// ============================================================
+
+model InvitationUtilisateur {
+    id String @id @default(cuid())
+
+    utilisateurId String
+    centreId      String
+
+    email String
+
+    role Role
+
+    token String @unique
+
+    expireLe  DateTime
+    utiliseLe DateTime?
+
+    utilisateur Utilisateur     @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+    creeLe DateTime @default(now())
+
+    @@index([centreId])
+    @@index([email])
+}
+
+// ============================================================
+// SESSION UTILISATEUR
+// ============================================================
+
+model SessionUtilisateur {
+    id String @id @default(cuid())
+
+    utilisateurId String
+
+    token String @unique
+
+    expireLe DateTime
+
+    adresseIP String?
+    userAgent String?
+
+    utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+    creeLe DateTime @default(now())
+
+    @@index([utilisateurId])
+    @@index([expireLe])
+}
+
+// ============================================================
+// JOURNAL AUDIT
+// ============================================================
+
+model JournalAudit {
+    id String @id @default(cuid())
+
+    centreId String
+
+    utilisateurId String?
+
+    action   String
+    entite   String
+    entiteId String?
+
+    anciennesDonnees String?
+    nouvellesDonnees String?
+
+    adresseIP String?
+    userAgent String?
+
+    centre      CentreFormation @relation(fields: [centreId], references: [id], onDelete: Cascade)
+    utilisateur Utilisateur?    @relation(fields: [utilisateurId], references: [id])
+
+    creeLe DateTime @default(now())
+
+    @@index([centreId, creeLe])
+    @@index([entite, entiteId])
+}
+
+// ============================================================
+// PLAN SaaS
+// ============================================================
+
+model PlanSaaS {
+    id String @id @default(cuid())
+
+    nom String
+
+    code String @unique
+
+    description String?
+
+    type TypePlanSaaS
+
+    prix Decimal
+
+    devise String @default("XAF")
+
+    dureeJours Int?
+
+    actif Boolean @default(true)
+
+    abonnements AbonnementSaaS[]
+    limites     LimitePlanSaaS[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+}
+
+// ============================================================
+// LIMITES PLAN SaaS
+// ============================================================
+
+model LimitePlanSaaS {
+    id String @id @default(cuid())
+
+    planId String
+
+    code String
+    nom  String
+
+    valeur Int
+
+    illimite Boolean @default(false)
+
+    plan PlanSaaS @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+    @@unique([planId, code])
+    @@index([planId])
+}
+
+// ============================================================
+// ABONNEMENT SaaS
+// ============================================================
+
+model AbonnementSaaS {
+    id String @id @default(cuid())
+
+    centreId String
+    planId   String
+
+    statut StatutAbonnement @default(ESSAI)
+
+    dateDebut DateTime
+    dateFin   DateTime
+
+    prochaineEcheance DateTime?
+
+    prix   Decimal
+    devise String  @default("XAF")
+
+    centre CentreFormation @relation(fields: [centreId], references: [id])
+    plan   PlanSaaS        @relation(fields: [planId], references: [id])
+
+    factures  FactureSaaS[]
+    paiements PaiementSaaS[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([centreId])
+    @@index([planId])
+    @@index([statut])
+}
+
+// ============================================================
+// FACTURE SaaS
+// ============================================================
+
+model FactureSaaS {
+    id String @id @default(cuid())
+
+    abonnementId String
+
+    numero String @unique
+
+    dateEmission DateTime  @default(now())
+    dateEcheance DateTime?
+
+    sousTotal Decimal @default(0)
+    taxe      Decimal @default(0)
+
+    total Decimal @default(0)
+
+    montantPaye Decimal @default(0)
+    montantDu   Decimal @default(0)
+
+    statut StatutFactureSaaS @default(BROUILLON)
+
+    abonnement AbonnementSaaS @relation(fields: [abonnementId], references: [id])
+
+    paiements PaiementSaaS[]
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([abonnementId])
+    @@index([statut])
+}
+
+// ============================================================
+// PAIEMENT SaaS
+// ============================================================
+
+model PaiementSaaS {
+    id String @id @default(cuid())
+
+    abonnementId String
+
+    factureId String?
+
+    reference String @unique
+
+    montant Decimal
+
+    mode ModePaiementSaaS
+
+    statut StatutPaiementSaaS @default(EN_ATTENTE)
+
+    datePaiement DateTime?
+
+    referenceTransaction String?
+
+    notes String?
+
+    abonnement AbonnementSaaS @relation(fields: [abonnementId], references: [id])
+    facture    FactureSaaS?   @relation(fields: [factureId], references: [id])
+
+    creeLe    DateTime @default(now())
+    modifieLe DateTime @updatedAt
+
+    @@index([abonnementId])
+    @@index([factureId])
+    @@index([statut])
+}
