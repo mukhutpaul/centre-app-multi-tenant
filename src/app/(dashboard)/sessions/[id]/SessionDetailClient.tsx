@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -32,6 +31,7 @@ import { toast } from "sonner";
 
 import {
     addModuleToSession,
+    getFormateursForSession,
     getSessionModules,
     moveSessionModuleDown,
     moveSessionModuleUp,
@@ -55,9 +55,12 @@ type Session = {
     id: string;
     code: string;
     nom: string | null;
+
     dateDebut: Date | string;
     dateFin: Date | string;
+
     capacite: number | null;
+
     statut: string;
 
     ouvertureInscriptions?: Date | string | null;
@@ -76,14 +79,19 @@ type Session = {
     };
 };
 
-/**
- * IMPORTANT :
- * getSessionModules() retourne des objets plats.
- */
+type SessionModuleFormateur = {
+    id: string;
+    prenom: string;
+    nom: string;
+    email?: string | null;
+    specialite?: string | null;
+};
+
 type SessionModule = {
     id: string;
     code: string;
     nom: string;
+
     description: string | null;
 
     formationPosition: number;
@@ -102,6 +110,17 @@ type SessionModule = {
 
     nombreFormateurs: number;
     nombreEvaluations: number;
+
+    formateurs?: SessionModuleFormateur[];
+};
+
+type Formateur = {
+    id: string;
+    prenom: string;
+    nom: string;
+    email?: string | null;
+    telephone?: string | null;
+    specialite?: string | null;
 };
 
 type Props = {
@@ -269,10 +288,32 @@ export default function SessionDetailClient({
     const [searchModule, setSearchModule] =
         useState("");
 
+    const [searchFormateur, setSearchFormateur] =
+        useState("");
+
     const [selectedModules, setSelectedModules] =
         useState<string[]>([]);
 
+    /**
+     * Formateurs sélectionnés par module.
+     *
+     * Exemple :
+     *
+     * {
+     *   "module-1": ["formateur-1", "formateur-2"],
+     *   "module-2": ["formateur-3"]
+     * }
+     */
+    const [selectedFormateurs, setSelectedFormateurs] =
+        useState<Record<string, string[]>>({});
+
+    const [formateurs, setFormateurs] =
+        useState<Formateur[]>([]);
+
     const [loadingModules, setLoadingModules] =
+        useState(false);
+
+    const [loadingFormateurs, setLoadingFormateurs] =
         useState(false);
 
     const [addingModules, setAddingModules] =
@@ -292,6 +333,262 @@ export default function SessionDetailClient({
                 : []
         );
     }, [modulesProp]);
+
+    /* ========================================================
+       RECHARGER LES MODULES
+    ======================================================== */
+
+    async function reloadModules() {
+        if (!session) {
+            return false;
+        }
+
+        try {
+            setLoadingModules(true);
+
+            const result =
+                await getSessionModules(session.id);
+
+            if (!result.success) {
+                toast.error(
+                    result.error ||
+                        "Impossible de récupérer les modules."
+                );
+
+                return false;
+            }
+
+            setModules(result.modules ?? []);
+
+            return true;
+        } catch (error) {
+            console.error(
+                "Erreur reloadModules :",
+                error
+            );
+
+            toast.error(
+                "Une erreur est survenue lors du chargement des modules."
+            );
+
+            return false;
+        } finally {
+            setLoadingModules(false);
+        }
+    }
+
+    /* ========================================================
+       CHARGER LES FORMATEURS
+    ======================================================== */
+
+    async function loadFormateurs() {
+        if (!session) {
+            return false;
+        }
+
+        try {
+            setLoadingFormateurs(true);
+
+            const result =
+                await getFormateursForSession(
+                    session.id
+                );
+
+            if (!result.success) {
+                toast.error(
+                    result.error ||
+                        "Impossible de récupérer les formateurs."
+                );
+
+                setFormateurs([]);
+
+                return false;
+            }
+
+            setFormateurs(
+                Array.isArray(result.formateurs)
+                    ? result.formateurs
+                    : []
+            );
+
+            return true;
+        } catch (error) {
+            console.error(
+                "Erreur loadFormateurs :",
+                error
+            );
+
+            toast.error(
+                "Une erreur est survenue lors du chargement des formateurs."
+            );
+
+            setFormateurs([]);
+
+            return false;
+        } finally {
+            setLoadingFormateurs(false);
+        }
+    }
+
+    /* ========================================================
+       OUVRIR LE MODAL
+    ======================================================== */
+
+    async function openAjouterModules() {
+        if (!session || addingModules) {
+            return;
+        }
+
+        setShowAjouterModules(true);
+
+        setSelectedModules([]);
+
+        setSelectedFormateurs({});
+
+        setSearchModule("");
+
+        setSearchFormateur("");
+
+        /**
+         * Chargement parallèle :
+         * modules + formateurs.
+         */
+        await Promise.all([
+            reloadModules(),
+            loadFormateurs(),
+        ]);
+    }
+
+    /* ========================================================
+       FERMER LE MODAL
+    ======================================================== */
+
+    function closeAjouterModules() {
+        if (addingModules) {
+            return;
+        }
+
+        setShowAjouterModules(false);
+
+        setSelectedModules([]);
+
+        setSelectedFormateurs({});
+
+        setSearchModule("");
+
+        setSearchFormateur("");
+    }
+
+    /* ========================================================
+       MODULES DANS LA SESSION
+    ======================================================== */
+
+    const modulesDansSession = useMemo(() => {
+        return modules
+            .filter(
+                (module) =>
+                    module.estDansSession
+            )
+            .slice()
+            .sort(
+                (a, b) =>
+                    (a.positionSession ?? 0) -
+                    (b.positionSession ?? 0)
+            );
+    }, [modules]);
+
+    /* ========================================================
+       MODULES DISPONIBLES
+    ======================================================== */
+
+    const modulesDisponibles = useMemo(() => {
+        const search =
+            searchModule
+                .trim()
+                .toLowerCase();
+
+        return modules.filter((module) => {
+            if (module.estDansSession) {
+                return false;
+            }
+
+            if (!search) {
+                return true;
+            }
+
+            return (
+                module.code
+                    .toLowerCase()
+                    .includes(search) ||
+                module.nom
+                    .toLowerCase()
+                    .includes(search) ||
+                (
+                    module.description ?? ""
+                )
+                    .toLowerCase()
+                    .includes(search)
+            );
+        });
+    }, [
+        modules,
+        searchModule,
+    ]);
+
+    /* ========================================================
+       FORMATEURS FILTRÉS
+    ======================================================== */
+
+    const formateursDisponibles = useMemo(() => {
+        const search =
+            searchFormateur
+                .trim()
+                .toLowerCase();
+
+        if (!search) {
+            return formateurs;
+        }
+
+        return formateurs.filter(
+            (formateur) => {
+                const fullName =
+                    `${formateur.prenom} ${formateur.nom}`
+                        .toLowerCase();
+
+                return (
+                    fullName.includes(search) ||
+                    (
+                        formateur.email ?? ""
+                    )
+                        .toLowerCase()
+                        .includes(search) ||
+                    (
+                        formateur.specialite ?? ""
+                    )
+                        .toLowerCase()
+                        .includes(search) ||
+                    (
+                        formateur.telephone ?? ""
+                    )
+                        .toLowerCase()
+                        .includes(search)
+                );
+            }
+        );
+    }, [
+        formateurs,
+        searchFormateur,
+    ]);
+
+    /* ========================================================
+       TOTAL MODULES DISPONIBLES
+    ======================================================== */
+
+    const totalModulesDisponibles =
+        modules.filter(
+            (module) =>
+                !module.estDansSession
+        ).length;
 
     /* ========================================================
        SESSION ABSENTE
@@ -338,146 +635,36 @@ export default function SessionDetailClient({
     }
 
     /* ========================================================
-       RECHARGER LES MODULES
+       SELECTION MODULE
     ======================================================== */
 
-    async function reloadModules() {
-        try {
-            setLoadingModules(true);
+    function toggleModule(
+        moduleId: string
+    ) {
+        setSelectedModules((current) => {
+            if (
+                current.includes(moduleId)
+            ) {
+                /**
+                 * Quand on retire le module de la sélection,
+                 * on supprime également les formateurs
+                 * sélectionnés pour ce module.
+                 */
+                setSelectedFormateurs(
+                    (previous) => {
+                        const copy = {
+                            ...previous,
+                        };
 
-            const result =
-                await getSessionModules(session.id);
+                        delete copy[moduleId];
 
-            if (!result.success) {
-                toast.error(
-                    result.error ||
-                        "Impossible de récupérer les modules."
+                        return copy;
+                    }
                 );
 
-                return false;
-            }
-
-            setModules(result.modules ?? []);
-
-            return true;
-        } catch (error) {
-            console.error(
-                "Erreur reloadModules :",
-                error
-            );
-
-            toast.error(
-                "Une erreur est survenue lors du chargement des modules."
-            );
-
-            return false;
-        } finally {
-            setLoadingModules(false);
-        }
-    }
-
-    /* ========================================================
-       OUVRIR LE MODAL AJOUT MODULES
-    ======================================================== */
-
-    async function openAjouterModules() {
-        if (addingModules) {
-            return;
-        }
-
-        setShowAjouterModules(true);
-        setSelectedModules([]);
-        setSearchModule("");
-
-        /*
-         * On recharge toujours les modules afin d'avoir
-         * l'état le plus récent.
-         */
-        await reloadModules();
-    }
-
-    /* ========================================================
-       FERMER LE MODAL
-    ======================================================== */
-
-    function closeAjouterModules() {
-        if (addingModules) {
-            return;
-        }
-
-        setShowAjouterModules(false);
-        setSelectedModules([]);
-        setSearchModule("");
-    }
-
-    /* ========================================================
-       MODULES DANS LA SESSION
-    ======================================================== */
-
-    const modulesDansSession = useMemo(() => {
-        return modules
-            .filter(
-                (module) =>
-                    module.estDansSession
-            )
-            .slice()
-            .sort(
-                (a, b) =>
-                    (a.positionSession ?? 0) -
-                    (b.positionSession ?? 0)
-            );
-    }, [modules]);
-
-    /* ========================================================
-       MODULES DISPONIBLES
-    ======================================================== */
-
-    const modulesDisponibles = useMemo(() => {
-        const search =
-            searchModule.trim().toLowerCase();
-
-        return modules.filter((module) => {
-            if (module.estDansSession) {
-                return false;
-            }
-
-            if (!search) {
-                return true;
-            }
-
-            return (
-                module.code
-                    .toLowerCase()
-                    .includes(search) ||
-                module.nom
-                    .toLowerCase()
-                    .includes(search) ||
-                (module.description ?? "")
-                    .toLowerCase()
-                    .includes(search)
-            );
-        });
-    }, [modules, searchModule]);
-
-    /* ========================================================
-       MODULES DISPONIBLES TOTAL
-    ======================================================== */
-
-    const totalModulesDisponibles =
-        modules.filter(
-            (module) =>
-                !module.estDansSession
-        ).length;
-
-    /* ========================================================
-       SELECTIONNER / DESELECTIONNER UN MODULE
-    ======================================================== */
-
-    function toggleModule(moduleId: string) {
-        setSelectedModules((current) => {
-            if (current.includes(moduleId)) {
                 return current.filter(
-                    (id) => id !== moduleId
+                    (id) =>
+                        id !== moduleId
                 );
             }
 
@@ -489,13 +676,91 @@ export default function SessionDetailClient({
     }
 
     /* ========================================================
-       SELECTIONNER TOUS LES MODULES VISIBLES
+       TOGGLE FORMATEUR POUR UN MODULE
+    ======================================================== */
+
+    function toggleFormateurForModule(
+        moduleId: string,
+        formateurId: string
+    ) {
+        setSelectedFormateurs(
+            (current) => {
+                const currentIds =
+                    current[moduleId] ?? [];
+
+                if (
+                    currentIds.includes(
+                        formateurId
+                    )
+                ) {
+                    return {
+                        ...current,
+                        [moduleId]:
+                            currentIds.filter(
+                                (id) =>
+                                    id !==
+                                    formateurId
+                            ),
+                    };
+                }
+
+                return {
+                    ...current,
+                    [moduleId]: [
+                        ...currentIds,
+                        formateurId,
+                    ],
+                };
+            }
+        );
+    }
+
+    /* ========================================================
+       TOUS LES FORMATEURS POUR UN MODULE
+    ======================================================== */
+
+    function selectAllFormateursForModule(
+        moduleId: string
+    ) {
+        const ids =
+            formateursDisponibles.map(
+                (formateur) =>
+                    formateur.id
+            );
+
+        setSelectedFormateurs(
+            (current) => ({
+                ...current,
+                [moduleId]: ids,
+            })
+        );
+    }
+
+    /* ========================================================
+       AUCUN FORMATEUR POUR UN MODULE
+    ======================================================== */
+
+    function clearFormateursForModule(
+        moduleId: string
+    ) {
+        setSelectedFormateurs(
+            (current) => ({
+                ...current,
+                [moduleId]: [],
+            })
+        );
+    }
+
+    /* ========================================================
+       SELECTIONNER TOUS LES MODULES
     ======================================================== */
 
     function selectAllModules() {
-        const ids = modulesDisponibles.map(
-            (module) => module.id
-        );
+        const ids =
+            modulesDisponibles.map(
+                (module) =>
+                    module.id
+            );
 
         setSelectedModules(ids);
     }
@@ -506,6 +771,32 @@ export default function SessionDetailClient({
 
     function deselectAllModules() {
         setSelectedModules([]);
+
+        setSelectedFormateurs({});
+    }
+
+    /* ========================================================
+       RECHERCHE FORMATEUR POUR UN MODULE
+    ======================================================== */
+
+    function getSelectedFormateurIds(
+        moduleId: string
+    ) {
+        return (
+            selectedFormateurs[
+                moduleId
+            ] ?? []
+        );
+    }
+
+    /* ========================================================
+       NOM D'UN FORMATEUR
+    ======================================================== */
+
+    function getFormateurFullName(
+        formateur: Formateur
+    ) {
+        return `${formateur.prenom} ${formateur.nom}`;
     }
 
     /* ========================================================
@@ -517,7 +808,9 @@ export default function SessionDetailClient({
     ) {
         event.preventDefault();
 
-        if (selectedModules.length === 0) {
+        if (
+            selectedModules.length === 0
+        ) {
             toast.warning(
                 "Veuillez sélectionner au moins un module."
             );
@@ -529,13 +822,32 @@ export default function SessionDetailClient({
             setAddingModules(true);
 
             let successCount = 0;
+
             let errorCount = 0;
 
-            for (const moduleId of selectedModules) {
+            /**
+             * Ajout séquentiel volontaire :
+             *
+             * Cela permet de conserver l'ordre
+             * de sélection des modules.
+             */
+            for (
+                const moduleId of selectedModules
+            ) {
+                const trainerIds =
+                    Array.from(
+                        new Set(
+                            selectedFormateurs[
+                                moduleId
+                            ] ?? []
+                        )
+                    );
+
                 const result =
                     await addModuleToSession(
                         session.id,
-                        moduleId
+                        moduleId,
+                        trainerIds
                     );
 
                 if (result.success) {
@@ -550,9 +862,9 @@ export default function SessionDetailClient({
                 }
             }
 
-            /*
-             * Recharger avant d'afficher le message final
-             * permet de garder l'interface cohérente.
+            /**
+             * Recharger les données
+             * après les insertions.
              */
             await reloadModules();
 
@@ -565,6 +877,16 @@ export default function SessionDetailClient({
                         ? "Le module a été ajouté à la session."
                         : `${successCount} modules ont été ajoutés à la session.`
                 );
+
+                setSelectedModules([]);
+
+                setSelectedFormateurs({});
+
+                setSearchModule("");
+
+                setShowAjouterModules(
+                    false
+                );
             } else if (
                 successCount > 0 &&
                 errorCount > 0
@@ -572,17 +894,21 @@ export default function SessionDetailClient({
                 toast.warning(
                     `${successCount} module(s) ajouté(s), ${errorCount} module(s) non ajouté(s).`
                 );
+
+                setSelectedModules([]);
+
+                setSelectedFormateurs({});
+
+                setSearchModule("");
+
+                setShowAjouterModules(
+                    false
+                );
             } else {
                 toast.error(
                     "Aucun module n'a pu être ajouté."
                 );
-
-                return;
             }
-
-            setSelectedModules([]);
-            setSearchModule("");
-            setShowAjouterModules(false);
         } catch (error) {
             console.error(
                 "Erreur handleAddModules :",
@@ -604,10 +930,12 @@ export default function SessionDetailClient({
     async function handleRemoveModule(
         moduleId: string
     ) {
-        const module = modules.find(
-            (item) =>
-                item.id === moduleId
-        );
+        const module =
+            modules.find(
+                (item) =>
+                    item.id ===
+                    moduleId
+            );
 
         if (!module) {
             return;
@@ -616,23 +944,34 @@ export default function SessionDetailClient({
         const confirmation =
             await Swal.fire({
                 title: "Retirer ce module ?",
+
                 text: `Le module "${module.nom}" sera retiré de cette session.`,
+
                 icon: "warning",
+
                 showCancelButton: true,
+
                 confirmButtonText:
                     "Oui, retirer",
+
                 cancelButtonText:
                     "Annuler",
+
                 reverseButtons: true,
+
                 buttonsStyling: true,
             });
 
-        if (!confirmation.isConfirmed) {
+        if (
+            !confirmation.isConfirmed
+        ) {
             return;
         }
 
         try {
-            setProcessingModuleId(moduleId);
+            setProcessingModuleId(
+                moduleId
+            );
 
             const result =
                 await removeModuleFromSession(
@@ -664,7 +1003,9 @@ export default function SessionDetailClient({
                 "Une erreur est survenue lors du retrait du module."
             );
         } finally {
-            setProcessingModuleId(null);
+            setProcessingModuleId(
+                null
+            );
         }
     }
 
@@ -676,7 +1017,9 @@ export default function SessionDetailClient({
         moduleId: string
     ) {
         try {
-            setProcessingModuleId(moduleId);
+            setProcessingModuleId(
+                moduleId
+            );
 
             const result =
                 await moveSessionModuleUp(
@@ -704,7 +1047,9 @@ export default function SessionDetailClient({
                 "Impossible de déplacer le module."
             );
         } finally {
-            setProcessingModuleId(null);
+            setProcessingModuleId(
+                null
+            );
         }
     }
 
@@ -716,7 +1061,9 @@ export default function SessionDetailClient({
         moduleId: string
     ) {
         try {
-            setProcessingModuleId(moduleId);
+            setProcessingModuleId(
+                moduleId
+            );
 
             const result =
                 await moveSessionModuleDown(
@@ -744,7 +1091,9 @@ export default function SessionDetailClient({
                 "Impossible de déplacer le module."
             );
         } finally {
-            setProcessingModuleId(null);
+            setProcessingModuleId(
+                null
+            );
         }
     }
 
@@ -761,18 +1110,15 @@ export default function SessionDetailClient({
         );
 
     const inscriptions =
-        session._count?.inscriptions ?? 0;
+        session._count
+            ?.inscriptions ?? 0;
 
-    /*
-     * IMPORTANT :
-     * On compte uniquement les modules réellement
-     * associés à la session.
-     */
     const nombreModules =
         modulesDansSession.length;
 
-    const formateurs =
-        session._count?.formateurs ?? 0;
+    const formateursCount =
+        session._count
+            ?.formateurs ?? 0;
 
     const planning =
         session._count?.planning ?? 0;
@@ -802,6 +1148,7 @@ export default function SessionDetailClient({
 
     return (
         <div className="p-4 md:p-6">
+
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* ==================================================
@@ -813,6 +1160,7 @@ export default function SessionDetailClient({
                     className="btn btn-ghost btn-sm gap-2"
                 >
                     <ArrowLeft size={17} />
+
                     Retour aux sessions
                 </Link>
 
@@ -821,6 +1169,7 @@ export default function SessionDetailClient({
                 ================================================== */}
 
                 <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                     <div className="card-body">
 
                         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -861,11 +1210,13 @@ export default function SessionDetailClient({
                                     {formation?.code && (
                                         <span className="inline-flex items-center gap-2">
                                             <BookOpen size={16} />
+
                                             {formation.code}
                                         </span>
                                     )}
 
                                     <span className="inline-flex items-center gap-2">
+
                                         <CalendarDays size={16} />
 
                                         Du{" "}
@@ -876,6 +1227,7 @@ export default function SessionDetailClient({
                                         {formatDate(
                                             session.dateFin
                                         )}
+
                                     </span>
 
                                 </div>
@@ -889,6 +1241,7 @@ export default function SessionDetailClient({
                                     className="btn btn-primary gap-2"
                                 >
                                     <Pencil size={17} />
+
                                     Modifier
                                 </Link>
 
@@ -897,6 +1250,7 @@ export default function SessionDetailClient({
                         </div>
 
                     </div>
+
                 </div>
 
                 {/* ==================================================
@@ -908,6 +1262,7 @@ export default function SessionDetailClient({
                     {/* PARTICIPANTS */}
 
                     <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                         <div className="card-body p-4">
 
                             <div className="flex items-center justify-between">
@@ -919,17 +1274,22 @@ export default function SessionDetailClient({
                                     </p>
 
                                     <p className="text-2xl font-bold mt-1">
+
                                         {inscriptions}
 
-                                        {capacite !== null &&
+                                        {capacite !==
+                                            null &&
                                             capacite !==
                                                 undefined && (
                                                 <span className="text-sm font-normal text-base-content/50">
                                                     {" "}
                                                     /{" "}
-                                                    {capacite}
+                                                    {
+                                                        capacite
+                                                    }
                                                 </span>
                                             )}
+
                                     </p>
 
                                 </div>
@@ -940,17 +1300,23 @@ export default function SessionDetailClient({
 
                             </div>
 
-                            {tauxOccupation !== null && (
+                            {tauxOccupation !==
+                                null && (
                                 <div className="mt-3">
 
                                     <div className="flex justify-between text-xs mb-1">
+
                                         <span>
                                             Occupation
                                         </span>
 
                                         <span>
-                                            {tauxOccupation}%
+                                            {
+                                                tauxOccupation
+                                            }
+                                            %
                                         </span>
+
                                     </div>
 
                                     <progress
@@ -965,11 +1331,13 @@ export default function SessionDetailClient({
                             )}
 
                         </div>
+
                     </div>
 
                     {/* MODULES */}
 
                     <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                         <div className="card-body p-4">
 
                             <div className="flex items-center justify-between">
@@ -981,7 +1349,9 @@ export default function SessionDetailClient({
                                     </p>
 
                                     <p className="text-2xl font-bold mt-1">
-                                        {nombreModules}
+                                        {
+                                            nombreModules
+                                        }
                                     </p>
 
                                 </div>
@@ -993,11 +1363,13 @@ export default function SessionDetailClient({
                             </div>
 
                         </div>
+
                     </div>
 
                     {/* FORMATEURS */}
 
                     <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                         <div className="card-body p-4">
 
                             <div className="flex items-center justify-between">
@@ -1009,7 +1381,9 @@ export default function SessionDetailClient({
                                     </p>
 
                                     <p className="text-2xl font-bold mt-1">
-                                        {formateurs}
+                                        {
+                                            formateursCount
+                                        }
                                     </p>
 
                                 </div>
@@ -1021,11 +1395,13 @@ export default function SessionDetailClient({
                             </div>
 
                         </div>
+
                     </div>
 
                     {/* PLANNING */}
 
                     <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                         <div className="card-body p-4">
 
                             <div className="flex items-center justify-between">
@@ -1037,7 +1413,9 @@ export default function SessionDetailClient({
                                     </p>
 
                                     <p className="text-2xl font-bold mt-1">
-                                        {planning}
+                                        {
+                                            planning
+                                        }
                                     </p>
 
                                 </div>
@@ -1049,11 +1427,13 @@ export default function SessionDetailClient({
                             </div>
 
                         </div>
+
                     </div>
 
                     {/* JURY */}
 
                     <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                         <div className="card-body p-4">
 
                             <div className="flex items-center justify-between">
@@ -1077,6 +1457,7 @@ export default function SessionDetailClient({
                             </div>
 
                         </div>
+
                     </div>
 
                 </div>
@@ -1090,10 +1471,12 @@ export default function SessionDetailClient({
                     {/* SESSION */}
 
                     <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                         <div className="card-body">
 
                             <h2 className="card-title text-lg">
                                 <CalendarDays size={20} />
+
                                 Informations de la session
                             </h2>
 
@@ -1102,16 +1485,21 @@ export default function SessionDetailClient({
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                                 <div>
+
                                     <p className="text-xs uppercase tracking-wide text-base-content/50">
                                         Code
                                     </p>
 
                                     <p className="font-semibold mt-1">
-                                        {session.code}
+                                        {
+                                            session.code
+                                        }
                                     </p>
+
                                 </div>
 
                                 <div>
+
                                     <p className="text-xs uppercase tracking-wide text-base-content/50">
                                         Statut
                                     </p>
@@ -1119,11 +1507,15 @@ export default function SessionDetailClient({
                                     <span
                                         className={`badge ${statusInfo.className} mt-1`}
                                     >
-                                        {statusInfo.label}
+                                        {
+                                            statusInfo.label
+                                        }
                                     </span>
+
                                 </div>
 
                                 <div>
+
                                     <p className="text-xs uppercase tracking-wide text-base-content/50">
                                         Date de début
                                     </p>
@@ -1133,9 +1525,11 @@ export default function SessionDetailClient({
                                             session.dateDebut
                                         )}
                                     </p>
+
                                 </div>
 
                                 <div>
+
                                     <p className="text-xs uppercase tracking-wide text-base-content/50">
                                         Date de fin
                                     </p>
@@ -1145,20 +1539,26 @@ export default function SessionDetailClient({
                                             session.dateFin
                                         )}
                                     </p>
+
                                 </div>
 
                                 <div>
+
                                     <p className="text-xs uppercase tracking-wide text-base-content/50">
                                         Capacité
                                     </p>
 
                                     <p className="font-medium mt-1">
-                                        {capacite ??
-                                            "Illimitée"}
+                                        {
+                                            capacite ??
+                                            "Illimitée"
+                                        }
                                     </p>
+
                                 </div>
 
                                 <div>
+
                                     <p className="text-xs uppercase tracking-wide text-base-content/50">
                                         Type
                                     </p>
@@ -1168,20 +1568,24 @@ export default function SessionDetailClient({
                                             formation?.type
                                         )}
                                     </p>
+
                                 </div>
 
                             </div>
 
                         </div>
+
                     </div>
 
                     {/* FORMATION */}
 
                     <div className="card bg-base-100 border border-base-300 shadow-sm">
+
                         <div className="card-body">
 
                             <h2 className="card-title text-lg">
                                 <BookOpen size={20} />
+
                                 Formation
                             </h2>
 
@@ -1199,6 +1603,7 @@ export default function SessionDetailClient({
                                 <div className="space-y-4">
 
                                     <div>
+
                                         <p className="text-xs uppercase tracking-wide text-base-content/50">
                                             Code
                                         </p>
@@ -1207,22 +1612,30 @@ export default function SessionDetailClient({
                                             href={`/formations/${formation.id}`}
                                             className="font-semibold link link-hover mt-1 inline-block"
                                         >
-                                            {formation.code}
+                                            {
+                                                formation.code
+                                            }
                                         </Link>
+
                                     </div>
 
                                     <div>
+
                                         <p className="text-xs uppercase tracking-wide text-base-content/50">
                                             Nom
                                         </p>
 
                                         <p className="font-medium mt-1">
-                                            {formation.nom}
+                                            {
+                                                formation.nom
+                                            }
                                         </p>
+
                                     </div>
 
                                     {formation.type && (
                                         <div>
+
                                             <p className="text-xs uppercase tracking-wide text-base-content/50">
                                                 Modalité
                                             </p>
@@ -1232,6 +1645,7 @@ export default function SessionDetailClient({
                                                     formation.type
                                                 )}
                                             </p>
+
                                         </div>
                                     )}
 
@@ -1240,26 +1654,32 @@ export default function SessionDetailClient({
                                         formation.dureeHeures !==
                                             undefined && (
                                             <div>
+
                                                 <p className="text-xs uppercase tracking-wide text-base-content/50">
                                                     Durée
                                                 </p>
 
                                                 <p className="font-medium mt-1">
+
                                                     {
                                                         formation.dureeHeures
                                                     }{" "}
                                                     heure
                                                     {Number(
                                                         formation.dureeHeures
-                                                    ) > 1
+                                                    ) >
+                                                    1
                                                         ? "s"
                                                         : ""}
+
                                                 </p>
+
                                             </div>
                                         )}
 
                                     {formation.description && (
                                         <div>
+
                                             <p className="text-xs uppercase tracking-wide text-base-content/50">
                                                 Description
                                             </p>
@@ -1269,6 +1689,7 @@ export default function SessionDetailClient({
                                                     formation.description
                                                 }
                                             </p>
+
                                         </div>
                                     )}
 
@@ -1276,6 +1697,7 @@ export default function SessionDetailClient({
                             )}
 
                         </div>
+
                     </div>
 
                 </div>
@@ -1292,6 +1714,7 @@ export default function SessionDetailClient({
 
                             <h2 className="card-title text-lg">
                                 <Users size={20} />
+
                                 Période des inscriptions
                             </h2>
 
@@ -1307,6 +1730,7 @@ export default function SessionDetailClient({
                                         </div>
 
                                         <div>
+
                                             <p className="text-sm text-base-content/60">
                                                 Ouverture
                                             </p>
@@ -1316,6 +1740,7 @@ export default function SessionDetailClient({
                                                     session.ouvertureInscriptions
                                                 )}
                                             </p>
+
                                         </div>
 
                                     </div>
@@ -1329,6 +1754,7 @@ export default function SessionDetailClient({
                                         </div>
 
                                         <div>
+
                                             <p className="text-sm text-base-content/60">
                                                 Fermeture
                                             </p>
@@ -1338,6 +1764,7 @@ export default function SessionDetailClient({
                                                     session.fermetureInscriptions
                                                 )}
                                             </p>
+
                                         </div>
 
                                     </div>
@@ -1361,13 +1788,16 @@ export default function SessionDetailClient({
 
                             <h2 className="card-title text-lg">
                                 <ClipboardList size={20} />
+
                                 Notes
                             </h2>
 
                             <div className="divider my-1" />
 
                             <div className="whitespace-pre-wrap text-base-content/80 leading-relaxed">
-                                {session.notes}
+                                {
+                                    session.notes
+                                }
                             </div>
 
                         </div>
@@ -1383,9 +1813,7 @@ export default function SessionDetailClient({
 
                     <div className="card-body p-0">
 
-                        {/* ==================================================
-                            EN-TÊTE MODULES
-                        ================================================== */}
+                        {/* HEADER */}
 
                         <div className="p-5 border-b border-base-300">
 
@@ -1395,19 +1823,27 @@ export default function SessionDetailClient({
 
                                     <h2 className="card-title text-lg">
                                         <FileText size={20} />
+
                                         Modules de la session
                                     </h2>
 
                                     <p className="text-sm text-base-content/60 mt-1">
-                                        {nombreModules} module
-                                        {nombreModules > 1
+
+                                        {
+                                            nombreModules
+                                        }{" "}
+                                        module
+                                        {nombreModules >
+                                        1
                                             ? "s"
                                             : ""}{" "}
                                         associé
-                                        {nombreModules > 1
+                                        {nombreModules >
+                                        1
                                             ? "s"
                                             : ""}{" "}
                                         à cette session.
+
                                     </p>
 
                                 </div>
@@ -1423,32 +1859,41 @@ export default function SessionDetailClient({
                                     }
                                     className="btn btn-primary btn-sm gap-2"
                                 >
+
                                     {loadingModules ? (
                                         <>
                                             <Loader2
-                                                size={16}
+                                                size={
+                                                    16
+                                                }
                                                 className="animate-spin"
                                             />
+
                                             Chargement...
                                         </>
                                     ) : (
                                         <>
-                                            <Plus size={16} />
+                                            <Plus
+                                                size={
+                                                    16
+                                                }
+                                            />
+
                                             Ajouter des modules
                                         </>
                                     )}
+
                                 </button>
 
                             </div>
 
                         </div>
 
-                        {/* ==================================================
-                            LISTE DES MODULES DE LA SESSION
-                        ================================================== */}
+                        {/* LISTE */}
 
                         {loadingModules &&
-                        modulesDansSession.length === 0 ? (
+                        modulesDansSession.length ===
+                            0 ? (
                             <div className="py-14 text-center px-5">
 
                                 <Loader2
@@ -1490,6 +1935,7 @@ export default function SessionDetailClient({
                                     className="btn btn-primary btn-sm mt-5 gap-2"
                                 >
                                     <Plus size={16} />
+
                                     Ajouter des modules
                                 </button>
 
@@ -1500,17 +1946,39 @@ export default function SessionDetailClient({
                                 <table className="table">
 
                                     <thead>
+
                                         <tr>
-                                            <th>#</th>
-                                            <th>Module</th>
-                                            <th>Période</th>
-                                            <th>Durée</th>
-                                            <th>Formateurs</th>
-                                            <th>Évaluations</th>
+
+                                            <th>
+                                                #
+                                            </th>
+
+                                            <th>
+                                                Module
+                                            </th>
+
+                                            <th>
+                                                Période
+                                            </th>
+
+                                            <th>
+                                                Durée
+                                            </th>
+
+                                            <th>
+                                                Formateurs
+                                            </th>
+
+                                            <th>
+                                                Évaluations
+                                            </th>
+
                                             <th className="text-right">
                                                 Actions
                                             </th>
+
                                         </tr>
+
                                     </thead>
 
                                     <tbody>
@@ -1595,7 +2063,7 @@ export default function SessionDetailClient({
 
                                                         </td>
 
-                                                        {/* PÉRIODE */}
+                                                        {/* PERIODE */}
 
                                                         <td>
 
@@ -1603,6 +2071,7 @@ export default function SessionDetailClient({
 
                                                                 {module.dateDebut && (
                                                                     <p>
+
                                                                         <span className="text-base-content/50">
                                                                             Du{" "}
                                                                         </span>
@@ -1610,11 +2079,13 @@ export default function SessionDetailClient({
                                                                         {formatDateTime(
                                                                             module.dateDebut
                                                                         )}
+
                                                                     </p>
                                                                 )}
 
                                                                 {module.dateFin && (
                                                                     <p className="mt-1">
+
                                                                         <span className="text-base-content/50">
                                                                             Au{" "}
                                                                         </span>
@@ -1622,6 +2093,7 @@ export default function SessionDetailClient({
                                                                         {formatDateTime(
                                                                             module.dateFin
                                                                         )}
+
                                                                     </p>
                                                                 )}
 
@@ -1636,7 +2108,7 @@ export default function SessionDetailClient({
 
                                                         </td>
 
-                                                        {/* DURÉE */}
+                                                        {/* DUREE */}
 
                                                         <td>
 
@@ -1651,15 +2123,74 @@ export default function SessionDetailClient({
 
                                                         <td>
 
-                                                            <span className="badge badge-sm badge-ghost">
-                                                                {
-                                                                    module.nombreFormateurs
-                                                                }
-                                                            </span>
+                                                            {module.formateurs &&
+                                                            module.formateurs.length >
+                                                                0 ? (
+                                                                <div className="space-y-1">
+
+                                                                    <div className="badge badge-success badge-sm gap-1">
+
+                                                                        <UserRound
+                                                                            size={
+                                                                                12
+                                                                            }
+                                                                        />
+
+                                                                        {
+                                                                            module.formateurs.length
+                                                                        }
+
+                                                                    </div>
+
+                                                                    <div className="flex flex-col gap-0.5">
+
+                                                                        {module.formateurs
+                                                                            .slice(
+                                                                                0,
+                                                                                3
+                                                                            )
+                                                                            .map(
+                                                                                (
+                                                                                    formateur
+                                                                                ) => (
+                                                                                    <span
+                                                                                        key={
+                                                                                            formateur.id
+                                                                                        }
+                                                                                        className="text-xs text-base-content/70 whitespace-nowrap"
+                                                                                    >
+                                                                                        {
+                                                                                            formateur.prenom
+                                                                                        }{" "}
+                                                                                        {
+                                                                                            formateur.nom
+                                                                                        }
+                                                                                    </span>
+                                                                                )
+                                                                            )}
+
+                                                                        {module.formateurs.length >
+                                                                            3 && (
+                                                                            <span className="text-xs text-base-content/50">
+                                                                                +
+                                                                                {module.formateurs.length -
+                                                                                    3}{" "}
+                                                                                autre(s)
+                                                                            </span>
+                                                                        )}
+
+                                                                    </div>
+
+                                                                </div>
+                                                            ) : (
+                                                                <span className="badge badge-sm badge-ghost">
+                                                                    Aucun
+                                                                </span>
+                                                            )}
 
                                                         </td>
 
-                                                        {/* ÉVALUATIONS */}
+                                                        {/* EVALUATIONS */}
 
                                                         <td>
 
@@ -1692,6 +2223,7 @@ export default function SessionDetailClient({
                                                                     className="btn btn-ghost btn-xs btn-square"
                                                                     title="Monter"
                                                                 >
+
                                                                     {processing ? (
                                                                         <Loader2
                                                                             size={
@@ -1706,6 +2238,7 @@ export default function SessionDetailClient({
                                                                             }
                                                                         />
                                                                     )}
+
                                                                 </button>
 
                                                                 <button
@@ -1724,6 +2257,7 @@ export default function SessionDetailClient({
                                                                     className="btn btn-ghost btn-xs btn-square"
                                                                     title="Descendre"
                                                                 >
+
                                                                     {processing ? (
                                                                         <Loader2
                                                                             size={
@@ -1738,6 +2272,7 @@ export default function SessionDetailClient({
                                                                             }
                                                                         />
                                                                     )}
+
                                                                 </button>
 
                                                                 <button
@@ -1753,6 +2288,7 @@ export default function SessionDetailClient({
                                                                     className="btn btn-ghost btn-xs btn-square text-error"
                                                                     title="Retirer"
                                                                 >
+
                                                                     {processing ? (
                                                                         <Loader2
                                                                             size={
@@ -1767,6 +2303,7 @@ export default function SessionDetailClient({
                                                                             }
                                                                         />
                                                                     )}
+
                                                                 </button>
 
                                                             </div>
@@ -1790,7 +2327,7 @@ export default function SessionDetailClient({
                 </div>
 
                 {/* ==================================================
-                    RÉSUMÉ
+                    RESUME
                 ================================================== */}
 
                 <div className="card bg-base-100 border border-base-300 shadow-sm">
@@ -1799,6 +2336,7 @@ export default function SessionDetailClient({
 
                         <h2 className="card-title text-lg">
                             <Clock size={20} />
+
                             Résumé
                         </h2>
 
@@ -1863,12 +2401,15 @@ export default function SessionDetailClient({
                                     </p>
 
                                     <p className="text-sm font-medium">
+
                                         {inscriptions}
 
-                                        {capacite !== null &&
+                                        {capacite !==
+                                            null &&
                                             capacite !==
                                                 undefined &&
                                             ` / ${capacite}`}
+
                                     </p>
 
                                 </div>
@@ -1888,7 +2429,9 @@ export default function SessionDetailClient({
                                     </p>
 
                                     <p className="text-sm font-medium">
-                                        {nombreModules}
+                                        {
+                                            nombreModules
+                                        }
                                     </p>
 
                                 </div>
@@ -1902,7 +2445,7 @@ export default function SessionDetailClient({
                 </div>
 
                 {/* ==================================================
-                    RETOUR BAS DE PAGE
+                    RETOUR BAS
                 ================================================== */}
 
                 <div className="flex justify-between items-center pt-2">
@@ -1912,6 +2455,7 @@ export default function SessionDetailClient({
                         className="btn btn-ghost gap-2"
                     >
                         <ArrowLeft size={17} />
+
                         Retour aux sessions
                     </Link>
 
@@ -1920,6 +2464,7 @@ export default function SessionDetailClient({
                         className="btn btn-primary gap-2"
                     >
                         <Pencil size={17} />
+
                         Modifier la session
                     </Link>
 
@@ -1928,13 +2473,15 @@ export default function SessionDetailClient({
             </div>
 
             {/* ======================================================
-                MODAL : AJOUTER DES MODULES
+                MODAL AJOUTER MODULES
             ====================================================== */}
 
             {showAjouterModules && (
                 <div
                     className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
-                    onMouseDown={(event) => {
+                    onMouseDown={(
+                        event
+                    ) => {
                         if (
                             event.target ===
                                 event.currentTarget &&
@@ -1946,14 +2493,16 @@ export default function SessionDetailClient({
                 >
 
                     <div
-                        className="w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-base-100 shadow-2xl border border-base-300"
-                        onMouseDown={(event) =>
+                        className="w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden rounded-2xl bg-base-100 shadow-2xl border border-base-300"
+                        onMouseDown={(
+                            event
+                        ) =>
                             event.stopPropagation()
                         }
                     >
 
                         {/* ==================================================
-                            HEADER MODAL
+                            HEADER
                         ================================================== */}
 
                         <div className="flex items-start justify-between gap-4 px-5 py-4 border-b border-base-300 bg-base-100">
@@ -1963,9 +2512,13 @@ export default function SessionDetailClient({
                                 <div className="flex items-center gap-3">
 
                                     <div className="p-2.5 rounded-xl bg-primary/10 text-primary shrink-0">
+
                                         <BookOpen
-                                            size={21}
+                                            size={
+                                                21
+                                            }
                                         />
+
                                     </div>
 
                                     <div className="min-w-0">
@@ -1975,12 +2528,15 @@ export default function SessionDetailClient({
                                         </h2>
 
                                         <p className="text-sm text-base-content/60 mt-0.5 truncate">
+
                                             Session{" "}
+
                                             <strong>
                                                 {
                                                     session.code
                                                 }
                                             </strong>
+
                                         </p>
 
                                     </div>
@@ -2006,7 +2562,7 @@ export default function SessionDetailClient({
                         </div>
 
                         {/* ==================================================
-                            CONTENU MODAL
+                            CONTENU
                         ================================================== */}
 
                         <div className="flex-1 overflow-y-auto">
@@ -2026,9 +2582,13 @@ export default function SessionDetailClient({
                                     <div className="flex items-start gap-3">
 
                                         <div className="p-2 rounded-lg bg-info/10 text-info shrink-0">
+
                                             <BookOpen
-                                                size={19}
+                                                size={
+                                                    19
+                                                }
                                             />
+
                                         </div>
 
                                         <div className="min-w-0">
@@ -2038,8 +2598,10 @@ export default function SessionDetailClient({
                                             </p>
 
                                             <p className="font-semibold mt-1">
-                                                {formation?.nom ??
-                                                    "Formation associée"}
+                                                {
+                                                    formation?.nom ??
+                                                    "Formation associée"
+                                                }
                                             </p>
 
                                             {formation?.code && (
@@ -2057,7 +2619,9 @@ export default function SessionDetailClient({
 
                                 </div>
 
-                                {/* RECHERCHE + ACTIONS */}
+                                {/* ==================================================
+                                    RECHERCHE MODULE + ACTIONS
+                                ================================================== */}
 
                                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 
@@ -2129,7 +2693,72 @@ export default function SessionDetailClient({
 
                                 </div>
 
-                                {/* COMPTEURS */}
+                                {/* ==================================================
+                                    RECHERCHE FORMATEURS
+                                ================================================== */}
+
+                                <div className="rounded-xl border border-base-300 bg-base-200/30 p-4">
+
+                                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+
+                                        <div>
+
+                                            <h3 className="font-semibold flex items-center gap-2">
+
+                                                <UserRound
+                                                    size={
+                                                        18
+                                                    }
+                                                />
+
+                                                Formateurs
+                                            </h3>
+
+                                            <p className="text-xs text-base-content/60 mt-1">
+                                                Sélectionnez les formateurs
+                                                à affecter à chaque module.
+                                            </p>
+
+                                        </div>
+
+                                        <div className="relative w-full md:max-w-sm">
+
+                                            <Search
+                                                size={16}
+                                                className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"
+                                            />
+
+                                            <input
+                                                type="text"
+                                                value={
+                                                    searchFormateur
+                                                }
+                                                onChange={(
+                                                    event
+                                                ) =>
+                                                    setSearchFormateur(
+                                                        event
+                                                            .target
+                                                            .value
+                                                    )
+                                                }
+                                                placeholder="Rechercher un formateur..."
+                                                className="input input-bordered input-sm w-full pl-9"
+                                                disabled={
+                                                    addingModules ||
+                                                    loadingFormateurs
+                                                }
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                {/* ==================================================
+                                    COMPTEURS
+                                ================================================== */}
 
                                 <div className="flex flex-wrap gap-2">
 
@@ -2162,9 +2791,22 @@ export default function SessionDetailClient({
                                             : ""}
                                     </span>
 
+                                    <span className="badge badge-info badge-outline">
+
+                                        {formateurs.length}{" "}
+                                        formateur
+                                        {formateurs.length >
+                                        1
+                                            ? "s"
+                                            : ""}
+
+                                    </span>
+
                                 </div>
 
-                                {/* LISTE */}
+                                {/* ==================================================
+                                    LISTE MODULES
+                                ================================================== */}
 
                                 <div className="rounded-xl border border-base-300 bg-base-100 overflow-hidden">
 
@@ -2203,14 +2845,16 @@ export default function SessionDetailClient({
                                             </h3>
 
                                             <p className="text-sm text-base-content/60 mt-1 max-w-md">
+
                                                 {searchModule
                                                     ? "Aucun module ne correspond à votre recherche."
                                                     : "Tous les modules de cette formation sont déjà associés à cette session."}
+
                                             </p>
 
                                         </div>
                                     ) : (
-                                        <div className="max-h-[420px] overflow-y-auto divide-y divide-base-300">
+                                        <div className="max-h-[560px] overflow-y-auto divide-y divide-base-300">
 
                                             {modulesDisponibles.map(
                                                 (
@@ -2221,14 +2865,18 @@ export default function SessionDetailClient({
                                                             module.id
                                                         );
 
+                                                    const moduleFormateurIds =
+                                                        getSelectedFormateurIds(
+                                                            module.id
+                                                        );
+
                                                     return (
-                                                        <label
+                                                        <div
                                                             key={
                                                                 module.id
                                                             }
                                                             className={`
-                                                                flex items-start gap-4 p-4 cursor-pointer transition
-                                                                hover:bg-base-200/60
+                                                                transition
                                                                 ${
                                                                     selected
                                                                         ? "bg-primary/5"
@@ -2237,99 +2885,349 @@ export default function SessionDetailClient({
                                                             `}
                                                         >
 
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={
-                                                                    selected
-                                                                }
-                                                                onChange={() =>
-                                                                    toggleModule(
-                                                                        module.id
-                                                                    )
-                                                                }
-                                                                disabled={
-                                                                    addingModules
-                                                                }
-                                                                className="checkbox checkbox-primary mt-1"
-                                                            />
+                                                            {/* MODULE */}
 
-                                                            <div className="flex-1 min-w-0">
+                                                            <label className="flex items-start gap-4 p-4 cursor-pointer hover:bg-base-200/60">
 
-                                                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={
+                                                                        selected
+                                                                    }
+                                                                    onChange={() =>
+                                                                        toggleModule(
+                                                                            module.id
+                                                                        )
+                                                                    }
+                                                                    disabled={
+                                                                        addingModules
+                                                                    }
+                                                                    className="checkbox checkbox-primary mt-1"
+                                                                />
 
-                                                                    <div className="flex flex-wrap items-center gap-2">
+                                                                <div className="flex-1 min-w-0">
 
-                                                                        <span className="badge badge-primary badge-outline">
+                                                                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+
+                                                                        <div className="flex flex-wrap items-center gap-2">
+
+                                                                            <span className="badge badge-primary badge-outline">
+
+                                                                                {
+                                                                                    module.code
+                                                                                }
+
+                                                                            </span>
+
+                                                                            <span className="font-semibold">
+
+                                                                                {
+                                                                                    module.nom
+                                                                                }
+
+                                                                            </span>
+
+                                                                        </div>
+
+                                                                        <span className="text-xs text-base-content/50">
+
+                                                                            Module #{" "}
+
                                                                             {
-                                                                                module.code
+                                                                                module.formationPosition
                                                                             }
-                                                                        </span>
 
-                                                                        <span className="font-semibold">
-                                                                            {
-                                                                                module.nom
-                                                                            }
                                                                         </span>
 
                                                                     </div>
 
-                                                                    <span className="text-xs text-base-content/50">
-                                                                        Module #{" "}
-                                                                        {
-                                                                            module.formationPosition
-                                                                        }
-                                                                    </span>
+                                                                    {module.description && (
+                                                                        <p className="text-sm text-base-content/60 mt-2 line-clamp-2">
+
+                                                                            {
+                                                                                module.description
+                                                                            }
+
+                                                                        </p>
+                                                                    )}
+
+                                                                    <div className="flex flex-wrap gap-2 mt-3">
+
+                                                                        {module.dureeHeures !==
+                                                                            null && (
+                                                                            <span className="badge badge-sm badge-ghost">
+
+                                                                                {
+                                                                                    module.dureeHeures
+                                                                                }{" "}
+                                                                                h
+
+                                                                            </span>
+                                                                        )}
+
+                                                                        {module.coefficient !==
+                                                                            null && (
+                                                                            <span className="badge badge-sm badge-ghost">
+
+                                                                                Coef.{" "}
+
+                                                                                {
+                                                                                    module.coefficient
+                                                                                }
+
+                                                                            </span>
+                                                                        )}
+
+                                                                    </div>
 
                                                                 </div>
 
-                                                                {module.description && (
-                                                                    <p className="text-sm text-base-content/60 mt-2 line-clamp-2">
-                                                                        {
-                                                                            module.description
-                                                                        }
-                                                                    </p>
+                                                                {selected && (
+                                                                    <div className="h-6 w-6 shrink-0 rounded-full bg-primary text-primary-content flex items-center justify-center">
+
+                                                                        <Check
+                                                                            size={
+                                                                                15
+                                                                            }
+                                                                            strokeWidth={
+                                                                                3
+                                                                            }
+                                                                        />
+
+                                                                    </div>
                                                                 )}
 
-                                                                <div className="flex flex-wrap gap-2 mt-3">
+                                                            </label>
 
-                                                                    {module.dureeHeures !==
-                                                                        null && (
-                                                                        <span className="badge badge-sm badge-ghost">
-                                                                            {
-                                                                                module.dureeHeures
-                                                                            }{" "}
-                                                                            h
-                                                                        </span>
-                                                                    )}
-
-                                                                    {module.coefficient !==
-                                                                        null && (
-                                                                        <span className="badge badge-sm badge-ghost">
-                                                                            Coef.{" "}
-                                                                            {
-                                                                                module.coefficient
-                                                                            }
-                                                                        </span>
-                                                                    )}
-
-                                                                </div>
-
-                                                            </div>
+                                                            {/* ==================================================
+                                                                FORMATEURS DU MODULE
+                                                            ================================================== */}
 
                                                             {selected && (
-                                                                <div className="h-6 w-6 shrink-0 rounded-full bg-primary text-primary-content flex items-center justify-center">
-                                                                    <Check
-                                                                        size={
-                                                                            15
-                                                                        }
-                                                                        strokeWidth={
-                                                                            3
-                                                                        }
-                                                                    />
+                                                                <div className="px-4 pb-5 pl-14">
+
+                                                                    <div className="rounded-xl border border-base-300 bg-base-200/40 p-4">
+
+                                                                        <div className="flex flex-col gap-3">
+
+                                                                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+
+                                                                                <div>
+
+                                                                                    <p className="font-semibold text-sm flex items-center gap-2">
+
+                                                                                        <UserRound
+                                                                                            size={
+                                                                                                16
+                                                                                            }
+                                                                                        />
+
+                                                                                        Formateurs du module
+
+                                                                                    </p>
+
+                                                                                    <p className="text-xs text-base-content/50 mt-1">
+
+                                                                                        {
+                                                                                            moduleFormateurIds.length
+                                                                                        }{" "}
+                                                                                        sélectionné
+                                                                                        {
+                                                                                            moduleFormateurIds.length >
+                                                                                            1
+                                                                                                ? "s"
+                                                                                                : ""
+                                                                                        }
+
+                                                                                    </p>
+
+                                                                                </div>
+
+                                                                                <div className="flex flex-wrap gap-2">
+
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() =>
+                                                                                            selectAllFormateursForModule(
+                                                                                                module.id
+                                                                                            )
+                                                                                        }
+                                                                                        disabled={
+                                                                                            addingModules ||
+                                                                                            loadingFormateurs ||
+                                                                                            formateursDisponibles.length ===
+                                                                                                0
+                                                                                        }
+                                                                                        className="btn btn-xs btn-outline"
+                                                                                    >
+                                                                                        Tous
+                                                                                    </button>
+
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() =>
+                                                                                            clearFormateursForModule(
+                                                                                                module.id
+                                                                                            )
+                                                                                        }
+                                                                                        disabled={
+                                                                                            addingModules ||
+                                                                                            moduleFormateurIds.length ===
+                                                                                                0
+                                                                                        }
+                                                                                        className="btn btn-xs btn-ghost"
+                                                                                    >
+                                                                                        Aucun
+                                                                                    </button>
+
+                                                                                </div>
+
+                                                                            </div>
+
+                                                                            {loadingFormateurs ? (
+                                                                                <div className="flex items-center gap-2 py-4 text-sm text-base-content/60">
+
+                                                                                    <Loader2
+                                                                                        size={
+                                                                                            17
+                                                                                        }
+                                                                                        className="animate-spin"
+                                                                                    />
+
+                                                                                    Chargement des formateurs...
+
+                                                                                </div>
+                                                                            ) : formateurs.length ===
+                                                                              0 ? (
+                                                                                <div className="alert alert-warning text-sm">
+
+                                                                                    <UserRound
+                                                                                        size={
+                                                                                            18
+                                                                                        }
+                                                                                    />
+
+                                                                                    <span>
+                                                                                        Aucun formateur actif n'est disponible dans ce centre.
+                                                                                    </span>
+
+                                                                                </div>
+                                                                            ) : formateursDisponibles.length ===
+                                                                              0 ? (
+                                                                                <div className="text-sm text-base-content/50 py-3">
+
+                                                                                    Aucun formateur ne correspond à votre recherche.
+
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+
+                                                                                    {formateursDisponibles.map(
+                                                                                        (
+                                                                                            formateur
+                                                                                        ) => {
+                                                                                            const checked =
+                                                                                                moduleFormateurIds.includes(
+                                                                                                    formateur.id
+                                                                                                );
+
+                                                                                            return (
+                                                                                                <label
+                                                                                                    key={
+                                                                                                        formateur.id
+                                                                                                    }
+                                                                                                    className={`
+                                                                                                        flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition
+                                                                                                        ${
+                                                                                                            checked
+                                                                                                                ? "border-primary bg-primary/10"
+                                                                                                                : "border-base-300 hover:bg-base-100"
+                                                                                                        }
+                                                                                                    `}
+                                                                                                >
+
+                                                                                                    <input
+                                                                                                        type="checkbox"
+                                                                                                        checked={
+                                                                                                            checked
+                                                                                                        }
+                                                                                                        onChange={() =>
+                                                                                                            toggleFormateurForModule(
+                                                                                                                module.id,
+                                                                                                                formateur.id
+                                                                                                            )
+                                                                                                        }
+                                                                                                        disabled={
+                                                                                                            addingModules
+                                                                                                        }
+                                                                                                        className="checkbox checkbox-primary checkbox-sm mt-0.5"
+                                                                                                    />
+
+                                                                                                    <div className="min-w-0 flex-1">
+
+                                                                                                        <p className="font-medium text-sm">
+
+                                                                                                            {
+                                                                                                                getFormateurFullName(
+                                                                                                                    formateur
+                                                                                                                )
+                                                                                                            }
+
+                                                                                                        </p>
+
+                                                                                                        {formateur.specialite && (
+                                                                                                            <p className="text-xs text-base-content/60 mt-0.5">
+
+                                                                                                                {
+                                                                                                                    formateur.specialite
+                                                                                                                }
+
+                                                                                                            </p>
+                                                                                                        )}
+
+                                                                                                        {formateur.email && (
+                                                                                                            <p className="text-xs text-base-content/50 mt-0.5 truncate">
+
+                                                                                                                {
+                                                                                                                    formateur.email
+                                                                                                                }
+
+                                                                                                            </p>
+                                                                                                        )}
+
+                                                                                                    </div>
+
+                                                                                                    {checked && (
+                                                                                                        <div className="shrink-0 h-5 w-5 rounded-full bg-primary text-primary-content flex items-center justify-center">
+
+                                                                                                            <Check
+                                                                                                                size={
+                                                                                                                    12
+                                                                                                                }
+                                                                                                                strokeWidth={
+                                                                                                                    3
+                                                                                                                }
+                                                                                                            />
+
+                                                                                                        </div>
+                                                                                                    )}
+
+                                                                                                </label>
+                                                                                            );
+                                                                                        }
+                                                                                    )}
+
+                                                                                </div>
+                                                                            )}
+
+                                                                        </div>
+
+                                                                    </div>
+
                                                                 </div>
                                                             )}
 
-                                                        </label>
+                                                        </div>
                                                     );
                                                 }
                                             )}
@@ -2339,26 +3237,130 @@ export default function SessionDetailClient({
 
                                 </div>
 
+                                {/* ==================================================
+                                    RESUME DES AFFECTATIONS
+                                ================================================== */}
+
+                                {selectedModules.length >
+                                    0 && (
+                                    <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+
+                                        <div className="flex items-start gap-3">
+
+                                            <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+
+                                                <Users
+                                                    size={
+                                                        18
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="min-w-0">
+
+                                                <p className="font-semibold">
+                                                    Résumé des affectations
+                                                </p>
+
+                                                <p className="text-sm text-base-content/60 mt-1">
+
+                                                    Les formateurs sélectionnés
+                                                    seront affectés uniquement
+                                                    aux modules correspondants.
+
+                                                </p>
+
+                                                <div className="flex flex-wrap gap-2 mt-3">
+
+                                                    {selectedModules.map(
+                                                        (
+                                                            moduleId
+                                                        ) => {
+                                                            const module =
+                                                                modules.find(
+                                                                    (
+                                                                        item
+                                                                    ) =>
+                                                                        item.id ===
+                                                                        moduleId
+                                                                );
+
+                                                            if (
+                                                                !module
+                                                            ) {
+                                                                return null;
+                                                            }
+
+                                                            const count =
+                                                                getSelectedFormateurIds(
+                                                                    moduleId
+                                                                ).length;
+
+                                                            return (
+                                                                <span
+                                                                    key={
+                                                                        moduleId
+                                                                    }
+                                                                    className={`badge ${
+                                                                        count >
+                                                                        0
+                                                                            ? "badge-primary"
+                                                                            : "badge-ghost"
+                                                                    }`}
+                                                                >
+
+                                                                    {
+                                                                        module.code
+                                                                    }
+
+                                                                    {" : "}
+
+                                                                    {
+                                                                        count
+                                                                    }{" "}
+                                                                    formateur
+                                                                    {count >
+                                                                    1
+                                                                        ? "s"
+                                                                        : ""}
+
+                                                                </span>
+                                                            );
+                                                        }
+                                                    )}
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                )}
+
                             </form>
 
                         </div>
 
                         {/* ==================================================
-                            FOOTER MODAL
+                            FOOTER
                         ================================================== */}
 
                         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between px-5 py-4 border-t border-base-300 bg-base-200/30">
 
-                            <p className="text-sm text-base-content/60">
+                            <div>
 
                                 {selectedModules.length >
                                 0 ? (
-                                    <>
+                                    <p className="text-sm text-base-content/60">
+
                                         <strong className="text-base-content">
                                             {
                                                 selectedModules.length
                                             }
                                         </strong>{" "}
+
                                         module
                                         {selectedModules.length >
                                         1
@@ -2369,12 +3371,15 @@ export default function SessionDetailClient({
                                         1
                                             ? "s"
                                             : ""}
-                                    </>
+
+                                    </p>
                                 ) : (
-                                    "Sélectionnez les modules à ajouter."
+                                    <p className="text-sm text-base-content/60">
+                                        Sélectionnez les modules à ajouter.
+                                    </p>
                                 )}
 
-                            </p>
+                            </div>
 
                             <div className="flex gap-2">
 
@@ -2397,6 +3402,7 @@ export default function SessionDetailClient({
                                     disabled={
                                         addingModules ||
                                         loadingModules ||
+                                        loadingFormateurs ||
                                         selectedModules.length ===
                                             0
                                     }
@@ -2411,6 +3417,7 @@ export default function SessionDetailClient({
                                                 }
                                                 className="animate-spin"
                                             />
+
                                             Ajout en cours...
                                         </>
                                     ) : (
@@ -2420,6 +3427,7 @@ export default function SessionDetailClient({
                                                     18
                                                 }
                                             />
+
                                             Ajouter les modules
                                         </>
                                     )}
