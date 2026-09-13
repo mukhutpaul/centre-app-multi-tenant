@@ -1,4 +1,3 @@
-
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -33,17 +32,25 @@ const PAGE_SIZE = 10;
  * ============================================================
  */
 
+/**
+ * Normalise une valeur texte :
+ * - supprime les espaces inutiles
+ * - transforme une chaîne vide en null
+ */
 function normaliserValeur(
   value?: string | null
-) {
+): string | null {
   const resultat = value?.trim();
 
   return resultat ? resultat : null;
 }
 
+/**
+ * Normalise le numéro de page.
+ */
 function normaliserPage(
   page?: number
-) {
+): number {
   if (
     !page ||
     !Number.isFinite(page) ||
@@ -57,22 +64,78 @@ function normaliserPage(
 
 /**
  * ============================================================
+ * SELECT COMMUN POUR LES FORMATIONS
+ * ============================================================
+ *
+ * IMPORTANT :
+ * Le compteur "tarifs" est bien récupéré ici.
+ *
+ * Il sera donc disponible côté client via :
+ *
+ * formation._count.tarifs
+ *
+ * ============================================================
+ */
+
+const formationListSelect = {
+  id: true,
+  centreId: true,
+
+  code: true,
+  nom: true,
+
+  description: true,
+  objectifs: true,
+  prerequis: true,
+
+  type: true,
+
+  dureeHeures: true,
+
+  nombreModules: true,
+
+  statut: true,
+
+  creeLe: true,
+  modifieLe: true,
+
+  _count: {
+    select: {
+      modules: true,
+      sessions: true,
+
+      /**
+       * Nombre de tarifs liés à la formation.
+       */
+      tarifs: true,
+
+      modelesEvaluation: true,
+      certifications: true,
+    },
+  },
+} as const;
+
+/**
+ * ============================================================
  * LISTE DES FORMATIONS
  * ============================================================
  */
 
-export async function getFormations(params?: {
-  search?: string;
-  statut?: StatutFormation | "TOUS";
-  type?: TypeFormation | "TOUS";
-  page?: number;
-}) {
+export async function getFormations(
+  params?: {
+    search?: string;
+    statut?: StatutFormation | "TOUS";
+    type?: TypeFormation | "TOUS";
+    page?: number;
+  }
+) {
   const context =
     await getCurrentCentreContext();
 
-  const page = normaliserPage(
-    params?.page
-  );
+  const page =
+    normaliserPage(
+      params?.page
+    );
 
   const search =
     params?.search?.trim() ?? "";
@@ -191,40 +254,11 @@ export async function getFormations(params?: {
           (page - 1) *
           PAGE_SIZE,
 
-        take: PAGE_SIZE,
+        take:
+          PAGE_SIZE,
 
-        select: {
-          id: true,
-          centreId: true,
-
-          code: true,
-          nom: true,
-
-          description: true,
-          objectifs: true,
-          prerequis: true,
-
-          type: true,
-
-          dureeHeures: true,
-
-          nombreModules: true,
-
-          statut: true,
-
-          creeLe: true,
-          modifieLe: true,
-
-          _count: {
-            select: {
-              modules: true,
-              sessions: true,
-              tarifs: true,
-              modelesEvaluation: true,
-              certifications: true,
-            },
-          },
-        },
+        select:
+          formationListSelect,
       }),
     ]);
 
@@ -234,12 +268,13 @@ export async function getFormations(params?: {
    * ----------------------------------------------------------
    */
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(
-      total / PAGE_SIZE
-    )
-  );
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        total / PAGE_SIZE
+      )
+    );
 
   /**
    * ----------------------------------------------------------
@@ -248,14 +283,16 @@ export async function getFormations(params?: {
    * ----------------------------------------------------------
    */
 
-  const pageCorrigee = Math.min(
-    page,
-    totalPages
-  );
+  const pageCorrigee =
+    Math.min(
+      page,
+      totalPages
+    );
 
   /**
-   * Si la page demandée n'existe
-   * plus, on recharge la bonne page.
+   * ----------------------------------------------------------
+   * RECHARGEMENT SI NÉCESSAIRE
+   * ----------------------------------------------------------
    */
 
   if (
@@ -279,68 +316,58 @@ export async function getFormations(params?: {
             (pageCorrigee - 1) *
             PAGE_SIZE,
 
-          take: PAGE_SIZE,
+          take:
+            PAGE_SIZE,
 
-          select: {
-            id: true,
-            centreId: true,
-
-            code: true,
-            nom: true,
-
-            description: true,
-            objectifs: true,
-            prerequis: true,
-
-            type: true,
-
-            dureeHeures: true,
-
-            nombreModules: true,
-
-            statut: true,
-
-            creeLe: true,
-            modifieLe: true,
-
-            _count: {
-              select: {
-                modules: true,
-                sessions: true,
-                tarifs: true,
-                modelesEvaluation: true,
-                certifications: true,
-              },
-            },
-          },
+          select:
+            formationListSelect,
         }
       );
 
     return {
       formations:
         formationsCorrigees,
+
       total,
-      page: pageCorrigee,
+
+      page:
+        pageCorrigee,
+
       totalPages,
+
       search,
+
       statut:
         params?.statut ??
         "TOUS",
+
       type:
         params?.type ??
         "TOUS",
     };
   }
 
+  /**
+   * ----------------------------------------------------------
+   * RÉSULTAT NORMAL
+   * ----------------------------------------------------------
+   */
+
   return {
     formations,
+
     total,
+
     page,
+
     totalPages,
+
     search,
+
     statut:
       params?.statut ??
       "TOUS",
+
     type:
       params?.type ??
       "TOUS",
@@ -378,7 +405,8 @@ export async function createFormation(
 
   if (!validation.success) {
     throw new Error(
-      validation.error.issues[0]
+      validation.error
+        .issues[0]
         ?.message ??
         "Les données de la formation sont invalides."
     );
@@ -394,11 +422,13 @@ export async function createFormation(
    */
 
   const code =
-    data.code.trim().toUpperCase();
+    data.code
+      .trim()
+      .toUpperCase();
 
   /**
    * ----------------------------------------------------------
-   * VÉRIFICATION CODE
+   * VÉRIFICATION DU CODE
    * ----------------------------------------------------------
    */
 
@@ -439,7 +469,8 @@ export async function createFormation(
 
           code,
 
-          nom: data.nom.trim(),
+          nom:
+            data.nom.trim(),
 
           description:
             normaliserValeur(
@@ -456,7 +487,8 @@ export async function createFormation(
               data.prerequis
             ),
 
-          type: data.type,
+          type:
+            data.type,
 
           dureeHeures:
             data.dureeHeures,
@@ -467,7 +499,8 @@ export async function createFormation(
            */
           nombreModules: 0,
 
-          statut: data.statut,
+          statut:
+            data.statut,
         },
 
         select: {
@@ -537,7 +570,8 @@ export async function updateFormation(
 
   if (!validation.success) {
     throw new Error(
-      validation.error.issues[0]
+      validation.error
+        .issues[0]
         ?.message ??
         "Les données de la formation sont invalides."
     );
@@ -547,7 +581,9 @@ export async function updateFormation(
     validation.data;
 
   const code =
-    data.code.trim().toUpperCase();
+    data.code
+      .trim()
+      .toUpperCase();
 
   /**
    * ----------------------------------------------------------
@@ -560,6 +596,7 @@ export async function updateFormation(
       {
         where: {
           id,
+
           centreId:
             context.centreId,
         },
@@ -618,13 +655,15 @@ export async function updateFormation(
     await prisma.formation.update(
       {
         where: {
-          id: formation.id,
+          id:
+            formation.id,
         },
 
         data: {
           code,
 
-          nom: data.nom.trim(),
+          nom:
+            data.nom.trim(),
 
           description:
             normaliserValeur(
@@ -641,12 +680,14 @@ export async function updateFormation(
               data.prerequis
             ),
 
-          type: data.type,
+          type:
+            data.type,
 
           dureeHeures:
             data.dureeHeures,
 
-          statut: data.statut,
+          statut:
+            data.statut,
         },
 
         select: {
@@ -680,7 +721,8 @@ export async function updateFormation(
     message:
       "La formation a été modifiée avec succès.",
 
-    formation: updated,
+    formation:
+      updated,
   };
 }
 
@@ -714,6 +756,7 @@ export async function updateFormationStatut(
       {
         where: {
           id,
+
           centreId:
             context.centreId,
         },
@@ -740,7 +783,8 @@ export async function updateFormationStatut(
   await prisma.formation.update(
     {
       where: {
-        id: formation.id,
+        id:
+          formation.id,
       },
 
       data: {
@@ -749,19 +793,31 @@ export async function updateFormationStatut(
     }
   );
 
+  /**
+   * ----------------------------------------------------------
+   * LABELS
+   * ----------------------------------------------------------
+   */
+
   const labels: Record<
     StatutFormation,
     string
   > = {
-    BROUILLON: "Brouillon",
-    ACTIVE: "Active",
-    ARCHIVEE: "Archivée",
+    BROUILLON:
+      "Brouillon",
+
+    ACTIVE:
+      "Active",
+
+    ARCHIVEE:
+      "Archivée",
   };
 
   return {
     success: true,
 
-    message: `La formation « ${formation.nom} » est maintenant « ${labels[statut]} ».`,
+    message:
+      `La formation « ${formation.nom} » est maintenant « ${labels[statut]} ».`,
   };
 }
 
@@ -794,20 +850,29 @@ export async function deleteFormation(
       {
         where: {
           id,
+
           centreId:
             context.centreId,
         },
 
         select: {
           id: true,
+
           nom: true,
+
           code: true,
 
           _count: {
             select: {
               modules: true,
               sessions: true,
+
+              /**
+               * Vérification des tarifs
+               * avant suppression.
+               */
               tarifs: true,
+
               modelesEvaluation: true,
               certifications: true,
             },
@@ -831,34 +896,52 @@ export async function deleteFormation(
   const relations = [
     {
       label: "module",
+
       count:
-        formation._count.modules,
+        formation._count
+          .modules,
     },
+
     {
       label: "session",
+
       count:
-        formation._count.sessions,
+        formation._count
+          .sessions,
     },
+
     {
       label: "tarif",
+
       count:
-        formation._count.tarifs,
+        formation._count
+          .tarifs,
     },
+
     {
       label:
         "modèle d'évaluation",
+
       count:
         formation._count
           .modelesEvaluation,
     },
+
     {
       label:
         "certification",
+
       count:
         formation._count
           .certifications,
     },
   ];
+
+  /**
+   * ----------------------------------------------------------
+   * RELATIONS ACTIVES
+   * ----------------------------------------------------------
+   */
 
   const relationsActives =
     relations.filter(
@@ -873,7 +956,11 @@ export async function deleteFormation(
       relationsActives
         .map(
           (relation) =>
-            `${relation.count} ${relation.label}${relation.count > 1 ? "s" : ""}`
+            `${relation.count} ${relation.label}${
+              relation.count > 1
+                ? "s"
+                : ""
+            }`
         )
         .join(", ");
 
@@ -891,7 +978,8 @@ export async function deleteFormation(
   await prisma.formation.delete(
     {
       where: {
-        id: formation.id,
+        id:
+          formation.id,
       },
     }
   );

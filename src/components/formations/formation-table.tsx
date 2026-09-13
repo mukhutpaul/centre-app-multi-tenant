@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { StatutFormation, TypeFormation } from "@/generated/prisma/enums";
+import {
+  StatutFormation,
+  TypeFormation,
+} from "@/generated/prisma/enums";
 
 import {
   deleteFormation,
@@ -15,6 +18,7 @@ import Swal from "sweetalert2";
 
 import {
   Archive,
+  BadgeDollarSign,
   BookOpen,
   CalendarDays,
   ChevronLeft,
@@ -64,13 +68,19 @@ interface FormationTableProps {
  * ============================================================
  */
 
-const statutLabels: Record<StatutFormation, string> = {
+const statutLabels: Record<
+  StatutFormation,
+  string
+> = {
   BROUILLON: "Brouillon",
   ACTIVE: "Active",
   ARCHIVEE: "Archivée",
 };
 
-const typeLabels: Record<TypeFormation, string> = {
+const typeLabels: Record<
+  TypeFormation,
+  string
+> = {
   PRESENTIEL: "Présentiel",
   DISTANCIEL: "Distanciel",
   HYBRIDE: "Hybride",
@@ -82,13 +92,23 @@ const typeLabels: Record<TypeFormation, string> = {
  * ============================================================
  */
 
-function StatutBadge({ statut }: { statut: StatutFormation }) {
-  const classes: Record<StatutFormation, string> = {
-    BROUILLON: "badge badge-warning badge-sm gap-1",
+function StatutBadge({
+  statut,
+}: {
+  statut: StatutFormation;
+}) {
+  const classes: Record<
+    StatutFormation,
+    string
+  > = {
+    BROUILLON:
+      "badge badge-warning badge-sm gap-1",
 
-    ACTIVE: "badge badge-success badge-sm gap-1",
+    ACTIVE:
+      "badge badge-success badge-sm gap-1",
 
-    ARCHIVEE: "badge badge-neutral badge-sm gap-1",
+    ARCHIVEE:
+      "badge badge-neutral badge-sm gap-1",
   };
 
   return (
@@ -109,7 +129,11 @@ function StatutBadge({ statut }: { statut: StatutFormation }) {
  * ============================================================
  */
 
-function TypeBadge({ type }: { type: TypeFormation }) {
+function TypeBadge({
+  type,
+}: {
+  type: TypeFormation;
+}) {
   return (
     <span className="badge badge-outline badge-sm whitespace-nowrap">
       {typeLabels[type]}
@@ -137,9 +161,11 @@ export function FormationTable({
 }: FormationTableProps) {
   const router = useRouter();
 
-  const [searchValue, setSearchValue] = useState(search);
+  const [searchValue, setSearchValue] =
+    useState(search);
 
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessing, setIsProcessing] =
+    useState(false);
 
   /**
    * ----------------------------------------------------------
@@ -157,18 +183,33 @@ export function FormationTable({
    * ----------------------------------------------------------
    */
 
-  function updateParams(updates: Record<string, string | null>) {
-    const params = new URLSearchParams(window.location.search);
+  function updateParams(
+    updates: Record<
+      string,
+      string | null
+    >
+  ) {
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
 
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === null || value === "") {
-        params.delete(key);
-      } else {
-        params.set(key, value);
+    Object.entries(updates).forEach(
+      ([key, value]) => {
+        if (
+          value === null ||
+          value === ""
+        ) {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
       }
-    });
+    );
 
-    router.push(`?${params.toString()}`);
+    router.push(
+      `?${params.toString()}`
+    );
   }
 
   /**
@@ -178,20 +219,30 @@ export function FormationTable({
    */
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const valeur = searchValue.trim();
+    const timer =
+      window.setTimeout(() => {
+        const valeur =
+          searchValue.trim();
 
-      if (valeur === search.trim()) {
-        return;
-      }
+        if (
+          valeur ===
+          search.trim()
+        ) {
+          return;
+        }
 
-      updateParams({
-        q: valeur || null,
-        page: "1",
-      });
-    }, 350);
+        updateParams({
+          q:
+            valeur || null,
 
-    return () => window.clearTimeout(timer);
+          page: "1",
+        });
+      }, 350);
+
+    return () =>
+      window.clearTimeout(
+        timer
+      );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
@@ -202,32 +253,41 @@ export function FormationTable({
    * ----------------------------------------------------------
    */
 
-  async function handleArchive(formation: any) {
-    const result = await Swal.fire({
-      title: "Archiver la formation ?",
+  async function handleArchive(
+    formation: any
+  ) {
+    const result =
+      await Swal.fire({
+        title:
+          "Archiver la formation ?",
 
-      html: `
+        html: `
           <div style="font-size:14px;line-height:1.6">
             La formation
-            <strong>${escapeHtml(formation.nom)}</strong>
+            <strong>${escapeHtml(
+              formation.nom
+            )}</strong>
             sera archivée.
             <br />
             Elle ne sera pas supprimée.
           </div>
         `,
 
-      icon: "warning",
+        icon: "warning",
 
-      showCancelButton: true,
+        showCancelButton: true,
 
-      confirmButtonText: "Oui, archiver",
+        confirmButtonText:
+          "Oui, archiver",
 
-      cancelButtonText: "Annuler",
+        cancelButtonText:
+          "Annuler",
 
-      reverseButtons: true,
+        reverseButtons: true,
 
-      confirmButtonColor: "#f59e0b",
-    });
+        confirmButtonColor:
+          "#f59e0b",
+      });
 
     if (!result.isConfirmed) {
       return;
@@ -236,12 +296,17 @@ export function FormationTable({
     setIsProcessing(true);
 
     try {
-      await updateFormationStatut(formation.id, StatutFormation.ARCHIVEE);
+      await updateFormationStatut(
+        formation.id,
+        StatutFormation.ARCHIVEE
+      );
 
       await Swal.fire({
-        title: "Formation archivée",
+        title:
+          "Formation archivée",
 
-        text: "La formation a été archivée avec succès.",
+        text:
+          "La formation a été archivée avec succès.",
 
         icon: "success",
 
@@ -251,14 +316,18 @@ export function FormationTable({
       router.refresh();
     } catch (error) {
       await Swal.fire({
-        title: "Impossible d'archiver",
+        title:
+          "Impossible d'archiver",
 
         text:
-          error instanceof Error ? error.message : "Une erreur est survenue.",
+          error instanceof Error
+            ? error.message
+            : "Une erreur est survenue.",
 
         icon: "error",
 
-        confirmButtonText: "Fermer",
+        confirmButtonText:
+          "Fermer",
       });
     } finally {
       setIsProcessing(false);
@@ -271,24 +340,31 @@ export function FormationTable({
    * ----------------------------------------------------------
    */
 
-  async function handleRestore(formation: any) {
-    const result = await Swal.fire({
-      title: "Réactiver la formation ?",
+  async function handleRestore(
+    formation: any
+  ) {
+    const result =
+      await Swal.fire({
+        title:
+          "Réactiver la formation ?",
 
-      text: `La formation « ${formation.nom} » redeviendra active.`,
+        text: `La formation « ${formation.nom} » redeviendra active.`,
 
-      icon: "question",
+        icon: "question",
 
-      showCancelButton: true,
+        showCancelButton: true,
 
-      confirmButtonText: "Oui, réactiver",
+        confirmButtonText:
+          "Oui, réactiver",
 
-      cancelButtonText: "Annuler",
+        cancelButtonText:
+          "Annuler",
 
-      reverseButtons: true,
+        reverseButtons: true,
 
-      confirmButtonColor: "#16a34a",
-    });
+        confirmButtonColor:
+          "#16a34a",
+      });
 
     if (!result.isConfirmed) {
       return;
@@ -297,12 +373,17 @@ export function FormationTable({
     setIsProcessing(true);
 
     try {
-      await updateFormationStatut(formation.id, StatutFormation.ACTIVE);
+      await updateFormationStatut(
+        formation.id,
+        StatutFormation.ACTIVE
+      );
 
       await Swal.fire({
-        title: "Formation réactivée",
+        title:
+          "Formation réactivée",
 
-        text: "La formation est maintenant active.",
+        text:
+          "La formation est maintenant active.",
 
         icon: "success",
 
@@ -312,14 +393,18 @@ export function FormationTable({
       router.refresh();
     } catch (error) {
       await Swal.fire({
-        title: "Impossible de réactiver",
+        title:
+          "Impossible de réactiver",
 
         text:
-          error instanceof Error ? error.message : "Une erreur est survenue.",
+          error instanceof Error
+            ? error.message
+            : "Une erreur est survenue.",
 
         icon: "error",
 
-        confirmButtonText: "Fermer",
+        confirmButtonText:
+          "Fermer",
       });
     } finally {
       setIsProcessing(false);
@@ -332,14 +417,20 @@ export function FormationTable({
    * ----------------------------------------------------------
    */
 
-  async function handleDelete(formation: any) {
-    const result = await Swal.fire({
-      title: "Supprimer la formation ?",
+  async function handleDelete(
+    formation: any
+  ) {
+    const result =
+      await Swal.fire({
+        title:
+          "Supprimer la formation ?",
 
-      html: `
+        html: `
           <div style="font-size:14px;line-height:1.6">
             Vous êtes sur le point de supprimer
-            <strong>${escapeHtml(formation.nom)}</strong>.
+            <strong>${escapeHtml(
+              formation.nom
+            )}</strong>.
             <br />
             <br />
             <span style="color:#dc2626;font-weight:600">
@@ -348,18 +439,21 @@ export function FormationTable({
           </div>
         `,
 
-      icon: "warning",
+        icon: "warning",
 
-      showCancelButton: true,
+        showCancelButton: true,
 
-      confirmButtonText: "Oui, supprimer",
+        confirmButtonText:
+          "Oui, supprimer",
 
-      cancelButtonText: "Annuler",
+        cancelButtonText:
+          "Annuler",
 
-      reverseButtons: true,
+        reverseButtons: true,
 
-      confirmButtonColor: "#dc2626",
-    });
+        confirmButtonColor:
+          "#dc2626",
+      });
 
     if (!result.isConfirmed) {
       return;
@@ -368,12 +462,16 @@ export function FormationTable({
     setIsProcessing(true);
 
     try {
-      await deleteFormation(formation.id);
+      await deleteFormation(
+        formation.id
+      );
 
       await Swal.fire({
-        title: "Formation supprimée",
+        title:
+          "Formation supprimée",
 
-        text: "La formation a été supprimée avec succès.",
+        text:
+          "La formation a été supprimée avec succès.",
 
         icon: "success",
 
@@ -383,14 +481,18 @@ export function FormationTable({
       router.refresh();
     } catch (error) {
       await Swal.fire({
-        title: "Suppression impossible",
+        title:
+          "Suppression impossible",
 
         text:
-          error instanceof Error ? error.message : "Une erreur est survenue.",
+          error instanceof Error
+            ? error.message
+            : "Une erreur est survenue.",
 
         icon: "error",
 
-        confirmButtonText: "Fermer",
+        confirmButtonText:
+          "Fermer",
       });
     } finally {
       setIsProcessing(false);
@@ -409,9 +511,12 @@ export function FormationTable({
     router.push("?");
   }
 
-  const hasFilters = Boolean(
-    search.trim() || statut !== "TOUS" || type !== "TOUS",
-  );
+  const hasFilters =
+    Boolean(
+      search.trim() ||
+        statut !== "TOUS" ||
+        type !== "TOUS"
+    );
 
   /**
    * ----------------------------------------------------------
@@ -419,9 +524,16 @@ export function FormationTable({
    * ----------------------------------------------------------
    */
 
-  const firstItem = total === 0 ? 0 : (page - 1) * 10 + 1;
+  const firstItem =
+    total === 0
+      ? 0
+      : (page - 1) * 10 + 1;
 
-  const lastItem = Math.min(page * 10, total);
+  const lastItem =
+    Math.min(
+      page * 10,
+      total
+    );
 
   return (
     <div className="space-y-4">
@@ -433,13 +545,16 @@ export function FormationTable({
         <div className="card-body gap-4 p-4 sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* TITRE */}
+
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <BookOpen className="h-5 w-5" />
               </div>
 
               <div>
-                <h1 className="text-xl font-bold">Formations</h1>
+                <h1 className="text-xl font-bold">
+                  Formations
+                </h1>
 
                 <p className="text-sm text-base-content/60">
                   Gérez les formations de votre centre.
@@ -448,6 +563,7 @@ export function FormationTable({
             </div>
 
             {/* BOUTON */}
+
             {canManage && (
               <button
                 type="button"
@@ -455,6 +571,7 @@ export function FormationTable({
                 className="btn btn-primary gap-2"
               >
                 <Plus className="h-4 w-4" />
+
                 Nouvelle formation
               </button>
             )}
@@ -466,13 +583,18 @@ export function FormationTable({
 
           <div className="flex flex-col gap-3 xl:flex-row">
             {/* RECHERCHE */}
+
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/40" />
 
               <input
                 type="search"
                 value={searchValue}
-                onChange={(event) => setSearchValue(event.target.value)}
+                onChange={(event) =>
+                  setSearchValue(
+                    event.target.value
+                  )
+                }
                 placeholder="Rechercher par code, nom, description..."
                 className="input input-bordered w-full pl-10"
               />
@@ -480,7 +602,9 @@ export function FormationTable({
               {searchValue && (
                 <button
                   type="button"
-                  onClick={() => setSearchValue("")}
+                  onClick={() =>
+                    setSearchValue("")
+                  }
                   className="btn btn-xs btn-circle btn-ghost absolute right-2 top-1/2 -translate-y-1/2"
                   aria-label="Effacer la recherche"
                 >
@@ -490,50 +614,73 @@ export function FormationTable({
             </div>
 
             {/* STATUT */}
+
             <select
               value={statut}
               onChange={(event) =>
                 updateParams({
                   statut:
-                    event.target.value === "TOUS" ? null : event.target.value,
+                    event.target.value ===
+                    "TOUS"
+                      ? null
+                      : event.target.value,
 
                   page: "1",
                 })
               }
               className="select select-bordered w-full xl:w-52"
             >
-              <option value="TOUS">Tous les statuts</option>
+              <option value="TOUS">
+                Tous les statuts
+              </option>
 
-              {Object.values(StatutFormation).map((value) => (
-                <option key={value} value={value}>
+              {Object.values(
+                StatutFormation
+              ).map((value) => (
+                <option
+                  key={value}
+                  value={value}
+                >
                   {statutLabels[value]}
                 </option>
               ))}
             </select>
 
             {/* TYPE */}
+
             <select
               value={type}
               onChange={(event) =>
                 updateParams({
                   type:
-                    event.target.value === "TOUS" ? null : event.target.value,
+                    event.target.value ===
+                    "TOUS"
+                      ? null
+                      : event.target.value,
 
                   page: "1",
                 })
               }
               className="select select-bordered w-full xl:w-52"
             >
-              <option value="TOUS">Tous les types</option>
+              <option value="TOUS">
+                Tous les types
+              </option>
 
-              {Object.values(TypeFormation).map((value) => (
-                <option key={value} value={value}>
+              {Object.values(
+                TypeFormation
+              ).map((value) => (
+                <option
+                  key={value}
+                  value={value}
+                >
                   {typeLabels[value]}
                 </option>
               ))}
             </select>
 
             {/* RESET */}
+
             {hasFilters && (
               <button
                 type="button"
@@ -541,6 +688,7 @@ export function FormationTable({
                 className="btn btn-ghost gap-2"
               >
                 <RotateCcw className="h-4 w-4" />
+
                 Réinitialiser
               </button>
             )}
@@ -558,7 +706,8 @@ export function FormationTable({
 
           <span>
             {total} résultat
-            {total > 1 ? "s" : ""} trouvé
+            {total > 1 ? "s" : ""}{" "}
+            trouvé
             {total > 1 ? "s" : ""}
           </span>
         </div>
@@ -572,29 +721,59 @@ export function FormationTable({
         <div className="overflow-x-auto">
           <table className="table table-zebra w-full">
             {/* HEADER */}
+
             <thead>
               <tr>
-                <th>Formation</th>
+                <th>
+                  Formation
+                </th>
 
-                <th>Type</th>
+                <th>
+                  Type
+                </th>
 
-                <th>Durée</th>
+                <th>
+                  Durée
+                </th>
 
-                <th>Modules</th>
+                <th>
+                  Modules
+                </th>
 
-                <th>Sessions</th>
+                <th>
+                  Sessions
+                </th>
 
-                <th>Statut</th>
+                {/* NOUVELLE COLONNE TARIFS */}
 
-                {canManage && <th className="text-right">Actions</th>}
+                <th>
+                  Tarifs
+                </th>
+
+                <th>
+                  Statut
+                </th>
+
+                {canManage && (
+                  <th className="text-right">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
 
             {/* BODY */}
+
             <tbody>
               {formations.length === 0 ? (
                 <tr>
-                  <td colSpan={canManage ? 7 : 6}>
+                  <td
+                    colSpan={
+                      canManage
+                        ? 8
+                        : 7
+                    }
+                  >
                     <div className="flex min-h-60 flex-col items-center justify-center gap-3 text-center">
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-base-200">
                         <BookOpen className="h-6 w-6 text-base-content/40" />
@@ -612,24 +791,31 @@ export function FormationTable({
                         </p>
                       </div>
 
-                      {canManage && !hasFilters && (
-                        <button
-                          type="button"
-                          onClick={onCreate}
-                          className="btn btn-primary btn-sm gap-2"
-                        >
-                          <Plus className="h-4 w-4" />
-                          Créer une formation
-                        </button>
-                      )}
+                      {canManage &&
+                        !hasFilters && (
+                          <button
+                            type="button"
+                            onClick={
+                              onCreate
+                            }
+                            className="btn btn-primary btn-sm gap-2"
+                          >
+                            <Plus className="h-4 w-4" />
+
+                            Créer une formation
+                          </button>
+                        )}
 
                       {hasFilters && (
                         <button
                           type="button"
-                          onClick={resetFilters}
+                          onClick={
+                            resetFilters
+                          }
                           className="btn btn-ghost btn-sm gap-2"
                         >
                           <RotateCcw className="h-4 w-4" />
+
                           Réinitialiser
                         </button>
                       )}
@@ -637,166 +823,290 @@ export function FormationTable({
                   </td>
                 </tr>
               ) : (
-                formations.map((formation) => {
-                  const modulesCount =
-                    formation._count?.modules ?? formation.nombreModules ?? 0;
+                formations.map(
+                  (formation) => {
+                    const modulesCount =
+                      formation
+                        ._count
+                        ?.modules ??
+                      formation.nombreModules ??
+                      0;
 
-                  const sessionsCount = formation._count?.sessions ?? 0;
+                    const sessionsCount =
+                      formation
+                        ._count
+                        ?.sessions ??
+                      0;
 
-                  return (
-                    <tr key={formation.id} className="hover">
-                      {/* ================================= */}
-                      {/* FORMATION */}
-                      {/* ================================= */}
+                    /**
+                     * ------------------------------------------------
+                     * NOMBRE DE TARIFS LIÉS
+                     * ------------------------------------------------
+                     */
 
-                      <td className="min-w-64">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                            <BookOpen className="h-4 w-4" />
-                          </div>
+                    const tarifsCount =
+                      formation
+                        ._count
+                        ?.tarifs ??
+                      0;
 
-                          <div className="min-w-0">
-                            <div className="font-semibold">{formation.nom}</div>
+                    return (
+                      <tr
+                        key={
+                          formation.id
+                        }
+                        className="hover"
+                      >
+                        {/* ================================= */}
+                        {/* FORMATION */}
+                        {/* ================================= */}
 
-                            <div className="mt-0.5 font-mono text-xs text-base-content/50">
-                              {formation.code}
+                        <td className="min-w-64">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                              <BookOpen className="h-4 w-4" />
+                            </div>
+
+                            <div className="min-w-0">
+                              <div className="font-semibold">
+                                {
+                                  formation.nom
+                                }
+                              </div>
+
+                              <div className="mt-0.5 font-mono text-xs text-base-content/50">
+                                {
+                                  formation.code
+                                }
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* ================================= */}
-                      {/* TYPE */}
-                      {/* ================================= */}
+                        {/* ================================= */}
+                        {/* TYPE */}
+                        {/* ================================= */}
 
-                      <td>
-                        <TypeBadge type={formation.type} />
-                      </td>
-
-                      {/* ================================= */}
-                      {/* DURÉE */}
-                      {/* ================================= */}
-
-                      <td>
-                        <div className="flex items-center gap-1.5 whitespace-nowrap text-sm">
-                          <Clock3 className="h-4 w-4 text-base-content/40" />
-
-                          {formation.dureeHeures != null
-                            ? `${formation.dureeHeures} h`
-                            : "—"}
-                        </div>
-                      </td>
-
-                      {/* ================================= */}
-                      {/* MODULES */}
-                      {/* ================================= */}
-
-                      <td>
-                        <div className="flex items-center gap-1.5">
-                          <Layers3 className="h-4 w-4 text-base-content/40" />
-
-                          <span className="font-medium">{modulesCount}</span>
-                        </div>
-                      </td>
-
-                      {/* ================================= */}
-                      {/* SESSIONS */}
-                      {/* ================================= */}
-
-                      <td>
-                        <div className="flex items-center gap-1.5">
-                          <CalendarDays className="h-4 w-4 text-base-content/40" />
-
-                          <span className="font-medium">{sessionsCount}</span>
-                        </div>
-                      </td>
-
-                      {/* ================================= */}
-                      {/* STATUT */}
-                      {/* ================================= */}
-
-                      <td>
-                        <StatutBadge statut={formation.statut} />
-                      </td>
-
-                      {/* ================================= */}
-                      {/* ACTIONS */}
-                      {/* ================================= */}
-
-                      {canManage && (
                         <td>
-                          <div className="flex justify-end gap-1">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                router.push(
-                                  `/formations/${formation.id}/modules`,
-                                )
-                              }
-                              className="btn btn-sm btn-outline"
-                              title="Gérer les modules"
-                            >
-                              <BookOpen className="h-4 w-4" />
-                              Modules
-                            </button>
+                          <TypeBadge
+                            type={
+                              formation.type
+                            }
+                          />
+                        </td>
 
-                            {/* MODIFIER */}
-                            <button
-                              type="button"
-                              onClick={() => onEdit(formation)}
-                              disabled={isProcessing}
-                              className="btn btn-sm btn-ghost btn-square tooltip"
-                              data-tip="Modifier"
-                              aria-label="Modifier"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
+                        {/* ================================= */}
+                        {/* DURÉE */}
+                        {/* ================================= */}
 
-                            {/* ARCHIVER */}
-                            {formation.statut !== StatutFormation.ARCHIVEE && (
-                              <button
-                                type="button"
-                                onClick={() => handleArchive(formation)}
-                                disabled={isProcessing}
-                                className="btn btn-sm btn-ghost btn-square text-warning tooltip"
-                                data-tip="Archiver"
-                                aria-label="Archiver"
-                              >
-                                <Archive className="h-4 w-4" />
-                              </button>
-                            )}
+                        <td>
+                          <div className="flex items-center gap-1.5 whitespace-nowrap text-sm">
+                            <Clock3 className="h-4 w-4 text-base-content/40" />
 
-                            {/* RESTAURER */}
-                            {formation.statut === StatutFormation.ARCHIVEE && (
-                              <button
-                                type="button"
-                                onClick={() => handleRestore(formation)}
-                                disabled={isProcessing}
-                                className="btn btn-sm btn-ghost btn-square text-success tooltip"
-                                data-tip="Réactiver"
-                                aria-label="Réactiver"
-                              >
-                                <RotateCcw className="h-4 w-4" />
-                              </button>
-                            )}
-
-                            {/* SUPPRIMER */}
-                            <button
-                              type="button"
-                              onClick={() => handleDelete(formation)}
-                              disabled={isProcessing}
-                              className="btn btn-sm btn-ghost btn-square text-error tooltip"
-                              data-tip="Supprimer"
-                              aria-label="Supprimer"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
+                            {formation.dureeHeures !=
+                            null
+                              ? `${formation.dureeHeures} h`
+                              : "—"}
                           </div>
                         </td>
-                      )}
-                    </tr>
-                  );
-                })
+
+                        {/* ================================= */}
+                        {/* MODULES */}
+                        {/* ================================= */}
+
+                        <td>
+                          <div className="flex items-center gap-1.5">
+                            <Layers3 className="h-4 w-4 text-base-content/40" />
+
+                            <span className="font-medium">
+                              {
+                                modulesCount
+                              }
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* ================================= */}
+                        {/* SESSIONS */}
+                        {/* ================================= */}
+
+                        <td>
+                          <div className="flex items-center gap-1.5">
+                            <CalendarDays className="h-4 w-4 text-base-content/40" />
+
+                            <span className="font-medium">
+                              {
+                                sessionsCount
+                              }
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* ================================= */}
+                        {/* TARIFS */}
+                        {/* ================================= */}
+
+                        <td>
+                          <div className="flex items-center gap-1.5">
+                            <BadgeDollarSign className="h-4 w-4 text-base-content/40" />
+
+                            <span className="font-medium">
+                              {
+                                tarifsCount
+                              }
+                            </span>
+
+                            <span className="text-xs text-base-content/50">
+                              tarif
+                              {tarifsCount >
+                              1
+                                ? "s"
+                                : ""}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* ================================= */}
+                        {/* STATUT */}
+                        {/* ================================= */}
+
+                        <td>
+                          <StatutBadge
+                            statut={
+                              formation.statut
+                            }
+                          />
+                        </td>
+
+                        {/* ================================= */}
+                        {/* ACTIONS */}
+                        {/* ================================= */}
+
+                        {canManage && (
+                          <td>
+                            <div className="flex justify-end gap-1">
+                              {/* MODULES */}
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  router.push(
+                                    `/formations/${formation.id}/modules`
+                                  )
+                                }
+                                className="btn btn-sm btn-outline"
+                                title="Gérer les modules"
+                              >
+                                <BookOpen className="h-4 w-4" />
+
+                                Modules
+                              </button>
+
+                              {/* TARIFS */}
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  router.push(
+                                    `/formations/${formation.id}/tarifs`
+                                  )
+                                }
+                                className="btn btn-sm btn-outline"
+                                title="Gérer les tarifs"
+                              >
+                                <BadgeDollarSign className="h-4 w-4" />
+
+                                Tarifs
+                              </button>
+
+                              {/* MODIFIER */}
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  onEdit(
+                                    formation
+                                  )
+                                }
+                                disabled={
+                                  isProcessing
+                                }
+                                className="btn btn-sm btn-ghost btn-square tooltip"
+                                data-tip="Modifier"
+                                aria-label="Modifier"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+
+                              {/* ARCHIVER */}
+
+                              {formation.statut !==
+                                StatutFormation.ARCHIVEE && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleArchive(
+                                      formation
+                                    )
+                                  }
+                                  disabled={
+                                    isProcessing
+                                  }
+                                  className="btn btn-sm btn-ghost btn-square text-warning tooltip"
+                                  data-tip="Archiver"
+                                  aria-label="Archiver"
+                                >
+                                  <Archive className="h-4 w-4" />
+                                </button>
+                              )}
+
+                              {/* RESTAURER */}
+
+                              {formation.statut ===
+                                StatutFormation.ARCHIVEE && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleRestore(
+                                      formation
+                                    )
+                                  }
+                                  disabled={
+                                    isProcessing
+                                  }
+                                  className="btn btn-sm btn-ghost btn-square text-success tooltip"
+                                  data-tip="Réactiver"
+                                  aria-label="Réactiver"
+                                >
+                                  <RotateCcw className="h-4 w-4" />
+                                </button>
+                              )}
+
+                              {/* SUPPRIMER */}
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleDelete(
+                                    formation
+                                  )
+                                }
+                                disabled={
+                                  isProcessing
+                                }
+                                className="btn btn-sm btn-ghost btn-square text-error tooltip"
+                                data-tip="Supprimer"
+                                aria-label="Supprimer"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  }
+                )
               )}
             </tbody>
           </table>
@@ -810,12 +1120,21 @@ export function FormationTable({
           <div className="flex flex-col gap-3 border-t border-base-300 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-sm text-base-content/60">
               Affichage de{" "}
-              <span className="font-medium text-base-content">{firstItem}</span>{" "}
+              <span className="font-medium text-base-content">
+                {firstItem}
+              </span>{" "}
               à{" "}
-              <span className="font-medium text-base-content">{lastItem}</span>{" "}
-              sur <span className="font-medium text-base-content">{total}</span>{" "}
+              <span className="font-medium text-base-content">
+                {lastItem}
+              </span>{" "}
+              sur{" "}
+              <span className="font-medium text-base-content">
+                {total}
+              </span>{" "}
               formation
-              {total > 1 ? "s" : ""}
+              {total > 1
+                ? "s"
+                : ""}
             </div>
 
             {totalPages > 1 && (
@@ -824,10 +1143,18 @@ export function FormationTable({
                   type="button"
                   onClick={() =>
                     updateParams({
-                      page: String(Math.max(1, page - 1)),
+                      page: String(
+                        Math.max(
+                          1,
+                          page - 1
+                        )
+                      ),
                     })
                   }
-                  disabled={page <= 1 || isProcessing}
+                  disabled={
+                    page <= 1 ||
+                    isProcessing
+                  }
                   className="btn btn-sm btn-outline btn-square"
                   aria-label="Page précédente"
                 >
@@ -835,17 +1162,33 @@ export function FormationTable({
                 </button>
 
                 <span className="px-2 text-sm">
-                  Page <strong>{page}</strong> / <strong>{totalPages}</strong>
+                  Page{" "}
+                  <strong>
+                    {page}
+                  </strong>{" "}
+                  /{" "}
+                  <strong>
+                    {totalPages}
+                  </strong>
                 </span>
 
                 <button
                   type="button"
                   onClick={() =>
                     updateParams({
-                      page: String(Math.min(totalPages, page + 1)),
+                      page: String(
+                        Math.min(
+                          totalPages,
+                          page + 1
+                        )
+                      ),
                     })
                   }
-                  disabled={page >= totalPages || isProcessing}
+                  disabled={
+                    page >=
+                      totalPages ||
+                    isProcessing
+                  }
                   className="btn btn-sm btn-outline btn-square"
                   aria-label="Page suivante"
                 >
@@ -864,16 +1207,30 @@ export function FormationTable({
  * ============================================================
  * PROTECTION HTML POUR SWEETALERT
  * ============================================================
- *
- * On échappe le nom avant de l'insérer dans le HTML
- * de SweetAlert2.
  */
 
-function escapeHtml(value: unknown): string {
+function escapeHtml(
+  value: unknown
+): string {
   return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }
