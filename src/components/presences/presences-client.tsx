@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   CalendarDays,
@@ -23,6 +19,7 @@ import {
 import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Select from "react-select";
 
 import {
   createPresence,
@@ -79,13 +76,12 @@ function formatPlanning(planning: any) {
   )} - ${formatTime(planning.fin)}`;
 }
 
-export default function PresencesClient({
-  plannings,
-}: Props) {
+export default function PresencesClient({ plannings }: Props) {
   const router = useRouter();
 
-  const [selectedPlanningId, setSelectedPlanningId] =
-    useState<string>(plannings[0]?.id ?? "");
+  const [selectedPlanningId, setSelectedPlanningId] = useState<string>(
+    plannings[0]?.id ?? "",
+  );
 
   const [table, setTable] = useState<any>(null);
 
@@ -93,22 +89,17 @@ export default function PresencesClient({
 
   const [search, setSearch] = useState("");
 
-  const [editingPresence, setEditingPresence] =
-    useState<any>(null);
+  const [editingPresence, setEditingPresence] = useState<any>(null);
 
-  const [editStatut, setEditStatut] =
-    useState("PRESENT");
+  const [editStatut, setEditStatut] = useState("PRESENT");
 
-  const [editMotif, setEditMotif] =
-    useState("");
+  const [editMotif, setEditMotif] = useState("");
 
-  const [editCommentaire, setEditCommentaire] =
-    useState("");
+  const [editCommentaire, setEditCommentaire] = useState("");
 
   const [saving, setSaving] = useState(false);
 
-  const [processingRowId, setProcessingRowId] =
-    useState<string | null>(null);
+  const [processingRowId, setProcessingRowId] = useState<string | null>(null);
 
   /* =====================================================
      CHARGER LA TABLE
@@ -123,18 +114,13 @@ export default function PresencesClient({
     try {
       setLoading(true);
 
-      const result = await getPresenceTable(
-        planningId,
-      );
+      const result = await getPresenceTable(planningId);
 
       setTable(result);
     } catch (error: any) {
       console.error(error);
 
-      toast.error(
-        error?.message ||
-          "Impossible de charger les présences.",
-      );
+      toast.error(error?.message || "Impossible de charger les présences.");
 
       setTable(null);
     } finally {
@@ -162,22 +148,14 @@ export default function PresencesClient({
     }
 
     return table.rows.filter((row: any) => {
-      const apprenant =
-        row.inscription?.apprenant;
+      const apprenant = row.inscription?.apprenant;
 
-      const nom = [
-        apprenant?.prenom,
-        apprenant?.nom,
-      ]
-        .filter(Boolean)
-        .join(" ");
+      const nom = [apprenant?.prenom, apprenant?.nom].filter(Boolean).join(" ");
 
-      const numero =
-        row.inscription?.numero ?? "";
+      const numero = row.inscription?.numero ?? "";
 
       return (
-        nom.toLowerCase().includes(term) ||
-        numero.toLowerCase().includes(term)
+        nom.toLowerCase().includes(term) || numero.toLowerCase().includes(term)
       );
     });
   }, [table, search]);
@@ -186,12 +164,8 @@ export default function PresencesClient({
      MARQUER UNE PRESENCE
   ====================================================== */
 
-  async function markPresence(
-    row: any,
-    statut: string,
-  ) {
-    const rowId =
-      row.inscription?.id ?? null;
+  async function markPresence(row: any, statut: string) {
+    const rowId = row.inscription?.id ?? null;
 
     if (!rowId || processingRowId) {
       return;
@@ -203,8 +177,7 @@ export default function PresencesClient({
       const response = await createPresence({
         planningId: selectedPlanningId,
 
-        inscriptionId:
-          row.inscription.id,
+        inscriptionId: row.inscription.id,
 
         statut: statut as any,
       });
@@ -220,9 +193,7 @@ export default function PresencesClient({
     } catch (error) {
       console.error(error);
 
-      toast.error(
-        "Impossible d'enregistrer la présence.",
-      );
+      toast.error("Impossible d'enregistrer la présence.");
     } finally {
       setProcessingRowId(null);
     }
@@ -232,25 +203,15 @@ export default function PresencesClient({
      SUPPRESSION
   ====================================================== */
 
-  async function handleDelete(
-    presence: any,
-  ) {
-    const apprenant =
-      presence.inscription?.apprenant;
+  async function handleDelete(presence: any) {
+    const apprenant = presence.inscription?.apprenant;
 
-    const nom = [
-      apprenant?.prenom,
-      apprenant?.nom,
-    ]
-      .filter(Boolean)
-      .join(" ");
+    const nom = [apprenant?.prenom, apprenant?.nom].filter(Boolean).join(" ");
 
     const result = await Swal.fire({
       title: "Supprimer la présence ?",
 
-      text: `La présence de ${
-        nom || "cet apprenant"
-      } sera supprimée.`,
+      text: `La présence de ${nom || "cet apprenant"} sera supprimée.`,
 
       icon: "warning",
 
@@ -270,14 +231,9 @@ export default function PresencesClient({
     }
 
     try {
-      setProcessingRowId(
-        presence.inscription?.id ?? null,
-      );
+      setProcessingRowId(presence.inscription?.id ?? null);
 
-      const response =
-        await deletePresence(
-          presence.id,
-        );
+      const response = await deletePresence(presence.id);
 
       if (!response.success) {
         toast.error(response.message);
@@ -286,15 +242,11 @@ export default function PresencesClient({
 
       toast.success(response.message);
 
-      await loadTable(
-        selectedPlanningId,
-      );
+      await loadTable(selectedPlanningId);
     } catch (error) {
       console.error(error);
 
-      toast.error(
-        "Impossible de supprimer la présence.",
-      );
+      toast.error("Impossible de supprimer la présence.");
     } finally {
       setProcessingRowId(null);
     }
@@ -307,17 +259,11 @@ export default function PresencesClient({
   function openEdit(presence: any) {
     setEditingPresence(presence);
 
-    setEditStatut(
-      presence.statut,
-    );
+    setEditStatut(presence.statut);
 
-    setEditMotif(
-      presence.motif ?? "",
-    );
+    setEditMotif(presence.motif ?? "");
 
-    setEditCommentaire(
-      presence.commentaire ?? "",
-    );
+    setEditCommentaire(presence.commentaire ?? "");
   }
 
   /* =====================================================
@@ -332,62 +278,38 @@ export default function PresencesClient({
     try {
       setSaving(true);
 
-      const response =
-        await updatePresence(
-          editingPresence.id,
-          {
-            statut:
-              editStatut as any,
+      const response = await updatePresence(editingPresence.id, {
+        statut: editStatut as any,
 
-            heureArrivee:
-              editingPresence.heureArrivee
-                ? new Date(
-                    editingPresence.heureArrivee,
-                  ).toISOString()
-                : null,
+        heureArrivee: editingPresence.heureArrivee
+          ? new Date(editingPresence.heureArrivee).toISOString()
+          : null,
 
-            heureDepart:
-              editingPresence.heureDepart
-                ? new Date(
-                    editingPresence.heureDepart,
-                  ).toISOString()
-                : null,
+        heureDepart: editingPresence.heureDepart
+          ? new Date(editingPresence.heureDepart).toISOString()
+          : null,
 
-            minutesRetard:
-              editingPresence.minutesRetard,
+        minutesRetard: editingPresence.minutesRetard,
 
-            motif:
-              editMotif.trim() ||
-              null,
+        motif: editMotif.trim() || null,
 
-            commentaire:
-              editCommentaire.trim() ||
-              null,
-          },
-        );
+        commentaire: editCommentaire.trim() || null,
+      });
 
       if (!response.success) {
-        toast.error(
-          response.message,
-        );
+        toast.error(response.message);
         return;
       }
 
-      toast.success(
-        response.message,
-      );
+      toast.success(response.message);
 
       setEditingPresence(null);
 
-      await loadTable(
-        selectedPlanningId,
-      );
+      await loadTable(selectedPlanningId);
     } catch (error) {
       console.error(error);
 
-      toast.error(
-        "Impossible de modifier la présence.",
-      );
+      toast.error("Impossible de modifier la présence.");
     } finally {
       setSaving(false);
     }
@@ -397,12 +319,9 @@ export default function PresencesClient({
      PLANNING COURANT
   ====================================================== */
 
-  const currentPlanning =
-    plannings.find(
-      (planning) =>
-        planning.id ===
-        selectedPlanningId,
-    );
+  const currentPlanning = plannings.find(
+    (planning) => planning.id === selectedPlanningId,
+  );
 
   /* =====================================================
      RENDER
@@ -435,15 +354,10 @@ export default function PresencesClient({
 
         <button
           type="button"
-          onClick={() =>
-            router.push(
-              "/presences/scanner",
-            )
-          }
+          onClick={() => router.push("/presences/scanner")}
           className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
           <QrCode className="h-4 w-4" />
-
           Scanner un QR
         </button>
       </div>
@@ -459,56 +373,38 @@ export default function PresencesClient({
               Planning / cours
             </label>
 
-            <select
+            <Select
               value={
-                selectedPlanningId
+                currentPlanning
+                  ? {
+                      value: currentPlanning.id,
+                      label: `${currentPlanning.session?.formation?.nom ?? "Formation"} — ${
+                        currentPlanning.titre || "Cours"
+                      } — ${formatDate(currentPlanning.debut)} — ${formatTime(
+                        currentPlanning.debut,
+                      )} à ${formatTime(currentPlanning.fin)}`,
+                    }
+                  : null
               }
-              onChange={(event) =>
-                setSelectedPlanningId(
-                  event.target.value,
-                )
-              }
-              className="h-11 w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
-            >
-              {plannings.length === 0 ? (
-                <option value="">
-                  Aucun planning disponible
-                </option>
-              ) : (
-                plannings.map(
-                  (planning) => (
-                    <option
-                      key={
-                        planning.id
-                      }
-                      value={
-                        planning.id
-                      }
-                    >
-                      {planning.session
-                        ?.formation
-                        ?.nom ??
-                        "Formation"}{" "}
-                      —{" "}
-                      {planning.titre ||
-                        "Cours"}{" "}
-                      —{" "}
-                      {formatDate(
-                        planning.debut,
-                      )}{" "}
-                      —{" "}
-                      {formatTime(
-                        planning.debut,
-                      )}{" "}
-                      à{" "}
-                      {formatTime(
-                        planning.fin,
-                      )}
-                    </option>
-                  ),
-                )
-              )}
-            </select>
+              onChange={(option) => {
+                setSelectedPlanningId(option?.value ?? "");
+              }}
+              options={plannings.map((planning) => ({
+                value: planning.id,
+                label: `${planning.session?.formation?.nom ?? "Formation"} — ${
+                  planning.titre || "Cours"
+                } — ${formatDate(planning.debut)} — ${formatTime(
+                  planning.debut,
+                )} à ${formatTime(planning.fin)}`,
+              }))}
+              placeholder="Sélectionner un planning..."
+              isSearchable
+              isClearable={false}
+              noOptionsMessage={() => "Aucun planning trouvé"}
+              loadingMessage={() => "Chargement..."}
+              className="text-sm"
+              classNamePrefix="planning-select"
+            />
           </div>
 
           <div>
@@ -521,11 +417,7 @@ export default function PresencesClient({
 
               <input
                 value={search}
-                onChange={(event) =>
-                  setSearch(
-                    event.target.value,
-                  )
-                }
+                onChange={(event) => setSearch(event.target.value)}
                 placeholder="Nom ou numéro..."
                 className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
               />
@@ -536,32 +428,20 @@ export default function PresencesClient({
         {currentPlanning && (
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-100 pt-4 text-sm dark:border-slate-800">
             <span className="font-semibold text-slate-800 dark:text-slate-200">
-              {
-                currentPlanning
-                  .session
-                  ?.formation
-                  ?.nom
-              }
+              {currentPlanning.session?.formation?.nom}
             </span>
 
             <span className="text-slate-500">
-              {currentPlanning.titre ||
-                "Cours"}
+              {currentPlanning.titre || "Cours"}
             </span>
 
             <span className="text-slate-500">
-              {formatPlanning(
-                currentPlanning,
-              )}
+              {formatPlanning(currentPlanning)}
             </span>
 
             {currentPlanning.salle && (
               <span className="text-slate-500">
-                Salle :{" "}
-                {
-                  currentPlanning
-                    .salle.nom
-                }
+                Salle : {currentPlanning.salle.nom}
               </span>
             )}
           </div>
@@ -575,73 +455,43 @@ export default function PresencesClient({
       {table && (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
           <StatCard
-            icon={
-              <Users className="h-5 w-5" />
-            }
+            icon={<Users className="h-5 w-5" />}
             label="Total"
-            value={
-              table.statistiques
-                ?.total ?? 0
-            }
+            value={table.statistiques?.total ?? 0}
           />
 
           <StatCard
-            icon={
-              <CheckCircle2 className="h-5 w-5" />
-            }
+            icon={<CheckCircle2 className="h-5 w-5" />}
             label="Présents"
-            value={
-              table.statistiques
-                ?.presents ?? 0
-            }
+            value={table.statistiques?.presents ?? 0}
             type="success"
           />
 
           <StatCard
-            icon={
-              <Clock3 className="h-5 w-5" />
-            }
+            icon={<Clock3 className="h-5 w-5" />}
             label="Retards"
-            value={
-              table.statistiques
-                ?.retards ?? 0
-            }
+            value={table.statistiques?.retards ?? 0}
             type="warning"
           />
 
           <StatCard
-            icon={
-              <UserX className="h-5 w-5" />
-            }
+            icon={<UserX className="h-5 w-5" />}
             label="Absents"
-            value={
-              table.statistiques
-                ?.absents ?? 0
-            }
+            value={table.statistiques?.absents ?? 0}
             type="danger"
           />
 
           <StatCard
-            icon={
-              <FileWarning className="h-5 w-5" />
-            }
+            icon={<FileWarning className="h-5 w-5" />}
             label="Excusés"
-            value={
-              table.statistiques
-                ?.excuses ?? 0
-            }
+            value={table.statistiques?.excuses ?? 0}
             type="info"
           />
 
           <StatCard
-            icon={
-              <XCircle className="h-5 w-5" />
-            }
+            icon={<XCircle className="h-5 w-5" />}
             label="Non marqués"
-            value={
-              table.statistiques
-                ?.nonMarques ?? 0
-            }
+            value={table.statistiques?.nonMarques ?? 0}
           />
         </div>
       )}
@@ -726,213 +576,145 @@ export default function PresencesClient({
                 </thead>
 
                 <tbody>
-                  {filteredRows.map(
-                    (
-                      row: any,
-                      index: number,
-                    ) => {
-                      const apprenant =
-                        row.inscription
-                          ?.apprenant;
+                  {filteredRows.map((row: any, index: number) => {
+                    const apprenant = row.inscription?.apprenant;
 
-                      const presence =
-                        row.presence;
+                    const presence = row.presence;
 
-                      const nom = [
-                        apprenant?.prenom,
-                        apprenant?.nom,
-                      ]
-                        .filter(Boolean)
-                        .join(" ");
+                    const nom = [apprenant?.prenom, apprenant?.nom]
+                      .filter(Boolean)
+                      .join(" ");
 
-                      const isProcessing =
-                        processingRowId ===
-                        row.inscription.id;
+                    const isProcessing = processingRowId === row.inscription.id;
 
-                      return (
-                        <tr
-                          key={
-                            row
-                              .inscription
-                              .id
-                          }
-                          className="border-b border-slate-100 transition-colors hover:bg-slate-50/80 dark:border-slate-800 dark:hover:bg-slate-800/40"
-                        >
-                          <td className="px-5 py-4 text-slate-400">
-                            {index + 1}
-                          </td>
+                    return (
+                      <tr
+                        key={row.inscription.id}
+                        className="border-b border-slate-100 transition-colors hover:bg-slate-50/80 dark:border-slate-800 dark:hover:bg-slate-800/40"
+                      >
+                        <td className="px-5 py-4 text-slate-400">
+                          {index + 1}
+                        </td>
 
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 font-bold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400">
-                                {(
-                                  apprenant?.prenom?.[0] ||
-                                  apprenant?.nom?.[0] ||
-                                  "A"
-                                ).toUpperCase()}
-                              </div>
-
-                              <div className="min-w-0">
-                                <p className="font-semibold text-slate-900 dark:text-white">
-                                  {nom ||
-                                    "Apprenant"}
-                                </p>
-
-                                <p className="text-xs text-slate-500">
-                                  {
-                                    row
-                                      .inscription
-                                      .numero
-                                  }
-                                </p>
-                              </div>
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 font-bold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400">
+                              {(
+                                apprenant?.prenom?.[0] ||
+                                apprenant?.nom?.[0] ||
+                                "A"
+                              ).toUpperCase()}
                             </div>
-                          </td>
 
-                          <td className="px-5 py-4">
-                            {presence ? (
-                              <StatusBadge
-                                statut={
-                                  presence.statut
-                                }
-                              />
-                            ) : (
-                              <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
-                                Non marqué
-                              </span>
-                            )}
-                          </td>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-slate-900 dark:text-white">
+                                {nom || "Apprenant"}
+                              </p>
 
-                          <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
-                            {formatTime(
-                              presence?.heureArrivee,
-                            )}
-                          </td>
-
-                          <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
-                            {formatTime(
-                              presence?.heureDepart,
-                            )}
-                          </td>
-
-                          <td className="px-5 py-4">
-                            {presence?.minutesRetard ? (
-                              <span className="font-semibold text-orange-600">
-                                {
-                                  presence.minutesRetard
-                                }{" "}
-                                min
-                              </span>
-                            ) : (
-                              <span className="text-slate-400">
-                                —
-                              </span>
-                            )}
-                          </td>
-
-                          <td className="px-5 py-4">
-                            <div className="flex justify-end gap-2">
-                              {!presence ? (
-                                <>
-                                  <QuickButton
-                                    title="Présent"
-                                    onClick={() =>
-                                      markPresence(
-                                        row,
-                                        "PRESENT",
-                                      )
-                                    }
-                                    disabled={
-                                      !!processingRowId
-                                    }
-                                    className="border-green-200 text-green-700 hover:bg-green-50"
-                                  >
-                                    {isProcessing ? (
-                                      <LoadingIcon />
-                                    ) : (
-                                      <CheckCircle2 className="h-4 w-4" />
-                                    )}
-                                  </QuickButton>
-
-                                  <QuickButton
-                                    title="Absent"
-                                    onClick={() =>
-                                      markPresence(
-                                        row,
-                                        "ABSENT",
-                                      )
-                                    }
-                                    disabled={
-                                      !!processingRowId
-                                    }
-                                    className="border-red-200 text-red-700 hover:bg-red-50"
-                                  >
-                                    {isProcessing ? (
-                                      <LoadingIcon />
-                                    ) : (
-                                      <UserX className="h-4 w-4" />
-                                    )}
-                                  </QuickButton>
-
-                                  <QuickButton
-                                    title="Retard"
-                                    onClick={() =>
-                                      markPresence(
-                                        row,
-                                        "RETARD",
-                                      )
-                                    }
-                                    disabled={
-                                      !!processingRowId
-                                    }
-                                    className="border-orange-200 text-orange-700 hover:bg-orange-50"
-                                  >
-                                    {isProcessing ? (
-                                      <LoadingIcon />
-                                    ) : (
-                                      <Clock3 className="h-4 w-4" />
-                                    )}
-                                  </QuickButton>
-                                </>
-                              ) : (
-                                <>
-                                  <QuickButton
-                                    title="Modifier"
-                                    onClick={() =>
-                                      openEdit(
-                                        presence,
-                                      )
-                                    }
-                                    disabled={
-                                      !!processingRowId
-                                    }
-                                    className="border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                                  >
-                                    <Edit3 className="h-4 w-4" />
-                                  </QuickButton>
-
-                                  <QuickButton
-                                    title="Supprimer"
-                                    onClick={() =>
-                                      handleDelete(
-                                        presence,
-                                      )
-                                    }
-                                    disabled={
-                                      !!processingRowId
-                                    }
-                                    className="border-red-200 text-red-600 hover:bg-red-50"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </QuickButton>
-                                </>
-                              )}
+                              <p className="text-xs text-slate-500">
+                                {row.inscription.numero}
+                              </p>
                             </div>
-                          </td>
-                        </tr>
-                      );
-                    },
-                  )}
+                          </div>
+                        </td>
+
+                        <td className="px-5 py-4">
+                          {presence ? (
+                            <StatusBadge statut={presence.statut} />
+                          ) : (
+                            <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+                              Non marqué
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+                          {formatTime(presence?.heureArrivee)}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+                          {formatTime(presence?.heureDepart)}
+                        </td>
+
+                        <td className="px-5 py-4">
+                          {presence?.minutesRetard ? (
+                            <span className="font-semibold text-orange-600">
+                              {presence.minutesRetard} min
+                            </span>
+                          ) : (
+                            <span className="text-slate-400">—</span>
+                          )}
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <div className="flex justify-end gap-2">
+                            {!presence ? (
+                              <>
+                                <QuickButton
+                                  title="Présent"
+                                  onClick={() => markPresence(row, "PRESENT")}
+                                  disabled={!!processingRowId}
+                                  className="border-green-200 text-green-700 hover:bg-green-50"
+                                >
+                                  {isProcessing ? (
+                                    <LoadingIcon />
+                                  ) : (
+                                    <CheckCircle2 className="h-4 w-4" />
+                                  )}
+                                </QuickButton>
+
+                                <QuickButton
+                                  title="Absent"
+                                  onClick={() => markPresence(row, "ABSENT")}
+                                  disabled={!!processingRowId}
+                                  className="border-red-200 text-red-700 hover:bg-red-50"
+                                >
+                                  {isProcessing ? (
+                                    <LoadingIcon />
+                                  ) : (
+                                    <UserX className="h-4 w-4" />
+                                  )}
+                                </QuickButton>
+
+                                <QuickButton
+                                  title="Retard"
+                                  onClick={() => markPresence(row, "RETARD")}
+                                  disabled={!!processingRowId}
+                                  className="border-orange-200 text-orange-700 hover:bg-orange-50"
+                                >
+                                  {isProcessing ? (
+                                    <LoadingIcon />
+                                  ) : (
+                                    <Clock3 className="h-4 w-4" />
+                                  )}
+                                </QuickButton>
+                              </>
+                            ) : (
+                              <>
+                                <QuickButton
+                                  title="Modifier"
+                                  onClick={() => openEdit(presence)}
+                                  disabled={!!processingRowId}
+                                  className="border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                                >
+                                  <Edit3 className="h-4 w-4" />
+                                </QuickButton>
+
+                                <QuickButton
+                                  title="Supprimer"
+                                  onClick={() => handleDelete(presence)}
+                                  disabled={!!processingRowId}
+                                  className="border-red-200 text-red-600 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </QuickButton>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -942,211 +724,145 @@ export default function PresencesClient({
             ================================================== */}
 
             <div className="divide-y divide-slate-100 dark:divide-slate-800 lg:hidden">
-              {filteredRows.map(
-                (
-                  row: any,
-                  index: number,
-                ) => {
-                  const apprenant =
-                    row.inscription
-                      ?.apprenant;
+              {filteredRows.map((row: any, index: number) => {
+                const apprenant = row.inscription?.apprenant;
 
-                  const presence =
-                    row.presence;
+                const presence = row.presence;
 
-                  const nom = [
-                    apprenant?.prenom,
-                    apprenant?.nom,
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
+                const nom = [apprenant?.prenom, apprenant?.nom]
+                  .filter(Boolean)
+                  .join(" ");
 
-                  const isProcessing =
-                    processingRowId ===
-                    row.inscription.id;
+                const isProcessing = processingRowId === row.inscription.id;
 
-                  return (
-                    <div
-                      key={
-                        row.inscription.id
-                      }
-                      className="p-4"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex min-w-0 items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 font-bold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400">
-                            {(
-                              apprenant?.prenom?.[0] ||
-                              apprenant?.nom?.[0] ||
-                              "A"
-                            ).toUpperCase()}
-                          </div>
-
-                          <div className="min-w-0">
-                            <p className="truncate font-semibold text-slate-900 dark:text-white">
-                              {nom ||
-                                "Apprenant"}
-                            </p>
-
-                            <p className="text-xs text-slate-500">
-                              {
-                                row
-                                  .inscription
-                                  .numero
-                              }
-                            </p>
-                          </div>
+                return (
+                  <div key={row.inscription.id} className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 font-bold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400">
+                          {(
+                            apprenant?.prenom?.[0] ||
+                            apprenant?.nom?.[0] ||
+                            "A"
+                          ).toUpperCase()}
                         </div>
 
-                        {presence ? (
-                          <StatusBadge
-                            statut={
-                              presence.statut
-                            }
-                          />
-                        ) : (
-                          <span className="whitespace-nowrap rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
-                            Non marqué
-                          </span>
-                        )}
+                        <div className="min-w-0">
+                          <p className="truncate font-semibold text-slate-900 dark:text-white">
+                            {nom || "Apprenant"}
+                          </p>
+
+                          <p className="text-xs text-slate-500">
+                            {row.inscription.numero}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="mt-4 grid grid-cols-3 gap-2">
-                        <InfoMini
-                          label="Arrivée"
-                          value={formatTime(
-                            presence?.heureArrivee,
-                          )}
-                        />
-
-                        <InfoMini
-                          label="Départ"
-                          value={formatTime(
-                            presence?.heureDepart,
-                          )}
-                        />
-
-                        <InfoMini
-                          label="Retard"
-                          value={
-                            presence?.minutesRetard
-                              ? `${presence.minutesRetard} min`
-                              : "—"
-                          }
-                        />
-                      </div>
-
-                      <div className="mt-4 flex gap-2">
-                        {!presence ? (
-                          <>
-                            <button
-                              type="button"
-                              disabled={
-                                !!processingRowId
-                              }
-                              onClick={() =>
-                                markPresence(
-                                  row,
-                                  "PRESENT",
-                                )
-                              }
-                              className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-700 transition hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              {isProcessing ? (
-                                <LoadingIcon />
-                              ) : (
-                                <CheckCircle2 className="h-4 w-4" />
-                              )}
-
-                              Présent
-                            </button>
-
-                            <button
-                              type="button"
-                              disabled={
-                                !!processingRowId
-                              }
-                              onClick={() =>
-                                markPresence(
-                                  row,
-                                  "ABSENT",
-                                )
-                              }
-                              className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              {isProcessing ? (
-                                <LoadingIcon />
-                              ) : (
-                                <UserX className="h-4 w-4" />
-                              )}
-
-                              Absent
-                            </button>
-
-                            <button
-                              type="button"
-                              disabled={
-                                !!processingRowId
-                              }
-                              onClick={() =>
-                                markPresence(
-                                  row,
-                                  "RETARD",
-                                )
-                              }
-                              className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs font-semibold text-orange-700 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              {isProcessing ? (
-                                <LoadingIcon />
-                              ) : (
-                                <Clock3 className="h-4 w-4" />
-                              )}
-
-                              Retard
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                openEdit(
-                                  presence,
-                                )
-                              }
-                              className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                            >
-                              <Edit3 className="h-4 w-4" />
-
-                              Modifier
-                            </button>
-
-                            <button
-                              type="button"
-                              disabled={
-                                !!processingRowId
-                              }
-                              onClick={() =>
-                                handleDelete(
-                                  presence,
-                                )
-                              }
-                              className="flex cursor-pointer items-center justify-center rounded-lg border border-red-200 px-3 py-2 text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                              title="Supprimer"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </>
-                        )}
-                      </div>
-
-                      <p className="mt-2 text-right text-[10px] text-slate-400">
-                        #{index + 1}
-                      </p>
+                      {presence ? (
+                        <StatusBadge statut={presence.statut} />
+                      ) : (
+                        <span className="whitespace-nowrap rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+                          Non marqué
+                        </span>
+                      )}
                     </div>
-                  );
-                },
-              )}
+
+                    <div className="mt-4 grid grid-cols-3 gap-2">
+                      <InfoMini
+                        label="Arrivée"
+                        value={formatTime(presence?.heureArrivee)}
+                      />
+
+                      <InfoMini
+                        label="Départ"
+                        value={formatTime(presence?.heureDepart)}
+                      />
+
+                      <InfoMini
+                        label="Retard"
+                        value={
+                          presence?.minutesRetard
+                            ? `${presence.minutesRetard} min`
+                            : "—"
+                        }
+                      />
+                    </div>
+
+                    <div className="mt-4 flex gap-2">
+                      {!presence ? (
+                        <>
+                          <button
+                            type="button"
+                            disabled={!!processingRowId}
+                            onClick={() => markPresence(row, "PRESENT")}
+                            className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs font-semibold text-green-700 transition hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {isProcessing ? (
+                              <LoadingIcon />
+                            ) : (
+                              <CheckCircle2 className="h-4 w-4" />
+                            )}
+                            Présent
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!!processingRowId}
+                            onClick={() => markPresence(row, "ABSENT")}
+                            className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {isProcessing ? (
+                              <LoadingIcon />
+                            ) : (
+                              <UserX className="h-4 w-4" />
+                            )}
+                            Absent
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!!processingRowId}
+                            onClick={() => markPresence(row, "RETARD")}
+                            className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs font-semibold text-orange-700 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {isProcessing ? (
+                              <LoadingIcon />
+                            ) : (
+                              <Clock3 className="h-4 w-4" />
+                            )}
+                            Retard
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => openEdit(presence)}
+                            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                          >
+                            <Edit3 className="h-4 w-4" />
+                            Modifier
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!!processingRowId}
+                            onClick={() => handleDelete(presence)}
+                            className="flex cursor-pointer items-center justify-center rounded-lg border border-red-200 px-3 py-2 text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            title="Supprimer"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+
+                    <p className="mt-2 text-right text-[10px] text-slate-400">
+                      #{index + 1}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </>
         )}
@@ -1166,28 +882,14 @@ export default function PresencesClient({
                 </h2>
 
                 <p className="mt-0.5 text-xs text-slate-500">
-                  {
-                    editingPresence
-                      .inscription
-                      ?.apprenant
-                      ?.prenom
-                  }{" "}
-                  {
-                    editingPresence
-                      .inscription
-                      ?.apprenant
-                      ?.nom
-                  }
+                  {editingPresence.inscription?.apprenant?.prenom}{" "}
+                  {editingPresence.inscription?.apprenant?.nom}
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={() =>
-                  setEditingPresence(
-                    null,
-                  )
-                }
+                onClick={() => setEditingPresence(null)}
                 className="cursor-pointer rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800"
               >
                 <XCircle className="h-5 w-5" />
@@ -1202,28 +904,16 @@ export default function PresencesClient({
 
                 <select
                   value={editStatut}
-                  onChange={(event) =>
-                    setEditStatut(
-                      event.target.value,
-                    )
-                  }
+                  onChange={(event) => setEditStatut(event.target.value)}
                   className="h-11 w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                 >
-                  <option value="PRESENT">
-                    Présent
-                  </option>
+                  <option value="PRESENT">Présent</option>
 
-                  <option value="ABSENT">
-                    Absent
-                  </option>
+                  <option value="ABSENT">Absent</option>
 
-                  <option value="RETARD">
-                    Retard
-                  </option>
+                  <option value="RETARD">Retard</option>
 
-                  <option value="EXCUSE">
-                    Excusé
-                  </option>
+                  <option value="EXCUSE">Excusé</option>
                 </select>
               </div>
 
@@ -1234,11 +924,7 @@ export default function PresencesClient({
 
                 <input
                   value={editMotif}
-                  onChange={(event) =>
-                    setEditMotif(
-                      event.target.value,
-                    )
-                  }
+                  onChange={(event) => setEditMotif(event.target.value)}
                   placeholder="Motif éventuel..."
                   className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                 />
@@ -1250,14 +936,8 @@ export default function PresencesClient({
                 </label>
 
                 <textarea
-                  value={
-                    editCommentaire
-                  }
-                  onChange={(event) =>
-                    setEditCommentaire(
-                      event.target.value,
-                    )
-                  }
+                  value={editCommentaire}
+                  onChange={(event) => setEditCommentaire(event.target.value)}
                   rows={3}
                   placeholder="Commentaire..."
                   className="w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
@@ -1268,11 +948,7 @@ export default function PresencesClient({
             <div className="flex justify-end gap-3 border-t border-slate-200 px-5 py-4 dark:border-slate-800">
               <button
                 type="button"
-                onClick={() =>
-                  setEditingPresence(
-                    null,
-                  )
-                }
+                onClick={() => setEditingPresence(null)}
                 className="cursor-pointer rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 Annuler
@@ -1281,15 +957,12 @@ export default function PresencesClient({
               <button
                 type="button"
                 disabled={saving}
-                onClick={
-                  handleUpdate
-                }
+                onClick={handleUpdate}
                 className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving && (
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
                 )}
-
                 Enregistrer
               </button>
             </div>
@@ -1313,16 +986,10 @@ function StatCard({
   icon: React.ReactNode;
   label: string;
   value: number;
-  type?:
-    | "default"
-    | "success"
-    | "warning"
-    | "danger"
-    | "info";
+  type?: "default" | "success" | "warning" | "danger" | "info";
 }) {
   const classes = {
-    default:
-      "bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+    default: "bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
 
     success:
       "bg-green-50 text-green-600 dark:bg-green-950/30 dark:text-green-400",
@@ -1330,11 +997,9 @@ function StatCard({
     warning:
       "bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400",
 
-    danger:
-      "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400",
+    danger: "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400",
 
-    info:
-      "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400",
+    info: "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400",
   };
 
   return (
@@ -1347,9 +1012,7 @@ function StatCard({
         </div>
 
         <div>
-          <p className="text-xs font-medium text-slate-500">
-            {label}
-          </p>
+          <p className="text-xs font-medium text-slate-500">{label}</p>
 
           <p className="mt-0.5 text-xl font-bold text-slate-900 dark:text-white">
             {value}
@@ -1364,22 +1027,16 @@ function StatCard({
    STATUS BADGE
 ========================================================= */
 
-function StatusBadge({
-  statut,
-}: {
-  statut: string;
-}) {
+function StatusBadge({ statut }: { statut: string }) {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
-        statutClasses[statut] ??
-        "border-slate-200 bg-slate-50 text-slate-500"
+        statutClasses[statut] ?? "border-slate-200 bg-slate-50 text-slate-500"
       }`}
     >
       <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-current" />
 
-      {statutLabels[statut] ??
-        statut}
+      {statutLabels[statut] ?? statut}
     </span>
   );
 }
@@ -1418,13 +1075,7 @@ function QuickButton({
    INFO MOBILE
 ========================================================= */
 
-function InfoMini({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function InfoMini({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-slate-50 px-3 py-2 dark:bg-slate-800/70">
       <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
