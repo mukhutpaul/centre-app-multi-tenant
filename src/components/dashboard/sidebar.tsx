@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -18,6 +19,9 @@ import {
   Scale,
   FileText,
   X,
+  Receipt,
+  WalletCards,
+  CalendarClock,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -105,15 +109,38 @@ const menuSections = [
       },
 
       {
+        label: "Conventions",
+        href: "/conventions",
+        icon: FileText,
+      },
+    ],
+  },
+
+  {
+    title: "FINANCE",
+    items: [
+      {
+        label: "Factures",
+        href: "/factures",
+        icon: Receipt,
+      },
+
+      {
         label: "Paiements",
         href: "/paiements",
         icon: CreditCard,
       },
 
       {
-        label: "Conventions",
-        href: "/conventions",
-        icon: FileText,
+        label: "Échéances",
+        href: "/echeances",
+        icon: CalendarClock,
+      },
+
+      {
+        label: "Rapports financiers",
+        href: "/rapports/finance",
+        icon: WalletCards,
       },
     ],
   },
@@ -167,7 +194,6 @@ export function Sidebar({
       ====================================================== */}
 
       <div className="flex h-20 shrink-0 items-center justify-between border-b border-white/10 px-6">
-
         <Link
           href="/dashboard"
           className="flex items-center gap-3"
@@ -202,7 +228,6 @@ export function Sidebar({
             <X size={20} />
           </button>
         )}
-
       </div>
 
       {/* =====================================================
@@ -210,20 +235,17 @@ export function Sidebar({
       ====================================================== */}
 
       <div className="flex-1 overflow-y-auto px-4 py-5">
-
         {menuSections.map(
           (section) => (
             <div
               key={section.title}
               className="mb-6"
             >
-
               <p className="mb-2 px-3 text-[10px] font-bold tracking-[0.15em] text-white/40">
                 {section.title}
               </p>
 
               <nav className="space-y-1">
-
                 {section.items.map(
                   (item) => {
                     const Icon =
@@ -265,12 +287,10 @@ export function Sidebar({
                     );
                   },
                 )}
-
               </nav>
             </div>
           ),
         )}
-
       </div>
 
       {/* =====================================================
@@ -278,7 +298,6 @@ export function Sidebar({
       ====================================================== */}
 
       <div className="shrink-0 border-t border-white/10 p-4">
-
         <Link
           href="/parametres"
           onClick={
@@ -306,9 +325,7 @@ export function Sidebar({
             Paramètres
           </span>
         </Link>
-
       </div>
-
     </aside>
   );
 }
