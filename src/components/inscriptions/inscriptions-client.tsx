@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
@@ -6,13 +5,16 @@ import { useRouter } from "next/navigation";
 
 import Swal from "sweetalert2";
 
-import { deleteInscription } from "@/actions/inscription.actions";
+import {
+  deleteInscription,
+} from "@/actions/inscription.actions";
 
 import InscriptionForm from "./inscription-form";
 
 import {
   Eye,
   Pencil,
+  Printer,
   Trash2,
 } from "lucide-react";
 
@@ -22,7 +24,10 @@ type Props = {
   sessions: any[];
 };
 
-const statutLabels: Record<string, string> = {
+const statutLabels: Record<
+  string,
+  string
+> = {
   BROUILLON: "Brouillon",
   EN_ATTENTE: "En attente",
   CONFIRMEE: "Confirmée",
@@ -32,19 +37,28 @@ const statutLabels: Record<string, string> = {
   SUSPENDUE: "Suspendue",
 };
 
-const statutClasses: Record<string, string> = {
+const statutClasses: Record<
+  string,
+  string
+> = {
   BROUILLON:
     "bg-gray-100 text-gray-700",
+
   EN_ATTENTE:
     "bg-yellow-100 text-yellow-700",
+
   CONFIRMEE:
     "bg-blue-100 text-blue-700",
+
   ACTIVE:
     "bg-green-100 text-green-700",
+
   TERMINEE:
     "bg-purple-100 text-purple-700",
+
   ANNULEE:
     "bg-red-100 text-red-700",
+
   SUSPENDUE:
     "bg-orange-100 text-orange-700",
 };
@@ -55,11 +69,21 @@ const financementLabels: Record<
 > = {
   AUTO_FINANCEMENT:
     "Auto-financement",
-  ENTREPRISE: "Entreprise",
-  ETAT: "État",
-  PARTENAIRE: "Partenaire",
-  BOURSE: "Bourse",
-  AUTRE: "Autre",
+
+  ENTREPRISE:
+    "Entreprise",
+
+  ETAT:
+    "État",
+
+  PARTENAIRE:
+    "Partenaire",
+
+  BOURSE:
+    "Bourse",
+
+  AUTRE:
+    "Autre",
 };
 
 export default function InscriptionsClient({
@@ -80,8 +104,10 @@ export default function InscriptionsClient({
   const [search, setSearch] =
     useState("");
 
-  const [statutFilter, setStatutFilter] =
-    useState("TOUS");
+  const [
+    statutFilter,
+    setStatutFilter,
+  ] = useState("TOUS");
 
   /**
    * =========================================================
@@ -174,6 +200,19 @@ export default function InscriptionsClient({
   ) {
     router.push(
       `/inscriptions/${inscription.id}`,
+    );
+  }
+
+  /**
+   * =========================================================
+   * IMPRIMER LE BADGE QR
+   * =========================================================
+   */
+  function handlePrintBadge(
+    inscription: any,
+  ) {
+    router.push(
+      `/inscriptions/${inscription.id}/badge`,
     );
   }
 
@@ -335,6 +374,7 @@ export default function InscriptionsClient({
         >
           + Nouvelle inscription
         </button>
+
       </div>
 
       {/* =====================================================
@@ -345,6 +385,7 @@ export default function InscriptionsClient({
         <div className="rounded-xl border bg-white p-5 shadow-sm">
 
           <div className="mb-5">
+
             <h2 className="text-xl font-semibold">
               {editingInscription
                 ? "Modifier l'inscription"
@@ -361,6 +402,7 @@ export default function InscriptionsClient({
                 </strong>
               </p>
             )}
+
           </div>
 
           <InscriptionForm
@@ -374,6 +416,7 @@ export default function InscriptionsClient({
               setShowForm(false)
             }
           />
+
         </div>
       )}
 
@@ -386,7 +429,9 @@ export default function InscriptionsClient({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_220px]">
 
           {/* RECHERCHE */}
+
           <div>
+
             <label className="mb-2 block text-sm font-medium">
               Rechercher
             </label>
@@ -402,10 +447,13 @@ export default function InscriptionsClient({
               placeholder="Numéro, apprenant, session, formation..."
               className="w-full rounded-lg border px-4 py-2.5 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
+
           </div>
 
           {/* STATUT */}
+
           <div>
+
             <label className="mb-2 block text-sm font-medium">
               Statut
             </label>
@@ -419,6 +467,7 @@ export default function InscriptionsClient({
               }
               className="w-full cursor-pointer rounded-lg border px-3 py-2.5 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             >
+
               <option value="TOUS">
                 Tous les statuts
               </option>
@@ -435,9 +484,13 @@ export default function InscriptionsClient({
                   </option>
                 ),
               )}
+
             </select>
+
           </div>
+
         </div>
+
       </div>
 
       {/* =====================================================
@@ -524,6 +577,7 @@ export default function InscriptionsClient({
                     >
 
                       {/* NUMÉRO */}
+
                       <td className="px-4 py-3 font-medium">
                         {
                           inscription.numero
@@ -531,6 +585,7 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* APPRENANT */}
+
                       <td className="px-4 py-3">
 
                         <div className="font-medium">
@@ -563,6 +618,7 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* FORMATION */}
+
                       <td className="px-4 py-3">
                         {
                           inscription
@@ -573,6 +629,7 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* SESSION */}
+
                       <td className="px-4 py-3">
                         {
                           inscription
@@ -585,6 +642,7 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* DATE */}
+
                       <td className="px-4 py-3">
                         {formatDate(
                           inscription.dateInscription,
@@ -592,6 +650,7 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* FINANCEMENT */}
+
                       <td className="px-4 py-3">
                         {
                           financementLabels[
@@ -604,6 +663,7 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* MONTANT */}
+
                       <td className="px-4 py-3 text-right font-medium">
                         {formatMontant(
                           inscription.montantConvenu,
@@ -611,6 +671,7 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* STATUT */}
+
                       <td className="px-4 py-3 text-center">
 
                         <span
@@ -634,11 +695,13 @@ export default function InscriptionsClient({
                       </td>
 
                       {/* ACTIONS */}
+
                       <td className="px-4 py-3">
 
                         <div className="flex justify-end gap-2">
 
                           {/* VOIR */}
+
                           <button
                             type="button"
                             onClick={() =>
@@ -656,6 +719,7 @@ export default function InscriptionsClient({
                           </button>
 
                           {/* MODIFIER */}
+
                           <button
                             type="button"
                             onClick={() =>
@@ -672,7 +736,26 @@ export default function InscriptionsClient({
                             </span>
                           </button>
 
+                          {/* BADGE QR */}
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handlePrintBadge(
+                                inscription,
+                              )
+                            }
+                            title="Imprimer le badge QR"
+                            className="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 transition hover:bg-blue-100"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Printer className="h-4 w-4" />
+                              QR
+                            </span>
+                          </button>
+
                           {/* SUPPRIMER */}
+
                           <button
                             type="button"
                             onClick={() =>
@@ -707,18 +790,23 @@ export default function InscriptionsClient({
         </div>
 
         {/* FOOTER TABLE */}
+
         <div className="border-t bg-gray-50 px-4 py-3 text-sm text-gray-500">
+
           {filteredInscriptions.length}{" "}
+
           inscription
           {filteredInscriptions.length !==
           1
             ? "s"
             : ""}{" "}
+
           affichée
           {filteredInscriptions.length !==
           1
             ? "s"
             : ""}
+
         </div>
 
       </div>
