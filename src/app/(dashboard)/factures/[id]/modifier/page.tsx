@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import {
   getFactureById,
   getFactureFormData,
-} from "@/actions/facture.actions";
+} from "@/actions/facture-actions";
 
 import FactureEditForm from "@/components/factures/facture-edit-form";
 

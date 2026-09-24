@@ -47,7 +47,7 @@ export type FactureSumAggregateOutputType = {
 export type FactureMinAggregateOutputType = {
   id: string | null
   centreId: string | null
-  inscriptionId: string | null
+  conventionId: string | null
   numero: string | null
   dateEmission: Date | null
   dateEcheance: Date | null
@@ -66,7 +66,7 @@ export type FactureMinAggregateOutputType = {
 export type FactureMaxAggregateOutputType = {
   id: string | null
   centreId: string | null
-  inscriptionId: string | null
+  conventionId: string | null
   numero: string | null
   dateEmission: Date | null
   dateEcheance: Date | null
@@ -85,7 +85,7 @@ export type FactureMaxAggregateOutputType = {
 export type FactureCountAggregateOutputType = {
   id: number
   centreId: number
-  inscriptionId: number
+  conventionId: number
   numero: number
   dateEmission: number
   dateEcheance: number
@@ -124,7 +124,7 @@ export type FactureSumAggregateInputType = {
 export type FactureMinAggregateInputType = {
   id?: true
   centreId?: true
-  inscriptionId?: true
+  conventionId?: true
   numero?: true
   dateEmission?: true
   dateEcheance?: true
@@ -143,7 +143,7 @@ export type FactureMinAggregateInputType = {
 export type FactureMaxAggregateInputType = {
   id?: true
   centreId?: true
-  inscriptionId?: true
+  conventionId?: true
   numero?: true
   dateEmission?: true
   dateEcheance?: true
@@ -162,7 +162,7 @@ export type FactureMaxAggregateInputType = {
 export type FactureCountAggregateInputType = {
   id?: true
   centreId?: true
-  inscriptionId?: true
+  conventionId?: true
   numero?: true
   dateEmission?: true
   dateEcheance?: true
@@ -268,7 +268,7 @@ export type FactureGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type FactureGroupByOutputType = {
   id: string
   centreId: string
-  inscriptionId: string | null
+  conventionId: string
   numero: string
   dateEmission: Date
   dateEcheance: Date | null
@@ -310,7 +310,7 @@ export type FactureWhereInput = {
   NOT?: Prisma.FactureWhereInput | Prisma.FactureWhereInput[]
   id?: Prisma.StringFilter<"Facture"> | string
   centreId?: Prisma.StringFilter<"Facture"> | string
-  inscriptionId?: Prisma.StringNullableFilter<"Facture"> | string | null
+  conventionId?: Prisma.StringFilter<"Facture"> | string
   numero?: Prisma.StringFilter<"Facture"> | string
   dateEmission?: Prisma.DateTimeFilter<"Facture"> | Date | string
   dateEcheance?: Prisma.DateTimeNullableFilter<"Facture"> | Date | string | null
@@ -325,7 +325,7 @@ export type FactureWhereInput = {
   creeLe?: Prisma.DateTimeFilter<"Facture"> | Date | string
   modifieLe?: Prisma.DateTimeFilter<"Facture"> | Date | string
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
-  inscription?: Prisma.XOR<Prisma.InscriptionNullableScalarRelationFilter, Prisma.InscriptionWhereInput> | null
+  convention?: Prisma.XOR<Prisma.ConventionScalarRelationFilter, Prisma.ConventionWhereInput>
   lignes?: Prisma.LigneFactureListRelationFilter
   paiements?: Prisma.PaiementListRelationFilter
   echeances?: Prisma.EcheancePaiementListRelationFilter
@@ -335,7 +335,7 @@ export type FactureWhereInput = {
 export type FactureOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  conventionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
   dateEmission?: Prisma.SortOrder
   dateEcheance?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -350,7 +350,7 @@ export type FactureOrderByWithRelationInput = {
   creeLe?: Prisma.SortOrder
   modifieLe?: Prisma.SortOrder
   centre?: Prisma.CentreFormationOrderByWithRelationInput
-  inscription?: Prisma.InscriptionOrderByWithRelationInput
+  convention?: Prisma.ConventionOrderByWithRelationInput
   lignes?: Prisma.LigneFactureOrderByRelationAggregateInput
   paiements?: Prisma.PaiementOrderByRelationAggregateInput
   echeances?: Prisma.EcheancePaiementOrderByRelationAggregateInput
@@ -364,7 +364,7 @@ export type FactureWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.FactureWhereInput[]
   NOT?: Prisma.FactureWhereInput | Prisma.FactureWhereInput[]
   centreId?: Prisma.StringFilter<"Facture"> | string
-  inscriptionId?: Prisma.StringNullableFilter<"Facture"> | string | null
+  conventionId?: Prisma.StringFilter<"Facture"> | string
   numero?: Prisma.StringFilter<"Facture"> | string
   dateEmission?: Prisma.DateTimeFilter<"Facture"> | Date | string
   dateEcheance?: Prisma.DateTimeNullableFilter<"Facture"> | Date | string | null
@@ -379,7 +379,7 @@ export type FactureWhereUniqueInput = Prisma.AtLeast<{
   creeLe?: Prisma.DateTimeFilter<"Facture"> | Date | string
   modifieLe?: Prisma.DateTimeFilter<"Facture"> | Date | string
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
-  inscription?: Prisma.XOR<Prisma.InscriptionNullableScalarRelationFilter, Prisma.InscriptionWhereInput> | null
+  convention?: Prisma.XOR<Prisma.ConventionScalarRelationFilter, Prisma.ConventionWhereInput>
   lignes?: Prisma.LigneFactureListRelationFilter
   paiements?: Prisma.PaiementListRelationFilter
   echeances?: Prisma.EcheancePaiementListRelationFilter
@@ -389,7 +389,7 @@ export type FactureWhereUniqueInput = Prisma.AtLeast<{
 export type FactureOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  conventionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
   dateEmission?: Prisma.SortOrder
   dateEcheance?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -416,7 +416,7 @@ export type FactureScalarWhereWithAggregatesInput = {
   NOT?: Prisma.FactureScalarWhereWithAggregatesInput | Prisma.FactureScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Facture"> | string
   centreId?: Prisma.StringWithAggregatesFilter<"Facture"> | string
-  inscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Facture"> | string | null
+  conventionId?: Prisma.StringWithAggregatesFilter<"Facture"> | string
   numero?: Prisma.StringWithAggregatesFilter<"Facture"> | string
   dateEmission?: Prisma.DateTimeWithAggregatesFilter<"Facture"> | Date | string
   dateEcheance?: Prisma.DateTimeNullableWithAggregatesFilter<"Facture"> | Date | string | null
@@ -448,7 +448,7 @@ export type FactureCreateInput = {
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFacturesInput
-  inscription?: Prisma.InscriptionCreateNestedOneWithoutFacturesInput
+  convention: Prisma.ConventionCreateNestedOneWithoutFacturesInput
   lignes?: Prisma.LigneFactureCreateNestedManyWithoutFactureInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutFactureInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutFactureInput
@@ -458,7 +458,7 @@ export type FactureCreateInput = {
 export type FactureUncheckedCreateInput = {
   id?: string
   centreId: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -494,7 +494,7 @@ export type FactureUpdateInput = {
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFacturesNestedInput
-  inscription?: Prisma.InscriptionUpdateOneWithoutFacturesNestedInput
+  convention?: Prisma.ConventionUpdateOneRequiredWithoutFacturesNestedInput
   lignes?: Prisma.LigneFactureUpdateManyWithoutFactureNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutFactureNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutFactureNestedInput
@@ -504,7 +504,7 @@ export type FactureUpdateInput = {
 export type FactureUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -527,7 +527,7 @@ export type FactureUncheckedUpdateInput = {
 export type FactureCreateManyInput = {
   id?: string
   centreId: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -563,7 +563,7 @@ export type FactureUpdateManyMutationInput = {
 export type FactureUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -597,7 +597,7 @@ export type FactureCentreIdNumeroCompoundUniqueInput = {
 export type FactureCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
+  conventionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
   dateEmission?: Prisma.SortOrder
   dateEcheance?: Prisma.SortOrder
@@ -625,7 +625,7 @@ export type FactureAvgOrderByAggregateInput = {
 export type FactureMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
+  conventionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
   dateEmission?: Prisma.SortOrder
   dateEcheance?: Prisma.SortOrder
@@ -644,7 +644,7 @@ export type FactureMaxOrderByAggregateInput = {
 export type FactureMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
+  conventionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
   dateEmission?: Prisma.SortOrder
   dateEcheance?: Prisma.SortOrder
@@ -721,45 +721,45 @@ export type FactureUncheckedUpdateManyWithoutCentreNestedInput = {
   deleteMany?: Prisma.FactureScalarWhereInput | Prisma.FactureScalarWhereInput[]
 }
 
-export type FactureCreateNestedManyWithoutInscriptionInput = {
-  create?: Prisma.XOR<Prisma.FactureCreateWithoutInscriptionInput, Prisma.FactureUncheckedCreateWithoutInscriptionInput> | Prisma.FactureCreateWithoutInscriptionInput[] | Prisma.FactureUncheckedCreateWithoutInscriptionInput[]
-  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutInscriptionInput | Prisma.FactureCreateOrConnectWithoutInscriptionInput[]
-  createMany?: Prisma.FactureCreateManyInscriptionInputEnvelope
+export type FactureCreateNestedManyWithoutConventionInput = {
+  create?: Prisma.XOR<Prisma.FactureCreateWithoutConventionInput, Prisma.FactureUncheckedCreateWithoutConventionInput> | Prisma.FactureCreateWithoutConventionInput[] | Prisma.FactureUncheckedCreateWithoutConventionInput[]
+  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutConventionInput | Prisma.FactureCreateOrConnectWithoutConventionInput[]
+  createMany?: Prisma.FactureCreateManyConventionInputEnvelope
   connect?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
 }
 
-export type FactureUncheckedCreateNestedManyWithoutInscriptionInput = {
-  create?: Prisma.XOR<Prisma.FactureCreateWithoutInscriptionInput, Prisma.FactureUncheckedCreateWithoutInscriptionInput> | Prisma.FactureCreateWithoutInscriptionInput[] | Prisma.FactureUncheckedCreateWithoutInscriptionInput[]
-  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutInscriptionInput | Prisma.FactureCreateOrConnectWithoutInscriptionInput[]
-  createMany?: Prisma.FactureCreateManyInscriptionInputEnvelope
+export type FactureUncheckedCreateNestedManyWithoutConventionInput = {
+  create?: Prisma.XOR<Prisma.FactureCreateWithoutConventionInput, Prisma.FactureUncheckedCreateWithoutConventionInput> | Prisma.FactureCreateWithoutConventionInput[] | Prisma.FactureUncheckedCreateWithoutConventionInput[]
+  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutConventionInput | Prisma.FactureCreateOrConnectWithoutConventionInput[]
+  createMany?: Prisma.FactureCreateManyConventionInputEnvelope
   connect?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
 }
 
-export type FactureUpdateManyWithoutInscriptionNestedInput = {
-  create?: Prisma.XOR<Prisma.FactureCreateWithoutInscriptionInput, Prisma.FactureUncheckedCreateWithoutInscriptionInput> | Prisma.FactureCreateWithoutInscriptionInput[] | Prisma.FactureUncheckedCreateWithoutInscriptionInput[]
-  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutInscriptionInput | Prisma.FactureCreateOrConnectWithoutInscriptionInput[]
-  upsert?: Prisma.FactureUpsertWithWhereUniqueWithoutInscriptionInput | Prisma.FactureUpsertWithWhereUniqueWithoutInscriptionInput[]
-  createMany?: Prisma.FactureCreateManyInscriptionInputEnvelope
+export type FactureUpdateManyWithoutConventionNestedInput = {
+  create?: Prisma.XOR<Prisma.FactureCreateWithoutConventionInput, Prisma.FactureUncheckedCreateWithoutConventionInput> | Prisma.FactureCreateWithoutConventionInput[] | Prisma.FactureUncheckedCreateWithoutConventionInput[]
+  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutConventionInput | Prisma.FactureCreateOrConnectWithoutConventionInput[]
+  upsert?: Prisma.FactureUpsertWithWhereUniqueWithoutConventionInput | Prisma.FactureUpsertWithWhereUniqueWithoutConventionInput[]
+  createMany?: Prisma.FactureCreateManyConventionInputEnvelope
   set?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
   disconnect?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
   delete?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
   connect?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
-  update?: Prisma.FactureUpdateWithWhereUniqueWithoutInscriptionInput | Prisma.FactureUpdateWithWhereUniqueWithoutInscriptionInput[]
-  updateMany?: Prisma.FactureUpdateManyWithWhereWithoutInscriptionInput | Prisma.FactureUpdateManyWithWhereWithoutInscriptionInput[]
+  update?: Prisma.FactureUpdateWithWhereUniqueWithoutConventionInput | Prisma.FactureUpdateWithWhereUniqueWithoutConventionInput[]
+  updateMany?: Prisma.FactureUpdateManyWithWhereWithoutConventionInput | Prisma.FactureUpdateManyWithWhereWithoutConventionInput[]
   deleteMany?: Prisma.FactureScalarWhereInput | Prisma.FactureScalarWhereInput[]
 }
 
-export type FactureUncheckedUpdateManyWithoutInscriptionNestedInput = {
-  create?: Prisma.XOR<Prisma.FactureCreateWithoutInscriptionInput, Prisma.FactureUncheckedCreateWithoutInscriptionInput> | Prisma.FactureCreateWithoutInscriptionInput[] | Prisma.FactureUncheckedCreateWithoutInscriptionInput[]
-  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutInscriptionInput | Prisma.FactureCreateOrConnectWithoutInscriptionInput[]
-  upsert?: Prisma.FactureUpsertWithWhereUniqueWithoutInscriptionInput | Prisma.FactureUpsertWithWhereUniqueWithoutInscriptionInput[]
-  createMany?: Prisma.FactureCreateManyInscriptionInputEnvelope
+export type FactureUncheckedUpdateManyWithoutConventionNestedInput = {
+  create?: Prisma.XOR<Prisma.FactureCreateWithoutConventionInput, Prisma.FactureUncheckedCreateWithoutConventionInput> | Prisma.FactureCreateWithoutConventionInput[] | Prisma.FactureUncheckedCreateWithoutConventionInput[]
+  connectOrCreate?: Prisma.FactureCreateOrConnectWithoutConventionInput | Prisma.FactureCreateOrConnectWithoutConventionInput[]
+  upsert?: Prisma.FactureUpsertWithWhereUniqueWithoutConventionInput | Prisma.FactureUpsertWithWhereUniqueWithoutConventionInput[]
+  createMany?: Prisma.FactureCreateManyConventionInputEnvelope
   set?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
   disconnect?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
   delete?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
   connect?: Prisma.FactureWhereUniqueInput | Prisma.FactureWhereUniqueInput[]
-  update?: Prisma.FactureUpdateWithWhereUniqueWithoutInscriptionInput | Prisma.FactureUpdateWithWhereUniqueWithoutInscriptionInput[]
-  updateMany?: Prisma.FactureUpdateManyWithWhereWithoutInscriptionInput | Prisma.FactureUpdateManyWithWhereWithoutInscriptionInput[]
+  update?: Prisma.FactureUpdateWithWhereUniqueWithoutConventionInput | Prisma.FactureUpdateWithWhereUniqueWithoutConventionInput[]
+  updateMany?: Prisma.FactureUpdateManyWithWhereWithoutConventionInput | Prisma.FactureUpdateManyWithWhereWithoutConventionInput[]
   deleteMany?: Prisma.FactureScalarWhereInput | Prisma.FactureScalarWhereInput[]
 }
 
@@ -844,7 +844,7 @@ export type FactureCreateWithoutCentreInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  inscription?: Prisma.InscriptionCreateNestedOneWithoutFacturesInput
+  convention: Prisma.ConventionCreateNestedOneWithoutFacturesInput
   lignes?: Prisma.LigneFactureCreateNestedManyWithoutFactureInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutFactureInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutFactureInput
@@ -853,7 +853,7 @@ export type FactureCreateWithoutCentreInput = {
 
 export type FactureUncheckedCreateWithoutCentreInput = {
   id?: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -904,7 +904,7 @@ export type FactureScalarWhereInput = {
   NOT?: Prisma.FactureScalarWhereInput | Prisma.FactureScalarWhereInput[]
   id?: Prisma.StringFilter<"Facture"> | string
   centreId?: Prisma.StringFilter<"Facture"> | string
-  inscriptionId?: Prisma.StringNullableFilter<"Facture"> | string | null
+  conventionId?: Prisma.StringFilter<"Facture"> | string
   numero?: Prisma.StringFilter<"Facture"> | string
   dateEmission?: Prisma.DateTimeFilter<"Facture"> | Date | string
   dateEcheance?: Prisma.DateTimeNullableFilter<"Facture"> | Date | string | null
@@ -920,7 +920,7 @@ export type FactureScalarWhereInput = {
   modifieLe?: Prisma.DateTimeFilter<"Facture"> | Date | string
 }
 
-export type FactureCreateWithoutInscriptionInput = {
+export type FactureCreateWithoutConventionInput = {
   id?: string
   numero: string
   dateEmission?: Date | string
@@ -942,7 +942,7 @@ export type FactureCreateWithoutInscriptionInput = {
   documents?: Prisma.DocumentCreateNestedManyWithoutFactureInput
 }
 
-export type FactureUncheckedCreateWithoutInscriptionInput = {
+export type FactureUncheckedCreateWithoutConventionInput = {
   id?: string
   centreId: string
   numero: string
@@ -964,29 +964,29 @@ export type FactureUncheckedCreateWithoutInscriptionInput = {
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutFactureInput
 }
 
-export type FactureCreateOrConnectWithoutInscriptionInput = {
+export type FactureCreateOrConnectWithoutConventionInput = {
   where: Prisma.FactureWhereUniqueInput
-  create: Prisma.XOR<Prisma.FactureCreateWithoutInscriptionInput, Prisma.FactureUncheckedCreateWithoutInscriptionInput>
+  create: Prisma.XOR<Prisma.FactureCreateWithoutConventionInput, Prisma.FactureUncheckedCreateWithoutConventionInput>
 }
 
-export type FactureCreateManyInscriptionInputEnvelope = {
-  data: Prisma.FactureCreateManyInscriptionInput | Prisma.FactureCreateManyInscriptionInput[]
+export type FactureCreateManyConventionInputEnvelope = {
+  data: Prisma.FactureCreateManyConventionInput | Prisma.FactureCreateManyConventionInput[]
 }
 
-export type FactureUpsertWithWhereUniqueWithoutInscriptionInput = {
+export type FactureUpsertWithWhereUniqueWithoutConventionInput = {
   where: Prisma.FactureWhereUniqueInput
-  update: Prisma.XOR<Prisma.FactureUpdateWithoutInscriptionInput, Prisma.FactureUncheckedUpdateWithoutInscriptionInput>
-  create: Prisma.XOR<Prisma.FactureCreateWithoutInscriptionInput, Prisma.FactureUncheckedCreateWithoutInscriptionInput>
+  update: Prisma.XOR<Prisma.FactureUpdateWithoutConventionInput, Prisma.FactureUncheckedUpdateWithoutConventionInput>
+  create: Prisma.XOR<Prisma.FactureCreateWithoutConventionInput, Prisma.FactureUncheckedCreateWithoutConventionInput>
 }
 
-export type FactureUpdateWithWhereUniqueWithoutInscriptionInput = {
+export type FactureUpdateWithWhereUniqueWithoutConventionInput = {
   where: Prisma.FactureWhereUniqueInput
-  data: Prisma.XOR<Prisma.FactureUpdateWithoutInscriptionInput, Prisma.FactureUncheckedUpdateWithoutInscriptionInput>
+  data: Prisma.XOR<Prisma.FactureUpdateWithoutConventionInput, Prisma.FactureUncheckedUpdateWithoutConventionInput>
 }
 
-export type FactureUpdateManyWithWhereWithoutInscriptionInput = {
+export type FactureUpdateManyWithWhereWithoutConventionInput = {
   where: Prisma.FactureScalarWhereInput
-  data: Prisma.XOR<Prisma.FactureUpdateManyMutationInput, Prisma.FactureUncheckedUpdateManyWithoutInscriptionInput>
+  data: Prisma.XOR<Prisma.FactureUpdateManyMutationInput, Prisma.FactureUncheckedUpdateManyWithoutConventionInput>
 }
 
 export type FactureCreateWithoutLignesInput = {
@@ -1005,7 +1005,7 @@ export type FactureCreateWithoutLignesInput = {
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFacturesInput
-  inscription?: Prisma.InscriptionCreateNestedOneWithoutFacturesInput
+  convention: Prisma.ConventionCreateNestedOneWithoutFacturesInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutFactureInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutFactureInput
   documents?: Prisma.DocumentCreateNestedManyWithoutFactureInput
@@ -1014,7 +1014,7 @@ export type FactureCreateWithoutLignesInput = {
 export type FactureUncheckedCreateWithoutLignesInput = {
   id?: string
   centreId: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -1065,7 +1065,7 @@ export type FactureUpdateWithoutLignesInput = {
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFacturesNestedInput
-  inscription?: Prisma.InscriptionUpdateOneWithoutFacturesNestedInput
+  convention?: Prisma.ConventionUpdateOneRequiredWithoutFacturesNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutFactureNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutFactureNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutFactureNestedInput
@@ -1074,7 +1074,7 @@ export type FactureUpdateWithoutLignesInput = {
 export type FactureUncheckedUpdateWithoutLignesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1109,7 +1109,7 @@ export type FactureCreateWithoutEcheancesInput = {
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFacturesInput
-  inscription?: Prisma.InscriptionCreateNestedOneWithoutFacturesInput
+  convention: Prisma.ConventionCreateNestedOneWithoutFacturesInput
   lignes?: Prisma.LigneFactureCreateNestedManyWithoutFactureInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutFactureInput
   documents?: Prisma.DocumentCreateNestedManyWithoutFactureInput
@@ -1118,7 +1118,7 @@ export type FactureCreateWithoutEcheancesInput = {
 export type FactureUncheckedCreateWithoutEcheancesInput = {
   id?: string
   centreId: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -1169,7 +1169,7 @@ export type FactureUpdateWithoutEcheancesInput = {
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFacturesNestedInput
-  inscription?: Prisma.InscriptionUpdateOneWithoutFacturesNestedInput
+  convention?: Prisma.ConventionUpdateOneRequiredWithoutFacturesNestedInput
   lignes?: Prisma.LigneFactureUpdateManyWithoutFactureNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutFactureNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutFactureNestedInput
@@ -1178,7 +1178,7 @@ export type FactureUpdateWithoutEcheancesInput = {
 export type FactureUncheckedUpdateWithoutEcheancesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1213,7 +1213,7 @@ export type FactureCreateWithoutPaiementsInput = {
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFacturesInput
-  inscription?: Prisma.InscriptionCreateNestedOneWithoutFacturesInput
+  convention: Prisma.ConventionCreateNestedOneWithoutFacturesInput
   lignes?: Prisma.LigneFactureCreateNestedManyWithoutFactureInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutFactureInput
   documents?: Prisma.DocumentCreateNestedManyWithoutFactureInput
@@ -1222,7 +1222,7 @@ export type FactureCreateWithoutPaiementsInput = {
 export type FactureUncheckedCreateWithoutPaiementsInput = {
   id?: string
   centreId: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -1273,7 +1273,7 @@ export type FactureUpdateWithoutPaiementsInput = {
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFacturesNestedInput
-  inscription?: Prisma.InscriptionUpdateOneWithoutFacturesNestedInput
+  convention?: Prisma.ConventionUpdateOneRequiredWithoutFacturesNestedInput
   lignes?: Prisma.LigneFactureUpdateManyWithoutFactureNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutFactureNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutFactureNestedInput
@@ -1282,7 +1282,7 @@ export type FactureUpdateWithoutPaiementsInput = {
 export type FactureUncheckedUpdateWithoutPaiementsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1317,7 +1317,7 @@ export type FactureCreateWithoutDocumentsInput = {
   creeLe?: Date | string
   modifieLe?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutFacturesInput
-  inscription?: Prisma.InscriptionCreateNestedOneWithoutFacturesInput
+  convention: Prisma.ConventionCreateNestedOneWithoutFacturesInput
   lignes?: Prisma.LigneFactureCreateNestedManyWithoutFactureInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutFactureInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutFactureInput
@@ -1326,7 +1326,7 @@ export type FactureCreateWithoutDocumentsInput = {
 export type FactureUncheckedCreateWithoutDocumentsInput = {
   id?: string
   centreId: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -1377,7 +1377,7 @@ export type FactureUpdateWithoutDocumentsInput = {
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutFacturesNestedInput
-  inscription?: Prisma.InscriptionUpdateOneWithoutFacturesNestedInput
+  convention?: Prisma.ConventionUpdateOneRequiredWithoutFacturesNestedInput
   lignes?: Prisma.LigneFactureUpdateManyWithoutFactureNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutFactureNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutFactureNestedInput
@@ -1386,7 +1386,7 @@ export type FactureUpdateWithoutDocumentsInput = {
 export type FactureUncheckedUpdateWithoutDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1407,7 +1407,7 @@ export type FactureUncheckedUpdateWithoutDocumentsInput = {
 
 export type FactureCreateManyCentreInput = {
   id?: string
-  inscriptionId?: string | null
+  conventionId: string
   numero: string
   dateEmission?: Date | string
   dateEcheance?: Date | string | null
@@ -1438,7 +1438,7 @@ export type FactureUpdateWithoutCentreInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  inscription?: Prisma.InscriptionUpdateOneWithoutFacturesNestedInput
+  convention?: Prisma.ConventionUpdateOneRequiredWithoutFacturesNestedInput
   lignes?: Prisma.LigneFactureUpdateManyWithoutFactureNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutFactureNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutFactureNestedInput
@@ -1447,7 +1447,7 @@ export type FactureUpdateWithoutCentreInput = {
 
 export type FactureUncheckedUpdateWithoutCentreInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1469,7 +1469,7 @@ export type FactureUncheckedUpdateWithoutCentreInput = {
 
 export type FactureUncheckedUpdateManyWithoutCentreInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conventionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dateEcheance?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1485,7 +1485,7 @@ export type FactureUncheckedUpdateManyWithoutCentreInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type FactureCreateManyInscriptionInput = {
+export type FactureCreateManyConventionInput = {
   id?: string
   centreId: string
   numero: string
@@ -1503,7 +1503,7 @@ export type FactureCreateManyInscriptionInput = {
   modifieLe?: Date | string
 }
 
-export type FactureUpdateWithoutInscriptionInput = {
+export type FactureUpdateWithoutConventionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   dateEmission?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1525,7 +1525,7 @@ export type FactureUpdateWithoutInscriptionInput = {
   documents?: Prisma.DocumentUpdateManyWithoutFactureNestedInput
 }
 
-export type FactureUncheckedUpdateWithoutInscriptionInput = {
+export type FactureUncheckedUpdateWithoutConventionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1547,7 +1547,7 @@ export type FactureUncheckedUpdateWithoutInscriptionInput = {
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutFactureNestedInput
 }
 
-export type FactureUncheckedUpdateManyWithoutInscriptionInput = {
+export type FactureUncheckedUpdateManyWithoutConventionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1626,7 +1626,7 @@ export type FactureCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Typ
 export type FactureSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
+  conventionId?: boolean
   numero?: boolean
   dateEmission?: boolean
   dateEcheance?: boolean
@@ -1641,7 +1641,7 @@ export type FactureSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   creeLe?: boolean
   modifieLe?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.Facture$inscriptionArgs<ExtArgs>
+  convention?: boolean | Prisma.ConventionDefaultArgs<ExtArgs>
   lignes?: boolean | Prisma.Facture$lignesArgs<ExtArgs>
   paiements?: boolean | Prisma.Facture$paiementsArgs<ExtArgs>
   echeances?: boolean | Prisma.Facture$echeancesArgs<ExtArgs>
@@ -1652,7 +1652,7 @@ export type FactureSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type FactureSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
+  conventionId?: boolean
   numero?: boolean
   dateEmission?: boolean
   dateEcheance?: boolean
@@ -1667,13 +1667,13 @@ export type FactureSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   creeLe?: boolean
   modifieLe?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.Facture$inscriptionArgs<ExtArgs>
+  convention?: boolean | Prisma.ConventionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["facture"]>
 
 export type FactureSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
+  conventionId?: boolean
   numero?: boolean
   dateEmission?: boolean
   dateEcheance?: boolean
@@ -1688,13 +1688,13 @@ export type FactureSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   creeLe?: boolean
   modifieLe?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.Facture$inscriptionArgs<ExtArgs>
+  convention?: boolean | Prisma.ConventionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["facture"]>
 
 export type FactureSelectScalar = {
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
+  conventionId?: boolean
   numero?: boolean
   dateEmission?: boolean
   dateEcheance?: boolean
@@ -1710,10 +1710,10 @@ export type FactureSelectScalar = {
   modifieLe?: boolean
 }
 
-export type FactureOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "inscriptionId" | "numero" | "dateEmission" | "dateEcheance" | "sousTotal" | "remise" | "taxe" | "total" | "montantPaye" | "montantDu" | "statut" | "notes" | "creeLe" | "modifieLe", ExtArgs["result"]["facture"]>
+export type FactureOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "conventionId" | "numero" | "dateEmission" | "dateEcheance" | "sousTotal" | "remise" | "taxe" | "total" | "montantPaye" | "montantDu" | "statut" | "notes" | "creeLe" | "modifieLe", ExtArgs["result"]["facture"]>
 export type FactureInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.Facture$inscriptionArgs<ExtArgs>
+  convention?: boolean | Prisma.ConventionDefaultArgs<ExtArgs>
   lignes?: boolean | Prisma.Facture$lignesArgs<ExtArgs>
   paiements?: boolean | Prisma.Facture$paiementsArgs<ExtArgs>
   echeances?: boolean | Prisma.Facture$echeancesArgs<ExtArgs>
@@ -1722,18 +1722,18 @@ export type FactureInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
 }
 export type FactureIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.Facture$inscriptionArgs<ExtArgs>
+  convention?: boolean | Prisma.ConventionDefaultArgs<ExtArgs>
 }
 export type FactureIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.Facture$inscriptionArgs<ExtArgs>
+  convention?: boolean | Prisma.ConventionDefaultArgs<ExtArgs>
 }
 
 export type $FacturePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Facture"
   objects: {
     centre: Prisma.$CentreFormationPayload<ExtArgs>
-    inscription: Prisma.$InscriptionPayload<ExtArgs> | null
+    convention: Prisma.$ConventionPayload<ExtArgs>
     lignes: Prisma.$LigneFacturePayload<ExtArgs>[]
     paiements: Prisma.$PaiementPayload<ExtArgs>[]
     echeances: Prisma.$EcheancePaiementPayload<ExtArgs>[]
@@ -1742,7 +1742,7 @@ export type $FacturePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     centreId: string
-    inscriptionId: string | null
+    conventionId: string
     numero: string
     dateEmission: Date
     dateEcheance: Date | null
@@ -2151,7 +2151,7 @@ readonly fields: FactureFieldRefs;
 export interface Prisma__FactureClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   centre<T extends Prisma.CentreFormationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CentreFormationDefaultArgs<ExtArgs>>): Prisma.Prisma__CentreFormationClient<runtime.Types.Result.GetResult<Prisma.$CentreFormationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  inscription<T extends Prisma.Facture$inscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Facture$inscriptionArgs<ExtArgs>>): Prisma.Prisma__InscriptionClient<runtime.Types.Result.GetResult<Prisma.$InscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  convention<T extends Prisma.ConventionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConventionDefaultArgs<ExtArgs>>): Prisma.Prisma__ConventionClient<runtime.Types.Result.GetResult<Prisma.$ConventionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   lignes<T extends Prisma.Facture$lignesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Facture$lignesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LigneFacturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   paiements<T extends Prisma.Facture$paiementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Facture$paiementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaiementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   echeances<T extends Prisma.Facture$echeancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Facture$echeancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EcheancePaiementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2187,7 +2187,7 @@ export interface Prisma__FactureClient<T, Null = never, ExtArgs extends runtime.
 export interface FactureFieldRefs {
   readonly id: Prisma.FieldRef<"Facture", 'String'>
   readonly centreId: Prisma.FieldRef<"Facture", 'String'>
-  readonly inscriptionId: Prisma.FieldRef<"Facture", 'String'>
+  readonly conventionId: Prisma.FieldRef<"Facture", 'String'>
   readonly numero: Prisma.FieldRef<"Facture", 'String'>
   readonly dateEmission: Prisma.FieldRef<"Facture", 'DateTime'>
   readonly dateEcheance: Prisma.FieldRef<"Facture", 'DateTime'>
@@ -2597,25 +2597,6 @@ export type FactureDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Factures to delete.
    */
   limit?: number
-}
-
-/**
- * Facture.inscription
- */
-export type Facture$inscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Inscription
-   */
-  select?: Prisma.InscriptionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Inscription
-   */
-  omit?: Prisma.InscriptionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.InscriptionInclude<ExtArgs> | null
-  where?: Prisma.InscriptionWhereInput
 }
 
 /**

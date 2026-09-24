@@ -37,61 +37,61 @@ export type ConventionSumAggregateOutputType = {
 export type ConventionMinAggregateOutputType = {
   id: string | null
   centreId: string | null
-  inscriptionId: string | null
   numero: string | null
-  nomOrganisme: string | null
-  emailOrganisme: string | null
-  telephoneOrganisme: string | null
-  adresseOrganisme: string | null
-  nomContact: string | null
+  organisationNom: string | null
+  organisationAdresse: string | null
+  organisationEmail: string | null
+  organisationTelephone: string | null
+  organisationContact: string | null
   dateDebut: Date | null
   dateFin: Date | null
   montant: runtime.Decimal | null
+  devise: string | null
   statut: $Enums.StatutConvention | null
   dateSignature: Date | null
   observations: string | null
-  creeLe: Date | null
-  modifieLe: Date | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ConventionMaxAggregateOutputType = {
   id: string | null
   centreId: string | null
-  inscriptionId: string | null
   numero: string | null
-  nomOrganisme: string | null
-  emailOrganisme: string | null
-  telephoneOrganisme: string | null
-  adresseOrganisme: string | null
-  nomContact: string | null
+  organisationNom: string | null
+  organisationAdresse: string | null
+  organisationEmail: string | null
+  organisationTelephone: string | null
+  organisationContact: string | null
   dateDebut: Date | null
   dateFin: Date | null
   montant: runtime.Decimal | null
+  devise: string | null
   statut: $Enums.StatutConvention | null
   dateSignature: Date | null
   observations: string | null
-  creeLe: Date | null
-  modifieLe: Date | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ConventionCountAggregateOutputType = {
   id: number
   centreId: number
-  inscriptionId: number
   numero: number
-  nomOrganisme: number
-  emailOrganisme: number
-  telephoneOrganisme: number
-  adresseOrganisme: number
-  nomContact: number
+  organisationNom: number
+  organisationAdresse: number
+  organisationEmail: number
+  organisationTelephone: number
+  organisationContact: number
   dateDebut: number
   dateFin: number
   montant: number
+  devise: number
   statut: number
   dateSignature: number
   observations: number
-  creeLe: number
-  modifieLe: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -107,61 +107,61 @@ export type ConventionSumAggregateInputType = {
 export type ConventionMinAggregateInputType = {
   id?: true
   centreId?: true
-  inscriptionId?: true
   numero?: true
-  nomOrganisme?: true
-  emailOrganisme?: true
-  telephoneOrganisme?: true
-  adresseOrganisme?: true
-  nomContact?: true
+  organisationNom?: true
+  organisationAdresse?: true
+  organisationEmail?: true
+  organisationTelephone?: true
+  organisationContact?: true
   dateDebut?: true
   dateFin?: true
   montant?: true
+  devise?: true
   statut?: true
   dateSignature?: true
   observations?: true
-  creeLe?: true
-  modifieLe?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ConventionMaxAggregateInputType = {
   id?: true
   centreId?: true
-  inscriptionId?: true
   numero?: true
-  nomOrganisme?: true
-  emailOrganisme?: true
-  telephoneOrganisme?: true
-  adresseOrganisme?: true
-  nomContact?: true
+  organisationNom?: true
+  organisationAdresse?: true
+  organisationEmail?: true
+  organisationTelephone?: true
+  organisationContact?: true
   dateDebut?: true
   dateFin?: true
   montant?: true
+  devise?: true
   statut?: true
   dateSignature?: true
   observations?: true
-  creeLe?: true
-  modifieLe?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ConventionCountAggregateInputType = {
   id?: true
   centreId?: true
-  inscriptionId?: true
   numero?: true
-  nomOrganisme?: true
-  emailOrganisme?: true
-  telephoneOrganisme?: true
-  adresseOrganisme?: true
-  nomContact?: true
+  organisationNom?: true
+  organisationAdresse?: true
+  organisationEmail?: true
+  organisationTelephone?: true
+  organisationContact?: true
   dateDebut?: true
   dateFin?: true
   montant?: true
+  devise?: true
   statut?: true
   dateSignature?: true
   observations?: true
-  creeLe?: true
-  modifieLe?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -254,21 +254,21 @@ export type ConventionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type ConventionGroupByOutputType = {
   id: string
   centreId: string
-  inscriptionId: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme: string | null
-  telephoneOrganisme: string | null
-  adresseOrganisme: string | null
-  nomContact: string | null
-  dateDebut: Date | null
-  dateFin: Date | null
+  organisationNom: string
+  organisationAdresse: string | null
+  organisationEmail: string | null
+  organisationTelephone: string | null
+  organisationContact: string | null
+  dateDebut: Date
+  dateFin: Date
   montant: runtime.Decimal
+  devise: string
   statut: $Enums.StatutConvention
   dateSignature: Date | null
   observations: string | null
-  creeLe: Date
-  modifieLe: Date
+  createdAt: Date
+  updatedAt: Date
   _count: ConventionCountAggregateOutputType | null
   _avg: ConventionAvgAggregateOutputType | null
   _sum: ConventionSumAggregateOutputType | null
@@ -297,94 +297,97 @@ export type ConventionWhereInput = {
   NOT?: Prisma.ConventionWhereInput | Prisma.ConventionWhereInput[]
   id?: Prisma.StringFilter<"Convention"> | string
   centreId?: Prisma.StringFilter<"Convention"> | string
-  inscriptionId?: Prisma.StringFilter<"Convention"> | string
   numero?: Prisma.StringFilter<"Convention"> | string
-  nomOrganisme?: Prisma.StringFilter<"Convention"> | string
-  emailOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  telephoneOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  adresseOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  nomContact?: Prisma.StringNullableFilter<"Convention"> | string | null
-  dateDebut?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
-  dateFin?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
+  organisationNom?: Prisma.StringFilter<"Convention"> | string
+  organisationAdresse?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationEmail?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationTelephone?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationContact?: Prisma.StringNullableFilter<"Convention"> | string | null
+  dateDebut?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  dateFin?: Prisma.DateTimeFilter<"Convention"> | Date | string
   montant?: Prisma.DecimalFilter<"Convention"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFilter<"Convention"> | string
   statut?: Prisma.EnumStatutConventionFilter<"Convention"> | $Enums.StatutConvention
   dateSignature?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
   observations?: Prisma.StringNullableFilter<"Convention"> | string | null
-  creeLe?: Prisma.DateTimeFilter<"Convention"> | Date | string
-  modifieLe?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Convention"> | Date | string
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
-  inscription?: Prisma.XOR<Prisma.InscriptionScalarRelationFilter, Prisma.InscriptionWhereInput>
+  participants?: Prisma.ConventionParticipantListRelationFilter
+  factures?: Prisma.FactureListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
 }
 
 export type ConventionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
-  nomOrganisme?: Prisma.SortOrder
-  emailOrganisme?: Prisma.SortOrderInput | Prisma.SortOrder
-  telephoneOrganisme?: Prisma.SortOrderInput | Prisma.SortOrder
-  adresseOrganisme?: Prisma.SortOrderInput | Prisma.SortOrder
-  nomContact?: Prisma.SortOrderInput | Prisma.SortOrder
-  dateDebut?: Prisma.SortOrderInput | Prisma.SortOrder
-  dateFin?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationNom?: Prisma.SortOrder
+  organisationAdresse?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationTelephone?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationContact?: Prisma.SortOrderInput | Prisma.SortOrder
+  dateDebut?: Prisma.SortOrder
+  dateFin?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateSignature?: Prisma.SortOrderInput | Prisma.SortOrder
   observations?: Prisma.SortOrderInput | Prisma.SortOrder
-  creeLe?: Prisma.SortOrder
-  modifieLe?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   centre?: Prisma.CentreFormationOrderByWithRelationInput
-  inscription?: Prisma.InscriptionOrderByWithRelationInput
+  participants?: Prisma.ConventionParticipantOrderByRelationAggregateInput
+  factures?: Prisma.FactureOrderByRelationAggregateInput
   documents?: Prisma.DocumentOrderByRelationAggregateInput
 }
 
 export type ConventionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  inscriptionId?: string
   centreId_numero?: Prisma.ConventionCentreIdNumeroCompoundUniqueInput
   AND?: Prisma.ConventionWhereInput | Prisma.ConventionWhereInput[]
   OR?: Prisma.ConventionWhereInput[]
   NOT?: Prisma.ConventionWhereInput | Prisma.ConventionWhereInput[]
   centreId?: Prisma.StringFilter<"Convention"> | string
   numero?: Prisma.StringFilter<"Convention"> | string
-  nomOrganisme?: Prisma.StringFilter<"Convention"> | string
-  emailOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  telephoneOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  adresseOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  nomContact?: Prisma.StringNullableFilter<"Convention"> | string | null
-  dateDebut?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
-  dateFin?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
+  organisationNom?: Prisma.StringFilter<"Convention"> | string
+  organisationAdresse?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationEmail?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationTelephone?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationContact?: Prisma.StringNullableFilter<"Convention"> | string | null
+  dateDebut?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  dateFin?: Prisma.DateTimeFilter<"Convention"> | Date | string
   montant?: Prisma.DecimalFilter<"Convention"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFilter<"Convention"> | string
   statut?: Prisma.EnumStatutConventionFilter<"Convention"> | $Enums.StatutConvention
   dateSignature?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
   observations?: Prisma.StringNullableFilter<"Convention"> | string | null
-  creeLe?: Prisma.DateTimeFilter<"Convention"> | Date | string
-  modifieLe?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Convention"> | Date | string
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
-  inscription?: Prisma.XOR<Prisma.InscriptionScalarRelationFilter, Prisma.InscriptionWhereInput>
+  participants?: Prisma.ConventionParticipantListRelationFilter
+  factures?: Prisma.FactureListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
-}, "id" | "inscriptionId" | "centreId_numero">
+}, "id" | "centreId_numero">
 
 export type ConventionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
-  nomOrganisme?: Prisma.SortOrder
-  emailOrganisme?: Prisma.SortOrderInput | Prisma.SortOrder
-  telephoneOrganisme?: Prisma.SortOrderInput | Prisma.SortOrder
-  adresseOrganisme?: Prisma.SortOrderInput | Prisma.SortOrder
-  nomContact?: Prisma.SortOrderInput | Prisma.SortOrder
-  dateDebut?: Prisma.SortOrderInput | Prisma.SortOrder
-  dateFin?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationNom?: Prisma.SortOrder
+  organisationAdresse?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationTelephone?: Prisma.SortOrderInput | Prisma.SortOrder
+  organisationContact?: Prisma.SortOrderInput | Prisma.SortOrder
+  dateDebut?: Prisma.SortOrder
+  dateFin?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateSignature?: Prisma.SortOrderInput | Prisma.SortOrder
   observations?: Prisma.SortOrderInput | Prisma.SortOrder
-  creeLe?: Prisma.SortOrder
-  modifieLe?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.ConventionCountOrderByAggregateInput
   _avg?: Prisma.ConventionAvgOrderByAggregateInput
   _max?: Prisma.ConventionMaxOrderByAggregateInput
@@ -398,163 +401,172 @@ export type ConventionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ConventionScalarWhereWithAggregatesInput | Prisma.ConventionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Convention"> | string
   centreId?: Prisma.StringWithAggregatesFilter<"Convention"> | string
-  inscriptionId?: Prisma.StringWithAggregatesFilter<"Convention"> | string
   numero?: Prisma.StringWithAggregatesFilter<"Convention"> | string
-  nomOrganisme?: Prisma.StringWithAggregatesFilter<"Convention"> | string
-  emailOrganisme?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
-  telephoneOrganisme?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
-  adresseOrganisme?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
-  nomContact?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
-  dateDebut?: Prisma.DateTimeNullableWithAggregatesFilter<"Convention"> | Date | string | null
-  dateFin?: Prisma.DateTimeNullableWithAggregatesFilter<"Convention"> | Date | string | null
+  organisationNom?: Prisma.StringWithAggregatesFilter<"Convention"> | string
+  organisationAdresse?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
+  organisationEmail?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
+  organisationTelephone?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
+  organisationContact?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
+  dateDebut?: Prisma.DateTimeWithAggregatesFilter<"Convention"> | Date | string
+  dateFin?: Prisma.DateTimeWithAggregatesFilter<"Convention"> | Date | string
   montant?: Prisma.DecimalWithAggregatesFilter<"Convention"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringWithAggregatesFilter<"Convention"> | string
   statut?: Prisma.EnumStatutConventionWithAggregatesFilter<"Convention"> | $Enums.StatutConvention
   dateSignature?: Prisma.DateTimeNullableWithAggregatesFilter<"Convention"> | Date | string | null
   observations?: Prisma.StringNullableWithAggregatesFilter<"Convention"> | string | null
-  creeLe?: Prisma.DateTimeWithAggregatesFilter<"Convention"> | Date | string
-  modifieLe?: Prisma.DateTimeWithAggregatesFilter<"Convention"> | Date | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Convention"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Convention"> | Date | string
 }
 
 export type ConventionCreateInput = {
   id?: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutConventionsInput
-  inscription: Prisma.InscriptionCreateNestedOneWithoutConventionInput
+  participants?: Prisma.ConventionParticipantCreateNestedManyWithoutConventionInput
+  factures?: Prisma.FactureCreateNestedManyWithoutConventionInput
   documents?: Prisma.DocumentCreateNestedManyWithoutConventionInput
 }
 
 export type ConventionUncheckedCreateInput = {
   id?: string
   centreId: string
-  inscriptionId: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  participants?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutConventionInput
+  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutConventionInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutConventionInput
 }
 
 export type ConventionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutConventionsNestedInput
-  inscription?: Prisma.InscriptionUpdateOneRequiredWithoutConventionNestedInput
+  participants?: Prisma.ConventionParticipantUpdateManyWithoutConventionNestedInput
+  factures?: Prisma.FactureUpdateManyWithoutConventionNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutConventionNestedInput
 }
 
 export type ConventionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutConventionNestedInput
+  factures?: Prisma.FactureUncheckedUpdateManyWithoutConventionNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutConventionNestedInput
 }
 
 export type ConventionCreateManyInput = {
   id?: string
   centreId: string
-  inscriptionId: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ConventionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ConventionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ConventionListRelationFilter = {
@@ -567,11 +579,6 @@ export type ConventionOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ConventionNullableScalarRelationFilter = {
-  is?: Prisma.ConventionWhereInput | null
-  isNot?: Prisma.ConventionWhereInput | null
-}
-
 export type ConventionCentreIdNumeroCompoundUniqueInput = {
   centreId: string
   numero: string
@@ -580,21 +587,21 @@ export type ConventionCentreIdNumeroCompoundUniqueInput = {
 export type ConventionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
-  nomOrganisme?: Prisma.SortOrder
-  emailOrganisme?: Prisma.SortOrder
-  telephoneOrganisme?: Prisma.SortOrder
-  adresseOrganisme?: Prisma.SortOrder
-  nomContact?: Prisma.SortOrder
+  organisationNom?: Prisma.SortOrder
+  organisationAdresse?: Prisma.SortOrder
+  organisationEmail?: Prisma.SortOrder
+  organisationTelephone?: Prisma.SortOrder
+  organisationContact?: Prisma.SortOrder
   dateDebut?: Prisma.SortOrder
   dateFin?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateSignature?: Prisma.SortOrder
   observations?: Prisma.SortOrder
-  creeLe?: Prisma.SortOrder
-  modifieLe?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ConventionAvgOrderByAggregateInput = {
@@ -604,45 +611,55 @@ export type ConventionAvgOrderByAggregateInput = {
 export type ConventionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
-  nomOrganisme?: Prisma.SortOrder
-  emailOrganisme?: Prisma.SortOrder
-  telephoneOrganisme?: Prisma.SortOrder
-  adresseOrganisme?: Prisma.SortOrder
-  nomContact?: Prisma.SortOrder
+  organisationNom?: Prisma.SortOrder
+  organisationAdresse?: Prisma.SortOrder
+  organisationEmail?: Prisma.SortOrder
+  organisationTelephone?: Prisma.SortOrder
+  organisationContact?: Prisma.SortOrder
   dateDebut?: Prisma.SortOrder
   dateFin?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateSignature?: Prisma.SortOrder
   observations?: Prisma.SortOrder
-  creeLe?: Prisma.SortOrder
-  modifieLe?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ConventionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   centreId?: Prisma.SortOrder
-  inscriptionId?: Prisma.SortOrder
   numero?: Prisma.SortOrder
-  nomOrganisme?: Prisma.SortOrder
-  emailOrganisme?: Prisma.SortOrder
-  telephoneOrganisme?: Prisma.SortOrder
-  adresseOrganisme?: Prisma.SortOrder
-  nomContact?: Prisma.SortOrder
+  organisationNom?: Prisma.SortOrder
+  organisationAdresse?: Prisma.SortOrder
+  organisationEmail?: Prisma.SortOrder
+  organisationTelephone?: Prisma.SortOrder
+  organisationContact?: Prisma.SortOrder
   dateDebut?: Prisma.SortOrder
   dateFin?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   dateSignature?: Prisma.SortOrder
   observations?: Prisma.SortOrder
-  creeLe?: Prisma.SortOrder
-  modifieLe?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ConventionSumOrderByAggregateInput = {
   montant?: Prisma.SortOrder
+}
+
+export type ConventionScalarRelationFilter = {
+  is?: Prisma.ConventionWhereInput
+  isNot?: Prisma.ConventionWhereInput
+}
+
+export type ConventionNullableScalarRelationFilter = {
+  is?: Prisma.ConventionWhereInput | null
+  isNot?: Prisma.ConventionWhereInput | null
 }
 
 export type ConventionCreateNestedManyWithoutCentreInput = {
@@ -687,40 +704,36 @@ export type ConventionUncheckedUpdateManyWithoutCentreNestedInput = {
   deleteMany?: Prisma.ConventionScalarWhereInput | Prisma.ConventionScalarWhereInput[]
 }
 
-export type ConventionCreateNestedOneWithoutInscriptionInput = {
-  create?: Prisma.XOR<Prisma.ConventionCreateWithoutInscriptionInput, Prisma.ConventionUncheckedCreateWithoutInscriptionInput>
-  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutInscriptionInput
-  connect?: Prisma.ConventionWhereUniqueInput
-}
-
-export type ConventionUncheckedCreateNestedOneWithoutInscriptionInput = {
-  create?: Prisma.XOR<Prisma.ConventionCreateWithoutInscriptionInput, Prisma.ConventionUncheckedCreateWithoutInscriptionInput>
-  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutInscriptionInput
-  connect?: Prisma.ConventionWhereUniqueInput
-}
-
-export type ConventionUpdateOneWithoutInscriptionNestedInput = {
-  create?: Prisma.XOR<Prisma.ConventionCreateWithoutInscriptionInput, Prisma.ConventionUncheckedCreateWithoutInscriptionInput>
-  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutInscriptionInput
-  upsert?: Prisma.ConventionUpsertWithoutInscriptionInput
-  disconnect?: Prisma.ConventionWhereInput | boolean
-  delete?: Prisma.ConventionWhereInput | boolean
-  connect?: Prisma.ConventionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ConventionUpdateToOneWithWhereWithoutInscriptionInput, Prisma.ConventionUpdateWithoutInscriptionInput>, Prisma.ConventionUncheckedUpdateWithoutInscriptionInput>
-}
-
-export type ConventionUncheckedUpdateOneWithoutInscriptionNestedInput = {
-  create?: Prisma.XOR<Prisma.ConventionCreateWithoutInscriptionInput, Prisma.ConventionUncheckedCreateWithoutInscriptionInput>
-  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutInscriptionInput
-  upsert?: Prisma.ConventionUpsertWithoutInscriptionInput
-  disconnect?: Prisma.ConventionWhereInput | boolean
-  delete?: Prisma.ConventionWhereInput | boolean
-  connect?: Prisma.ConventionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ConventionUpdateToOneWithWhereWithoutInscriptionInput, Prisma.ConventionUpdateWithoutInscriptionInput>, Prisma.ConventionUncheckedUpdateWithoutInscriptionInput>
-}
-
 export type EnumStatutConventionFieldUpdateOperationsInput = {
   set?: $Enums.StatutConvention
+}
+
+export type ConventionCreateNestedOneWithoutParticipantsInput = {
+  create?: Prisma.XOR<Prisma.ConventionCreateWithoutParticipantsInput, Prisma.ConventionUncheckedCreateWithoutParticipantsInput>
+  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutParticipantsInput
+  connect?: Prisma.ConventionWhereUniqueInput
+}
+
+export type ConventionUpdateOneRequiredWithoutParticipantsNestedInput = {
+  create?: Prisma.XOR<Prisma.ConventionCreateWithoutParticipantsInput, Prisma.ConventionUncheckedCreateWithoutParticipantsInput>
+  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutParticipantsInput
+  upsert?: Prisma.ConventionUpsertWithoutParticipantsInput
+  connect?: Prisma.ConventionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ConventionUpdateToOneWithWhereWithoutParticipantsInput, Prisma.ConventionUpdateWithoutParticipantsInput>, Prisma.ConventionUncheckedUpdateWithoutParticipantsInput>
+}
+
+export type ConventionCreateNestedOneWithoutFacturesInput = {
+  create?: Prisma.XOR<Prisma.ConventionCreateWithoutFacturesInput, Prisma.ConventionUncheckedCreateWithoutFacturesInput>
+  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutFacturesInput
+  connect?: Prisma.ConventionWhereUniqueInput
+}
+
+export type ConventionUpdateOneRequiredWithoutFacturesNestedInput = {
+  create?: Prisma.XOR<Prisma.ConventionCreateWithoutFacturesInput, Prisma.ConventionUncheckedCreateWithoutFacturesInput>
+  connectOrCreate?: Prisma.ConventionCreateOrConnectWithoutFacturesInput
+  upsert?: Prisma.ConventionUpsertWithoutFacturesInput
+  connect?: Prisma.ConventionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ConventionUpdateToOneWithWhereWithoutFacturesInput, Prisma.ConventionUpdateWithoutFacturesInput>, Prisma.ConventionUncheckedUpdateWithoutFacturesInput>
 }
 
 export type ConventionCreateNestedOneWithoutDocumentsInput = {
@@ -742,40 +755,44 @@ export type ConventionUpdateOneWithoutDocumentsNestedInput = {
 export type ConventionCreateWithoutCentreInput = {
   id?: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
-  inscription: Prisma.InscriptionCreateNestedOneWithoutConventionInput
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  participants?: Prisma.ConventionParticipantCreateNestedManyWithoutConventionInput
+  factures?: Prisma.FactureCreateNestedManyWithoutConventionInput
   documents?: Prisma.DocumentCreateNestedManyWithoutConventionInput
 }
 
 export type ConventionUncheckedCreateWithoutCentreInput = {
   id?: string
-  inscriptionId: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  participants?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutConventionInput
+  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutConventionInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutConventionInput
 }
 
@@ -810,157 +827,273 @@ export type ConventionScalarWhereInput = {
   NOT?: Prisma.ConventionScalarWhereInput | Prisma.ConventionScalarWhereInput[]
   id?: Prisma.StringFilter<"Convention"> | string
   centreId?: Prisma.StringFilter<"Convention"> | string
-  inscriptionId?: Prisma.StringFilter<"Convention"> | string
   numero?: Prisma.StringFilter<"Convention"> | string
-  nomOrganisme?: Prisma.StringFilter<"Convention"> | string
-  emailOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  telephoneOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  adresseOrganisme?: Prisma.StringNullableFilter<"Convention"> | string | null
-  nomContact?: Prisma.StringNullableFilter<"Convention"> | string | null
-  dateDebut?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
-  dateFin?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
+  organisationNom?: Prisma.StringFilter<"Convention"> | string
+  organisationAdresse?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationEmail?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationTelephone?: Prisma.StringNullableFilter<"Convention"> | string | null
+  organisationContact?: Prisma.StringNullableFilter<"Convention"> | string | null
+  dateDebut?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  dateFin?: Prisma.DateTimeFilter<"Convention"> | Date | string
   montant?: Prisma.DecimalFilter<"Convention"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFilter<"Convention"> | string
   statut?: Prisma.EnumStatutConventionFilter<"Convention"> | $Enums.StatutConvention
   dateSignature?: Prisma.DateTimeNullableFilter<"Convention"> | Date | string | null
   observations?: Prisma.StringNullableFilter<"Convention"> | string | null
-  creeLe?: Prisma.DateTimeFilter<"Convention"> | Date | string
-  modifieLe?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"Convention"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Convention"> | Date | string
 }
 
-export type ConventionCreateWithoutInscriptionInput = {
+export type ConventionCreateWithoutParticipantsInput = {
   id?: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutConventionsInput
+  factures?: Prisma.FactureCreateNestedManyWithoutConventionInput
   documents?: Prisma.DocumentCreateNestedManyWithoutConventionInput
 }
 
-export type ConventionUncheckedCreateWithoutInscriptionInput = {
+export type ConventionUncheckedCreateWithoutParticipantsInput = {
   id?: string
   centreId: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutConventionInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutConventionInput
 }
 
-export type ConventionCreateOrConnectWithoutInscriptionInput = {
+export type ConventionCreateOrConnectWithoutParticipantsInput = {
   where: Prisma.ConventionWhereUniqueInput
-  create: Prisma.XOR<Prisma.ConventionCreateWithoutInscriptionInput, Prisma.ConventionUncheckedCreateWithoutInscriptionInput>
+  create: Prisma.XOR<Prisma.ConventionCreateWithoutParticipantsInput, Prisma.ConventionUncheckedCreateWithoutParticipantsInput>
 }
 
-export type ConventionUpsertWithoutInscriptionInput = {
-  update: Prisma.XOR<Prisma.ConventionUpdateWithoutInscriptionInput, Prisma.ConventionUncheckedUpdateWithoutInscriptionInput>
-  create: Prisma.XOR<Prisma.ConventionCreateWithoutInscriptionInput, Prisma.ConventionUncheckedCreateWithoutInscriptionInput>
+export type ConventionUpsertWithoutParticipantsInput = {
+  update: Prisma.XOR<Prisma.ConventionUpdateWithoutParticipantsInput, Prisma.ConventionUncheckedUpdateWithoutParticipantsInput>
+  create: Prisma.XOR<Prisma.ConventionCreateWithoutParticipantsInput, Prisma.ConventionUncheckedCreateWithoutParticipantsInput>
   where?: Prisma.ConventionWhereInput
 }
 
-export type ConventionUpdateToOneWithWhereWithoutInscriptionInput = {
+export type ConventionUpdateToOneWithWhereWithoutParticipantsInput = {
   where?: Prisma.ConventionWhereInput
-  data: Prisma.XOR<Prisma.ConventionUpdateWithoutInscriptionInput, Prisma.ConventionUncheckedUpdateWithoutInscriptionInput>
+  data: Prisma.XOR<Prisma.ConventionUpdateWithoutParticipantsInput, Prisma.ConventionUncheckedUpdateWithoutParticipantsInput>
 }
 
-export type ConventionUpdateWithoutInscriptionInput = {
+export type ConventionUpdateWithoutParticipantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutConventionsNestedInput
+  factures?: Prisma.FactureUpdateManyWithoutConventionNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutConventionNestedInput
 }
 
-export type ConventionUncheckedUpdateWithoutInscriptionInput = {
+export type ConventionUncheckedUpdateWithoutParticipantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  factures?: Prisma.FactureUncheckedUpdateManyWithoutConventionNestedInput
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutConventionNestedInput
+}
+
+export type ConventionCreateWithoutFacturesInput = {
+  id?: string
+  numero: string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
+  statut?: $Enums.StatutConvention
+  dateSignature?: Date | string | null
+  observations?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  centre: Prisma.CentreFormationCreateNestedOneWithoutConventionsInput
+  participants?: Prisma.ConventionParticipantCreateNestedManyWithoutConventionInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutConventionInput
+}
+
+export type ConventionUncheckedCreateWithoutFacturesInput = {
+  id?: string
+  centreId: string
+  numero: string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
+  statut?: $Enums.StatutConvention
+  dateSignature?: Date | string | null
+  observations?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  participants?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutConventionInput
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutConventionInput
+}
+
+export type ConventionCreateOrConnectWithoutFacturesInput = {
+  where: Prisma.ConventionWhereUniqueInput
+  create: Prisma.XOR<Prisma.ConventionCreateWithoutFacturesInput, Prisma.ConventionUncheckedCreateWithoutFacturesInput>
+}
+
+export type ConventionUpsertWithoutFacturesInput = {
+  update: Prisma.XOR<Prisma.ConventionUpdateWithoutFacturesInput, Prisma.ConventionUncheckedUpdateWithoutFacturesInput>
+  create: Prisma.XOR<Prisma.ConventionCreateWithoutFacturesInput, Prisma.ConventionUncheckedCreateWithoutFacturesInput>
+  where?: Prisma.ConventionWhereInput
+}
+
+export type ConventionUpdateToOneWithWhereWithoutFacturesInput = {
+  where?: Prisma.ConventionWhereInput
+  data: Prisma.XOR<Prisma.ConventionUpdateWithoutFacturesInput, Prisma.ConventionUncheckedUpdateWithoutFacturesInput>
+}
+
+export type ConventionUpdateWithoutFacturesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  numero?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
+  statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
+  dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  centre?: Prisma.CentreFormationUpdateOneRequiredWithoutConventionsNestedInput
+  participants?: Prisma.ConventionParticipantUpdateManyWithoutConventionNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutConventionNestedInput
+}
+
+export type ConventionUncheckedUpdateWithoutFacturesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  centreId?: Prisma.StringFieldUpdateOperationsInput | string
+  numero?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
+  statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
+  dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutConventionNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutConventionNestedInput
 }
 
 export type ConventionCreateWithoutDocumentsInput = {
   id?: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   centre: Prisma.CentreFormationCreateNestedOneWithoutConventionsInput
-  inscription: Prisma.InscriptionCreateNestedOneWithoutConventionInput
+  participants?: Prisma.ConventionParticipantCreateNestedManyWithoutConventionInput
+  factures?: Prisma.FactureCreateNestedManyWithoutConventionInput
 }
 
 export type ConventionUncheckedCreateWithoutDocumentsInput = {
   id?: string
   centreId: string
-  inscriptionId: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  participants?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutConventionInput
+  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutConventionInput
 }
 
 export type ConventionCreateOrConnectWithoutDocumentsInput = {
@@ -982,119 +1115,127 @@ export type ConventionUpdateToOneWithWhereWithoutDocumentsInput = {
 export type ConventionUpdateWithoutDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutConventionsNestedInput
-  inscription?: Prisma.InscriptionUpdateOneRequiredWithoutConventionNestedInput
+  participants?: Prisma.ConventionParticipantUpdateManyWithoutConventionNestedInput
+  factures?: Prisma.FactureUpdateManyWithoutConventionNestedInput
 }
 
 export type ConventionUncheckedUpdateWithoutDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   centreId?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutConventionNestedInput
+  factures?: Prisma.FactureUncheckedUpdateManyWithoutConventionNestedInput
 }
 
 export type ConventionCreateManyCentreInput = {
   id?: string
-  inscriptionId: string
   numero: string
-  nomOrganisme: string
-  emailOrganisme?: string | null
-  telephoneOrganisme?: string | null
-  adresseOrganisme?: string | null
-  nomContact?: string | null
-  dateDebut?: Date | string | null
-  dateFin?: Date | string | null
-  montant?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  organisationNom: string
+  organisationAdresse?: string | null
+  organisationEmail?: string | null
+  organisationTelephone?: string | null
+  organisationContact?: string | null
+  dateDebut: Date | string
+  dateFin: Date | string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   statut?: $Enums.StatutConvention
   dateSignature?: Date | string | null
   observations?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ConventionUpdateWithoutCentreInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  inscription?: Prisma.InscriptionUpdateOneRequiredWithoutConventionNestedInput
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ConventionParticipantUpdateManyWithoutConventionNestedInput
+  factures?: Prisma.FactureUpdateManyWithoutConventionNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutConventionNestedInput
 }
 
 export type ConventionUncheckedUpdateWithoutCentreInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutConventionNestedInput
+  factures?: Prisma.FactureUncheckedUpdateManyWithoutConventionNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutConventionNestedInput
 }
 
 export type ConventionUncheckedUpdateManyWithoutCentreInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  inscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
-  nomOrganisme?: Prisma.StringFieldUpdateOperationsInput | string
-  emailOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telephoneOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  adresseOrganisme?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  nomContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  dateDebut?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  dateFin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organisationNom?: Prisma.StringFieldUpdateOperationsInput | string
+  organisationAdresse?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationTelephone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organisationContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateDebut?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dateFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutConventionFieldUpdateOperationsInput | $Enums.StatutConvention
   dateSignature?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   observations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1103,10 +1244,14 @@ export type ConventionUncheckedUpdateManyWithoutCentreInput = {
  */
 
 export type ConventionCountOutputType = {
+  participants: number
+  factures: number
   documents: number
 }
 
 export type ConventionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  participants?: boolean | ConventionCountOutputTypeCountParticipantsArgs
+  factures?: boolean | ConventionCountOutputTypeCountFacturesArgs
   documents?: boolean | ConventionCountOutputTypeCountDocumentsArgs
 }
 
@@ -1123,6 +1268,20 @@ export type ConventionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.E
 /**
  * ConventionCountOutputType without action
  */
+export type ConventionCountOutputTypeCountParticipantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConventionParticipantWhereInput
+}
+
+/**
+ * ConventionCountOutputType without action
+ */
+export type ConventionCountOutputTypeCountFacturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FactureWhereInput
+}
+
+/**
+ * ConventionCountOutputType without action
+ */
 export type ConventionCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DocumentWhereInput
 }
@@ -1131,23 +1290,24 @@ export type ConventionCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.
 export type ConventionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
   numero?: boolean
-  nomOrganisme?: boolean
-  emailOrganisme?: boolean
-  telephoneOrganisme?: boolean
-  adresseOrganisme?: boolean
-  nomContact?: boolean
+  organisationNom?: boolean
+  organisationAdresse?: boolean
+  organisationEmail?: boolean
+  organisationTelephone?: boolean
+  organisationContact?: boolean
   dateDebut?: boolean
   dateFin?: boolean
   montant?: boolean
+  devise?: boolean
   statut?: boolean
   dateSignature?: boolean
   observations?: boolean
-  creeLe?: boolean
-  modifieLe?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.InscriptionDefaultArgs<ExtArgs>
+  participants?: boolean | Prisma.Convention$participantsArgs<ExtArgs>
+  factures?: boolean | Prisma.Convention$facturesArgs<ExtArgs>
   documents?: boolean | Prisma.Convention$documentsArgs<ExtArgs>
   _count?: boolean | Prisma.ConventionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["convention"]>
@@ -1155,108 +1315,106 @@ export type ConventionSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type ConventionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
   numero?: boolean
-  nomOrganisme?: boolean
-  emailOrganisme?: boolean
-  telephoneOrganisme?: boolean
-  adresseOrganisme?: boolean
-  nomContact?: boolean
+  organisationNom?: boolean
+  organisationAdresse?: boolean
+  organisationEmail?: boolean
+  organisationTelephone?: boolean
+  organisationContact?: boolean
   dateDebut?: boolean
   dateFin?: boolean
   montant?: boolean
+  devise?: boolean
   statut?: boolean
   dateSignature?: boolean
   observations?: boolean
-  creeLe?: boolean
-  modifieLe?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.InscriptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["convention"]>
 
 export type ConventionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
   numero?: boolean
-  nomOrganisme?: boolean
-  emailOrganisme?: boolean
-  telephoneOrganisme?: boolean
-  adresseOrganisme?: boolean
-  nomContact?: boolean
+  organisationNom?: boolean
+  organisationAdresse?: boolean
+  organisationEmail?: boolean
+  organisationTelephone?: boolean
+  organisationContact?: boolean
   dateDebut?: boolean
   dateFin?: boolean
   montant?: boolean
+  devise?: boolean
   statut?: boolean
   dateSignature?: boolean
   observations?: boolean
-  creeLe?: boolean
-  modifieLe?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.InscriptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["convention"]>
 
 export type ConventionSelectScalar = {
   id?: boolean
   centreId?: boolean
-  inscriptionId?: boolean
   numero?: boolean
-  nomOrganisme?: boolean
-  emailOrganisme?: boolean
-  telephoneOrganisme?: boolean
-  adresseOrganisme?: boolean
-  nomContact?: boolean
+  organisationNom?: boolean
+  organisationAdresse?: boolean
+  organisationEmail?: boolean
+  organisationTelephone?: boolean
+  organisationContact?: boolean
   dateDebut?: boolean
   dateFin?: boolean
   montant?: boolean
+  devise?: boolean
   statut?: boolean
   dateSignature?: boolean
   observations?: boolean
-  creeLe?: boolean
-  modifieLe?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type ConventionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "inscriptionId" | "numero" | "nomOrganisme" | "emailOrganisme" | "telephoneOrganisme" | "adresseOrganisme" | "nomContact" | "dateDebut" | "dateFin" | "montant" | "statut" | "dateSignature" | "observations" | "creeLe" | "modifieLe", ExtArgs["result"]["convention"]>
+export type ConventionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "numero" | "organisationNom" | "organisationAdresse" | "organisationEmail" | "organisationTelephone" | "organisationContact" | "dateDebut" | "dateFin" | "montant" | "devise" | "statut" | "dateSignature" | "observations" | "createdAt" | "updatedAt", ExtArgs["result"]["convention"]>
 export type ConventionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.InscriptionDefaultArgs<ExtArgs>
+  participants?: boolean | Prisma.Convention$participantsArgs<ExtArgs>
+  factures?: boolean | Prisma.Convention$facturesArgs<ExtArgs>
   documents?: boolean | Prisma.Convention$documentsArgs<ExtArgs>
   _count?: boolean | Prisma.ConventionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ConventionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.InscriptionDefaultArgs<ExtArgs>
 }
 export type ConventionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
-  inscription?: boolean | Prisma.InscriptionDefaultArgs<ExtArgs>
 }
 
 export type $ConventionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Convention"
   objects: {
     centre: Prisma.$CentreFormationPayload<ExtArgs>
-    inscription: Prisma.$InscriptionPayload<ExtArgs>
+    participants: Prisma.$ConventionParticipantPayload<ExtArgs>[]
+    factures: Prisma.$FacturePayload<ExtArgs>[]
     documents: Prisma.$DocumentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     centreId: string
-    inscriptionId: string
     numero: string
-    nomOrganisme: string
-    emailOrganisme: string | null
-    telephoneOrganisme: string | null
-    adresseOrganisme: string | null
-    nomContact: string | null
-    dateDebut: Date | null
-    dateFin: Date | null
+    organisationNom: string
+    organisationAdresse: string | null
+    organisationEmail: string | null
+    organisationTelephone: string | null
+    organisationContact: string | null
+    dateDebut: Date
+    dateFin: Date
     montant: runtime.Decimal
+    devise: string
     statut: $Enums.StatutConvention
     dateSignature: Date | null
     observations: string | null
-    creeLe: Date
-    modifieLe: Date
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["convention"]>
   composites: {}
 }
@@ -1652,7 +1810,8 @@ readonly fields: ConventionFieldRefs;
 export interface Prisma__ConventionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   centre<T extends Prisma.CentreFormationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CentreFormationDefaultArgs<ExtArgs>>): Prisma.Prisma__CentreFormationClient<runtime.Types.Result.GetResult<Prisma.$CentreFormationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  inscription<T extends Prisma.InscriptionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InscriptionDefaultArgs<ExtArgs>>): Prisma.Prisma__InscriptionClient<runtime.Types.Result.GetResult<Prisma.$InscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  participants<T extends Prisma.Convention$participantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Convention$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConventionParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  factures<T extends Prisma.Convention$facturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Convention$facturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FacturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documents<T extends Prisma.Convention$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Convention$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1685,21 +1844,21 @@ export interface Prisma__ConventionClient<T, Null = never, ExtArgs extends runti
 export interface ConventionFieldRefs {
   readonly id: Prisma.FieldRef<"Convention", 'String'>
   readonly centreId: Prisma.FieldRef<"Convention", 'String'>
-  readonly inscriptionId: Prisma.FieldRef<"Convention", 'String'>
   readonly numero: Prisma.FieldRef<"Convention", 'String'>
-  readonly nomOrganisme: Prisma.FieldRef<"Convention", 'String'>
-  readonly emailOrganisme: Prisma.FieldRef<"Convention", 'String'>
-  readonly telephoneOrganisme: Prisma.FieldRef<"Convention", 'String'>
-  readonly adresseOrganisme: Prisma.FieldRef<"Convention", 'String'>
-  readonly nomContact: Prisma.FieldRef<"Convention", 'String'>
+  readonly organisationNom: Prisma.FieldRef<"Convention", 'String'>
+  readonly organisationAdresse: Prisma.FieldRef<"Convention", 'String'>
+  readonly organisationEmail: Prisma.FieldRef<"Convention", 'String'>
+  readonly organisationTelephone: Prisma.FieldRef<"Convention", 'String'>
+  readonly organisationContact: Prisma.FieldRef<"Convention", 'String'>
   readonly dateDebut: Prisma.FieldRef<"Convention", 'DateTime'>
   readonly dateFin: Prisma.FieldRef<"Convention", 'DateTime'>
   readonly montant: Prisma.FieldRef<"Convention", 'Decimal'>
+  readonly devise: Prisma.FieldRef<"Convention", 'String'>
   readonly statut: Prisma.FieldRef<"Convention", 'StatutConvention'>
   readonly dateSignature: Prisma.FieldRef<"Convention", 'DateTime'>
   readonly observations: Prisma.FieldRef<"Convention", 'String'>
-  readonly creeLe: Prisma.FieldRef<"Convention", 'DateTime'>
-  readonly modifieLe: Prisma.FieldRef<"Convention", 'DateTime'>
+  readonly createdAt: Prisma.FieldRef<"Convention", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Convention", 'DateTime'>
 }
     
 
@@ -2096,6 +2255,54 @@ export type ConventionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many Conventions to delete.
    */
   limit?: number
+}
+
+/**
+ * Convention.participants
+ */
+export type Convention$participantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConventionParticipant
+   */
+  select?: Prisma.ConventionParticipantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConventionParticipant
+   */
+  omit?: Prisma.ConventionParticipantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConventionParticipantInclude<ExtArgs> | null
+  where?: Prisma.ConventionParticipantWhereInput
+  orderBy?: Prisma.ConventionParticipantOrderByWithRelationInput | Prisma.ConventionParticipantOrderByWithRelationInput[]
+  cursor?: Prisma.ConventionParticipantWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConventionParticipantScalarFieldEnum | Prisma.ConventionParticipantScalarFieldEnum[]
+}
+
+/**
+ * Convention.factures
+ */
+export type Convention$facturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Facture
+   */
+  select?: Prisma.FactureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Facture
+   */
+  omit?: Prisma.FactureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FactureInclude<ExtArgs> | null
+  where?: Prisma.FactureWhereInput
+  orderBy?: Prisma.FactureOrderByWithRelationInput | Prisma.FactureOrderByWithRelationInput[]
+  cursor?: Prisma.FactureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FactureScalarFieldEnum | Prisma.FactureScalarFieldEnum[]
 }
 
 /**

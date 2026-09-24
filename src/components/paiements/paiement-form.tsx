@@ -1,902 +1,1605 @@
-"use client";
+"use client"
 
 import {
-  useMemo,
+  useRef,
   useState,
   useTransition,
-} from "react";
-import { useRouter } from "next/navigation";
-import Select from "react-select";
-import Swal from "sweetalert2";
+} from "react"
+
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+
+import Select, {
+  type SingleValue,
+} from "react-select"
+
 import {
   ArrowLeft,
+  CheckCircle2,
   CreditCard,
-  Save,
-} from "lucide-react";
+  Loader2,
+  Receipt,
+  UserRound,
+  Wallet,
+} from "lucide-react"
 
-import { createPaiement } from "@/actions/paiement.actions";
+import { toast } from "sonner"
 
-type Echeance = {
-  id: string;
-  numero: number;
-  dateEcheance: string | Date;
-  montant: string;
-  montantPaye: string;
-  montantDu: string;
-  statut: string;
-};
+import {
+  createPaiementRegulier,
+  createReglementFacture,
+  getTarifsForInscription,
+  type ModePaiementInput,
+} from "@/actions/paiement-actions"
 
-type Facture = {
-  id: string;
-  numero: string;
-  total: string;
-  montantPaye: string;
-  montantDu: string;
-  statut: string;
-  echeances: Echeance[];
-};
+import {
+  getEcheancesForFacture,
+} from "@/actions/paiement-form-actions"
+
+/* =========================================================
+TYPES
+========================================================= */
+
+type TypePaiement =
+  | "PAIEMENT_REGULIER"
+  | "REGLEMENT_FACTURE_CONVENTION"
 
 type Inscription = {
-  id: string;
-  numero: string;
-  montantConvenu: string;
+  id: string
+  numero: string
 
   apprenant: {
-    id: string;
-    prenom: string;
-    nom: string;
-  };
-
-  session: {
-    id: string;
-    code: string;
-    nom: string | null;
-
-    formation: {
-      id: string;
-      nom: string;
-    };
-  };
-
-  factures: Facture[];
-};
-
-type Props = {
-  data: {
-    inscriptions: Inscription[];
-  };
-};
-
-const modes = [
-  {
-    value: "ESPECES",
-    label: "Espèces",
-  },
-  {
-    value: "VIREMENT",
-    label: "Virement bancaire",
-  },
-  {
-    value: "MOBILE_MONEY",
-    label: "Mobile Money",
-  },
-  {
-    value: "CARTE",
-    label: "Carte bancaire",
-  },
-  {
-    value: "CHEQUE",
-    label: "Chèque",
-  },
-  {
-    value: "AUTRE",
-    label: "Autre",
-  },
-];
-
-function numberValue(value: unknown) {
-  const number = Number(
-    String(value ?? "0"),
-  );
-
-  return Number.isFinite(number)
-    ? number
-    : 0;
-}
-
-function money(value: unknown) {
-  return new Intl.NumberFormat(
-    "fr-FR",
-    {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-  ).format(numberValue(value));
-}
-
-function formatDate(value: unknown) {
-  const date = new Date(
-    String(value),
-  );
-
-  if (Number.isNaN(date.getTime())) {
-    return "—";
+    id: string
+    numero: string
+    nom: string
+    prenom: string
   }
 
-  return new Intl.DateTimeFormat(
-    "fr-FR",
-    {
-      dateStyle: "medium",
-    },
-  ).format(date);
+  session: {
+    formation: {
+      id: string
+      code: string
+      nom: string
+    }
+  }
 }
 
+type Tarif = {
+  id: string
+  nom: string
+  description: string | null
+  montant: number
+  montantPaye: number
+  montantRestant: number
+  devise: string
+  actif: boolean
+}
+
+type Facture = {
+  id: string
+  numero: string
+  total: number
+  montantPaye: number
+  montantDu: number
+
+  convention: {
+    id: string
+    numero: string
+    organisationNom: string
+    montant: number
+    devise: string
+  }
+}
+
+type Echeance = {
+  id: string
+  numero: number
+  dateEcheance: string
+  montant: number
+  montantPaye: number
+  montantDu: number
+  statut: string
+}
+
+type Props = {
+  inscriptions: Inscription[]
+  factures: Facture[]
+}
+
+/* =========================================================
+REACT SELECT OPTIONS
+========================================================= */
+
+type SelectOption = {
+  value: string
+  label: string
+}
+
+/* =========================================================
+STYLE REACT SELECT
+========================================================= */
+
+const selectStyles = {
+  control: (
+    base: any,
+    state: any
+  ) => ({
+    ...base,
+
+    minHeight: "48px",
+
+    borderRadius: "12px",
+
+    borderColor: state.isFocused
+      ? "#3b82f6"
+      : "#e2e8f0",
+
+    boxShadow: state.isFocused
+      ? "0 0 0 3px rgba(59,130,246,0.12)"
+      : "none",
+
+    backgroundColor: "white",
+
+    "&:hover": {
+      borderColor: "#3b82f6",
+    },
+  }),
+
+  menu: (base: any) => ({
+    ...base,
+
+    zIndex: 50,
+
+    borderRadius: "12px",
+
+    overflow: "hidden",
+  }),
+
+  option: (
+    base: any,
+    state: any
+  ) => ({
+    ...base,
+
+    cursor: "pointer",
+
+    backgroundColor:
+      state.isSelected
+        ? "#2563eb"
+        : state.isFocused
+          ? "#eff6ff"
+          : "white",
+
+    color:
+      state.isSelected
+        ? "white"
+        : "#0f172a",
+  }),
+
+  singleValue: (
+    base: any
+  ) => ({
+    ...base,
+    color: "#0f172a",
+  }),
+
+  placeholder: (
+    base: any
+  ) => ({
+    ...base,
+    color: "#94a3b8",
+  }),
+
+  input: (
+    base: any
+  ) => ({
+    ...base,
+    color: "#0f172a",
+  }),
+
+  menuPortal: (
+    base: any
+  ) => ({
+    ...base,
+    zIndex: 9999,
+  }),
+}
+
+/* =========================================================
+COMPOSANT
+========================================================= */
+
 export default function PaiementForm({
-  data,
+  inscriptions,
+  factures,
 }: Props) {
-  const router = useRouter();
+  const router = useRouter()
 
-  const {
-    inscriptions = [],
-  } = data;
+  const [
+    isPending,
+    startTransition,
+  ] = useTransition()
 
-  const [isPending, startTransition] =
-    useTransition();
+  /* =======================================================
+     REQUEST IDS
 
-  const [inscriptionId, setInscriptionId] =
-    useState("");
+     Permet d'éviter qu'une ancienne requête
+     écrase les données d'une nouvelle sélection.
+  ======================================================= */
 
-  const [factureId, setFactureId] =
-    useState("");
+  const tarifsRequestId =
+    useRef(0)
 
-  const [echeanceId, setEcheanceId] =
-    useState("");
+  const echeancesRequestId =
+    useRef(0)
 
-  const [montant, setMontant] =
-    useState("");
+  /* =======================================================
+     TYPE DE PAIEMENT
+  ======================================================= */
 
-  const [mode, setMode] =
-    useState("ESPECES");
+  const [type, setType] =
+    useState<TypePaiement>(
+      "PAIEMENT_REGULIER"
+    )
 
-  const [reference, setReference] =
-    useState("");
+  /* =======================================================
+     PAIEMENT RÉGULIER
+  ======================================================= */
 
-  const [datePaiement, setDatePaiement] =
-    useState(
-      new Date()
-        .toISOString()
-        .slice(0, 10),
-    );
+  const [
+    inscriptionId,
+    setInscriptionId,
+  ] = useState("")
+
+  const [
+    tarifId,
+    setTarifId,
+  ] = useState("")
+
+  const [
+    tarifs,
+    setTarifs,
+  ] = useState<Tarif[]>([])
+
+  const [
+    loadingTarifs,
+    setLoadingTarifs,
+  ] = useState(false)
+
+  /* =======================================================
+     FACTURE CONVENTION
+  ======================================================= */
+
+  const [
+    factureId,
+    setFactureId,
+  ] = useState("")
+
+  const [
+    echeanceId,
+    setEcheanceId,
+  ] = useState("")
+
+  const [
+    echeances,
+    setEcheances,
+  ] = useState<Echeance[]>([])
+
+  const [
+    loadingEcheances,
+    setLoadingEcheances,
+  ] = useState(false)
+
+  /* =======================================================
+     PAIEMENT
+  ======================================================= */
+
+  const [
+    montant,
+    setMontant,
+  ] = useState("")
+
+  const [
+    mode,
+    setMode,
+  ] = useState<ModePaiementInput>(
+    "ESPECES"
+  )
 
   const [
     referenceTransaction,
     setReferenceTransaction,
-  ] = useState("");
+  ] = useState("")
 
-  const [notes, setNotes] =
-    useState("");
+  const [
+    notes,
+    setNotes,
+  ] = useState("")
 
-  const selectedInscription =
-    useMemo(
-      () =>
-        inscriptions.find(
-          (item) =>
-            item.id ===
-            inscriptionId,
-        ),
-      [
-        inscriptions,
-        inscriptionId,
-      ],
-    );
+  /* =========================================================
+     ÉLÉMENTS SÉLECTIONNÉS
+  ========================================================= */
 
-  const factures =
-    selectedInscription?.factures ??
-    [];
+  const selectedTarif =
+    tarifs.find(
+      (tarif) =>
+        tarif.id === tarifId
+    )
 
   const selectedFacture =
     factures.find(
-      (item) =>
-        item.id === factureId,
-    );
-
-  const echeances =
-    selectedFacture?.echeances ??
-    [];
+      (facture) =>
+        facture.id === factureId
+    )
 
   const selectedEcheance =
     echeances.find(
-      (item) =>
-        item.id === echeanceId,
-    );
+      (echeance) =>
+        echeance.id === echeanceId
+    )
 
-  const inscriptionOptions =
+  /* =========================================================
+     OPTIONS INSCRIPTIONS
+  ========================================================= */
+
+  const inscriptionOptions: SelectOption[] =
     inscriptions.map(
-      (item) => ({
-        value: item.id,
+      (inscription) => ({
+        value: inscription.id,
 
-        label: `${item.numero} — ${item.apprenant.prenom} ${item.apprenant.nom} — ${item.session.formation.nom}`,
-      }),
-    );
+        label:
+          `${inscription.apprenant.nom} ` +
+          `${inscription.apprenant.prenom} — ` +
+          `${inscription.session.formation.nom} — ` +
+          `${inscription.numero}`,
+      })
+    )
 
-  const factureOptions =
+  /* =========================================================
+     OPTIONS TARIFS
+  ========================================================= */
+
+  const tarifOptions: SelectOption[] =
+    tarifs.map(
+      (tarif) => ({
+        value: tarif.id,
+
+        label:
+          `${tarif.nom} — reste ` +
+          `${tarif.montantRestant} ` +
+          `${tarif.devise}`,
+      })
+    )
+
+  /* =========================================================
+     OPTIONS FACTURES
+  ========================================================= */
+
+  const factureOptions: SelectOption[] =
     factures
       .filter(
         (facture) =>
-          numberValue(
-            facture.montantDu,
-          ) > 0,
+          facture.montantDu > 0
       )
       .map(
         (facture) => ({
           value: facture.id,
 
-          label: `${facture.numero} — reste ${money(
-            facture.montantDu,
-          )} FCFA`,
-        }),
-      );
+          label:
+            `${facture.numero} — ` +
+            `${facture.convention.organisationNom} — ` +
+            `reste ${facture.montantDu} ` +
+            `${facture.convention.devise}`,
+        })
+      )
 
-  const echeanceOptions =
+  /* =========================================================
+     OPTIONS ÉCHÉANCES
+  ========================================================= */
+
+  const echeanceOptions: SelectOption[] =
     echeances
       .filter(
         (echeance) =>
-          numberValue(
-            echeance.montantDu,
-          ) > 0 &&
-          echeance.statut !==
-            "ANNULEE",
+          echeance.montantDu > 0
       )
       .map(
         (echeance) => ({
           value: echeance.id,
 
-          label: `Échéance #${echeance.numero} — ${formatDate(
-            echeance.dateEcheance,
-          )} — reste ${money(
-            echeance.montantDu,
-          )} FCFA`,
-        }),
-      );
+          label:
+            `Échéance ${echeance.numero} — reste ` +
+            `${echeance.montantDu}`,
+        })
+      )
 
-  function handleInscriptionChange(
-    option: {
-      value: string;
-      label: string;
-    } | null,
+  /* =========================================================
+     OPTIONS MODE PAIEMENT
+  ========================================================= */
+
+  const modeOptions: SelectOption[] = [
+    {
+      value: "ESPECES",
+      label: "Espèces",
+    },
+    {
+      value: "VIREMENT",
+      label: "Virement bancaire",
+    },
+    {
+      value: "MOBILE_MONEY",
+      label: "Mobile Money",
+    },
+    {
+      value: "CARTE",
+      label: "Carte",
+    },
+    {
+      value: "CHEQUE",
+      label: "Chèque",
+    },
+    {
+      value: "AUTRE",
+      label: "Autre",
+    },
+  ]
+
+  /* =========================================================
+     CHARGEMENT TARIFS
+  ========================================================= */
+
+  async function loadTarifs(
+    inscription: string,
+    requestId: number
   ) {
-    const id =
-      option?.value ?? "";
+    setLoadingTarifs(true)
 
-    setInscriptionId(id);
+    try {
+      const result =
+        await getTarifsForInscription(
+          inscription
+        )
 
-    setFactureId("");
-    setEcheanceId("");
-    setMontant("");
+      /*
+       * Une nouvelle sélection a été faite.
+       * On ignore cette ancienne réponse.
+       */
+      if (
+        requestId !==
+        tarifsRequestId.current
+      ) {
+        return
+      }
 
-    if (!id) {
-      return;
-    }
+      if (!result.success) {
+        toast.error(
+          result.message
+        )
 
-    const inscription =
-      inscriptions.find(
-        (item) =>
-          item.id === id,
-      );
+        setTarifs([])
 
-    if (!inscription) {
-      return;
-    }
+        return
+      }
 
-    const facture =
-      inscription.factures.find(
-        (item) =>
-          numberValue(
-            item.montantDu,
-          ) > 0,
-      );
+      const tarifsRecus =
+        result.data?.tarifs ?? []
 
-    if (!facture) {
-      return;
-    }
+      const tarifsFormates: Tarif[] =
+        tarifsRecus.map(
+          (tarif) => ({
+            id: tarif.id,
 
-    setFactureId(
-      facture.id,
-    );
+            nom: tarif.nom,
 
-    const echeance =
-      facture.echeances.find(
-        (item) =>
-          numberValue(
-            item.montantDu,
-          ) > 0 &&
-          item.statut !==
-            "ANNULEE",
-      );
+            description:
+              tarif.description,
 
-    if (echeance) {
-      setEcheanceId(
-        echeance.id,
-      );
+            montant:
+              Number(
+                tarif.montant
+              ),
 
-      setMontant(
-        echeance.montantDu,
-      );
-    } else {
-      setMontant(
-        facture.montantDu,
-      );
+            montantPaye:
+              Number(
+                tarif.montantPaye
+              ),
+
+            montantRestant:
+              Number(
+                tarif.montantRestant
+              ),
+
+            devise:
+              tarif.devise,
+
+            actif:
+              tarif.actif,
+          })
+        )
+
+      setTarifs(
+        tarifsFormates
+      )
+    } catch (error) {
+      if (
+        requestId !==
+        tarifsRequestId.current
+      ) {
+        return
+      }
+
+      console.error(
+        "Chargement tarifs:",
+        error
+      )
+
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Impossible de charger les frais."
+      )
+
+      setTarifs([])
+    } finally {
+      if (
+        requestId ===
+        tarifsRequestId.current
+      ) {
+        setLoadingTarifs(false)
+      }
     }
   }
 
-  function handleFactureChange(
-    option: {
-      value: string;
-      label: string;
-    } | null,
+  /* =========================================================
+     CHARGEMENT ÉCHÉANCES
+  ========================================================= */
+
+  async function loadEcheances(
+    facture: string,
+    requestId: number
   ) {
-    const id =
-      option?.value ?? "";
+    setLoadingEcheances(true)
 
-    setFactureId(id);
-    setEcheanceId("");
-    setMontant("");
+    try {
+      const data =
+        await getEcheancesForFacture(
+          facture
+        )
 
-    if (!id) {
-      return;
-    }
+      if (
+        requestId !==
+        echeancesRequestId.current
+      ) {
+        return
+      }
 
-    const facture =
-      factures.find(
-        (item) =>
-          item.id === id,
-      );
+      setEcheances(
+        data.map(
+          (item) => ({
+            ...item,
 
-    if (!facture) {
-      return;
-    }
+            dateEcheance:
+              item.dateEcheance.toString(),
 
-    const echeance =
-      facture.echeances.find(
-        (item) =>
-          numberValue(
-            item.montantDu,
-          ) > 0 &&
-          item.statut !==
-            "ANNULEE",
-      );
+            montant:
+              Number(
+                item.montant
+              ),
 
-    if (echeance) {
-      setEcheanceId(
-        echeance.id,
-      );
+            montantPaye:
+              Number(
+                item.montantPaye
+              ),
 
-      setMontant(
-        echeance.montantDu,
-      );
-    } else {
-      setMontant(
-        facture.montantDu,
-      );
+            montantDu:
+              Number(
+                item.montantDu
+              ),
+          })
+        )
+      )
+    } catch (error) {
+      if (
+        requestId !==
+        echeancesRequestId.current
+      ) {
+        return
+      }
+
+      console.error(
+        "Chargement échéances:",
+        error
+      )
+
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Impossible de charger les échéances."
+      )
+
+      setEcheances([])
+    } finally {
+      if (
+        requestId ===
+        echeancesRequestId.current
+      ) {
+        setLoadingEcheances(false)
+      }
     }
   }
+
+  /* =========================================================
+     RESET FORMULAIRE
+  ========================================================= */
+
+  function resetFormForType(
+    newType: TypePaiement
+  ) {
+    /*
+     * Invalide les anciennes requêtes.
+     */
+    tarifsRequestId.current += 1
+    echeancesRequestId.current += 1
+
+    setType(newType)
+
+    /* Paiement régulier */
+    setInscriptionId("")
+    setTarifId("")
+    setTarifs([])
+    setLoadingTarifs(false)
+
+    /* Facture */
+    setFactureId("")
+    setEcheanceId("")
+    setEcheances([])
+    setLoadingEcheances(false)
+
+    /* Commun */
+    setMontant("")
+    setReferenceTransaction("")
+    setNotes("")
+    setMode("ESPECES")
+  }
+
+  /* =========================================================
+     CHANGEMENT D'INSCRIPTION
+  ========================================================= */
+
+  async function handleInscriptionChange(
+    option: SingleValue<SelectOption>
+  ) {
+    const value =
+      option?.value ?? ""
+
+    const requestId =
+      ++tarifsRequestId.current
+
+    setInscriptionId(value)
+
+    /*
+     * Réinitialiser le frais
+     * et le montant.
+     */
+    setTarifId("")
+    setTarifs([])
+    setMontant("")
+
+    if (!value) {
+      setLoadingTarifs(false)
+      return
+    }
+
+    await loadTarifs(
+      value,
+      requestId
+    )
+  }
+
+  /* =========================================================
+     CHANGEMENT DE TARIF
+  ========================================================= */
+
+  function handleTarifChange(
+    option: SingleValue<SelectOption>
+  ) {
+    const value =
+      option?.value ?? ""
+
+    setTarifId(value)
+
+    const tarif =
+      tarifs.find(
+        (item) =>
+          item.id === value
+      )
+
+    if (!tarif) {
+      setMontant("")
+      return
+    }
+
+    if (
+      tarif.montantRestant <= 0
+    ) {
+      setMontant("")
+      return
+    }
+
+    /*
+     * Le reste complet est proposé
+     * automatiquement.
+     *
+     * MAIS le champ reste totalement
+     * modifiable pour permettre les
+     * paiements progressifs.
+     */
+    setMontant(
+      tarif.montantRestant.toString()
+    )
+  }
+
+  /* =========================================================
+     CHANGEMENT FACTURE
+  ========================================================= */
+
+  async function handleFactureChange(
+    option: SingleValue<SelectOption>
+  ) {
+    const value =
+      option?.value ?? ""
+
+    const requestId =
+      ++echeancesRequestId.current
+
+    setFactureId(value)
+
+    /*
+     * Réinitialiser l'échéance
+     * et le montant.
+     */
+    setEcheanceId("")
+    setEcheances([])
+    setMontant("")
+
+    if (!value) {
+      setLoadingEcheances(false)
+      return
+    }
+
+    await loadEcheances(
+      value,
+      requestId
+    )
+  }
+
+  /* =========================================================
+     CHANGEMENT ÉCHÉANCE
+  ========================================================= */
 
   function handleEcheanceChange(
-    option: {
-      value: string;
-      label: string;
-    } | null,
+    option: SingleValue<SelectOption>
   ) {
-    const id =
-      option?.value ?? "";
+    const value =
+      option?.value ?? ""
 
-    setEcheanceId(id);
-
-    if (!id) {
-      setMontant("");
-      return;
-    }
+    setEcheanceId(value)
 
     const echeance =
       echeances.find(
         (item) =>
-          item.id === id,
-      );
+          item.id === value
+      )
 
-    if (echeance) {
-      setMontant(
-        echeance.montantDu,
-      );
+    if (!echeance) {
+      setMontant("")
+      return
     }
+
+    if (
+      echeance.montantDu <= 0
+    ) {
+      setMontant("")
+      return
+    }
+
+    /*
+     * Le reste est proposé par défaut,
+     * mais reste modifiable.
+     */
+    setMontant(
+      echeance.montantDu.toString()
+    )
   }
+
+  /* =========================================================
+     CHANGEMENT MODE
+  ========================================================= */
+
+  function handleModeChange(
+    option: SingleValue<SelectOption>
+  ) {
+    if (!option) {
+      return
+    }
+
+    setMode(
+      option.value as ModePaiementInput
+    )
+  }
+
+  /* =========================================================
+     SOUMISSION
+  ========================================================= */
 
   function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>,
+    event: React.FormEvent<HTMLFormElement>
   ) {
-    event.preventDefault();
+    event.preventDefault()
 
-    if (!inscriptionId) {
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Inscription obligatoire",
-        text:
-          "Sélectionnez l'inscription concernée.",
-      });
-
-      return;
+    if (isPending) {
+      return
     }
 
-    if (!factureId) {
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Facture obligatoire",
-        text:
-          "Sélectionnez la facture à régler.",
-      });
+    const montantNumber =
+      Number(montant)
 
-      return;
-    }
+    /* =======================================================
+       VALIDATION MONTANT
+    ======================================================= */
 
     if (
-      !montant ||
-      numberValue(montant) <= 0
+      !Number.isFinite(
+        montantNumber
+      ) ||
+      montantNumber <= 0
     ) {
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Montant invalide",
-        text:
-          "Le montant du paiement doit être supérieur à zéro.",
-      });
+      toast.error(
+        "Veuillez saisir un montant valide supérieur à zéro."
+      )
 
-      return;
+      return
     }
 
-    if (!reference.trim()) {
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Référence obligatoire",
-        text:
-          "Veuillez renseigner la référence du paiement.",
-      });
-
-      return;
-    }
+    /* =======================================================
+       PAIEMENT RÉGULIER
+    ======================================================= */
 
     if (
-      selectedEcheance &&
-      numberValue(montant) >
-        numberValue(
-          selectedEcheance.montantDu,
+      type ===
+      "PAIEMENT_REGULIER"
+    ) {
+      if (!inscriptionId) {
+        toast.error(
+          "Veuillez sélectionner une inscription."
         )
-    ) {
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Montant trop élevé",
-        text: `Le reste de cette échéance est de ${money(
-          selectedEcheance.montantDu,
-        )} FCFA.`,
-      });
 
-      return;
+        return
+      }
+
+      if (!tarifId) {
+        toast.error(
+          "Veuillez sélectionner un frais."
+        )
+
+        return
+      }
+
+      if (!selectedTarif) {
+        toast.error(
+          "Le frais sélectionné est introuvable."
+        )
+
+        return
+      }
+
+      if (
+        selectedTarif.montantRestant <=
+        0
+      ) {
+        toast.error(
+          "Ce frais est déjà entièrement payé."
+        )
+
+        return
+      }
+
+      /*
+       * Paiement progressif :
+       *
+       * reste = 500
+       *
+       * 100 -> accepté
+       * 200 -> accepté
+       * 150 -> accepté
+       * 50  -> accepté
+       *
+       * total = 500
+       *
+       * 501 -> refusé
+       */
+
+      if (
+        montantNumber >
+        selectedTarif.montantRestant
+      ) {
+        toast.error(
+          `Le montant ne peut pas dépasser ${selectedTarif.montantRestant} ${selectedTarif.devise}.`
+        )
+
+        return
+      }
     }
+
+    /* =======================================================
+       RÈGLEMENT FACTURE
+    ======================================================= */
 
     if (
-      selectedFacture &&
-      numberValue(montant) >
-        numberValue(
-          selectedFacture.montantDu,
-        )
+      type ===
+      "REGLEMENT_FACTURE_CONVENTION"
     ) {
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Montant trop élevé",
-        text: `Le reste de cette facture est de ${money(
-          selectedFacture.montantDu,
-        )} FCFA.`,
-      });
+      if (!factureId) {
+        toast.error(
+          "Veuillez sélectionner une facture."
+        )
 
-      return;
+        return
+      }
+
+      if (!echeanceId) {
+        toast.error(
+          "Veuillez sélectionner une échéance."
+        )
+
+        return
+      }
+
+      if (!selectedFacture) {
+        toast.error(
+          "La facture sélectionnée est introuvable."
+        )
+
+        return
+      }
+
+      if (!selectedEcheance) {
+        toast.error(
+          "L'échéance sélectionnée est introuvable."
+        )
+
+        return
+      }
+
+      if (
+        selectedFacture.montantDu <=
+        0
+      ) {
+        toast.error(
+          "Cette facture est déjà entièrement payée."
+        )
+
+        return
+      }
+
+      if (
+        selectedEcheance.montantDu <=
+        0
+      ) {
+        toast.error(
+          "Cette échéance est déjà entièrement payée."
+        )
+
+        return
+      }
+
+      if (
+        montantNumber >
+        selectedEcheance.montantDu
+      ) {
+        toast.error(
+          `Le montant ne peut pas dépasser ${selectedEcheance.montantDu} ${selectedFacture.convention.devise}.`
+        )
+
+        return
+      }
     }
 
-    startTransition(async () => {
-      try {
-        const result =
-          await createPaiement({
-            apprenantId:
-              selectedInscription
-                ?.apprenant.id ??
-              null,
+    /* =======================================================
+       APPEL SERVER ACTION
+    ======================================================= */
 
-            inscriptionId,
+    startTransition(
+      async () => {
+        try {
+          const datePaiement =
+            new Date().toISOString()
 
-            factureId,
+          /* =================================================
+             PAIEMENT RÉGULIER
+          ================================================= */
 
-            echeanceId:
-              echeanceId ||
-              null,
+          if (
+            type ===
+            "PAIEMENT_REGULIER"
+          ) {
+            const result =
+              await createPaiementRegulier({
+                type:
+                  "PAIEMENT_REGULIER",
 
-            reference:
-              reference.trim(),
+                inscriptionId,
 
-            montant:
-              numberValue(montant),
+                tarifFormationId:
+                  tarifId,
 
-            mode,
+                montant:
+                  montantNumber,
 
-            statut:
-              "EFFECTUE",
+                mode,
 
-            datePaiement:
-              datePaiement,
+                datePaiement,
 
-            referenceTransaction:
-              referenceTransaction.trim() ||
-              null,
+                referenceTransaction:
+                  referenceTransaction.trim() ||
+                  undefined,
 
-            notes:
-              notes.trim() ||
-              null,
-          });
+                notes:
+                  notes.trim() ||
+                  undefined,
+              })
 
-        if (!result.success) {
-          throw new Error(
-            result.message,
-          );
-        }
+            if (!result.success) {
+              toast.error(
+                result.message
+              )
 
-        await Swal.fire({
-          icon: "success",
-          title:
-            "Paiement enregistré",
-          text: result.message,
-          confirmButtonText:
-            "Continuer",
-        });
+              return
+            }
 
-        router.push(
-          "/paiements",
-        );
+            toast.success(
+              result.message ||
+                "Paiement régulier enregistré avec succès."
+            )
+          }
 
-        router.refresh();
-      } catch (error) {
-        console.error(
-          "CREATE_PAIEMENT_CLIENT_ERROR",
-          error,
-        );
+          /* =================================================
+             RÈGLEMENT FACTURE
+          ================================================= */
 
-        await Swal.fire({
-          icon: "error",
-          title: "Erreur",
-          text:
+          else {
+            const result =
+              await createReglementFacture({
+                type:
+                  "REGLEMENT_FACTURE_CONVENTION",
+
+                factureId,
+
+                echeanceId,
+
+                montant:
+                  montantNumber,
+
+                mode,
+
+                datePaiement,
+
+                referenceTransaction:
+                  referenceTransaction.trim() ||
+                  undefined,
+
+                notes:
+                  notes.trim() ||
+                  undefined,
+              })
+
+            if (!result.success) {
+              toast.error(
+                result.message
+              )
+
+              return
+            }
+
+            toast.success(
+              result.message ||
+                "Règlement de la facture enregistré avec succès."
+            )
+          }
+
+          router.push(
+            "/paiements"
+          )
+
+          router.refresh()
+        } catch (error) {
+          console.error(
+            "handleSubmit paiement:",
+            error
+          )
+
+          toast.error(
             error instanceof Error
               ? error.message
-              : "Impossible d'enregistrer le paiement.",
-        });
+              : "Une erreur est survenue lors de l'enregistrement."
+          )
+        }
       }
-    });
+    )
   }
+
+  /* =========================================================
+     OPTIONS SÉLECTIONNÉES
+  ========================================================= */
+
+  const selectedInscriptionOption =
+    inscriptionOptions.find(
+      (option) =>
+        option.value ===
+        inscriptionId
+    ) ?? null
+
+  const selectedTarifOption =
+    tarifOptions.find(
+      (option) =>
+        option.value ===
+        tarifId
+    ) ?? null
+
+  const selectedFactureOption =
+    factureOptions.find(
+      (option) =>
+        option.value ===
+        factureId
+    ) ?? null
+
+  const selectedEcheanceOption =
+    echeanceOptions.find(
+      (option) =>
+        option.value ===
+        echeanceId
+    ) ?? null
+
+  const selectedModeOption =
+    modeOptions.find(
+      (option) =>
+        option.value === mode
+    ) ?? null
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
     <form
       onSubmit={handleSubmit}
       className="space-y-6"
     >
-      {/* HEADER */}
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
 
-      <div className="flex flex-col gap-4 rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-primary/10 p-3 text-primary">
-            <CreditCard size={24} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="mb-2 flex items-center gap-2 text-sm text-slate-500">
+            <Wallet className="h-4 w-4" />
+            Paiements
+          </div>
+
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Nouveau paiement
+          </h1>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Enregistrez un paiement individuel
+            ou un règlement de facture de
+            convention.
+          </p>
+        </div>
+
+        <Link
+          href="/paiements"
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Retour
+        </Link>
+      </div>
+
+      {/* =====================================================
+          TYPE
+      ===================================================== */}
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="mb-5 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400">
+            <CreditCard className="h-5 w-5" />
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold">
-              Nouveau paiement
-            </h1>
+            <h2 className="font-semibold text-slate-900 dark:text-white">
+              Type de paiement
+            </h2>
 
-            <p className="text-sm opacity-60">
-              Enregistrez un règlement
-              sur une facture ou une
-              échéance.
+            <p className="text-sm text-slate-500">
+              Choisissez la nature du règlement.
             </p>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            router.push(
-              "/paiements",
-            )
-          }
-          className="btn btn-outline gap-2"
-          disabled={isPending}
-        >
-          <ArrowLeft size={18} />
-          Retour
-        </button>
-      </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <button
+            type="button"
+            onClick={() =>
+              resetFormForType(
+                "PAIEMENT_REGULIER"
+              )
+            }
+            disabled={isPending}
+            className={`rounded-2xl border p-5 text-left transition ${
+              type ===
+              "PAIEMENT_REGULIER"
+                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/30 dark:ring-blue-900/40"
+                : "border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600"
+            } disabled:cursor-not-allowed disabled:opacity-60`}
+          >
+            <div className="mb-2 flex items-center gap-3">
+              <UserRound className="h-5 w-5 text-blue-600" />
 
-      {/* DOCUMENT */}
-
-      <div className="rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm">
-        <h2 className="mb-5 text-lg font-semibold">
-          Document à régler
-        </h2>
-
-        <div className="space-y-5">
-          {/* INSCRIPTION */}
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              Inscription *
-            </label>
-
-            <Select
-              options={
-                inscriptionOptions
-              }
-              value={
-                inscriptionOptions.find(
-                  (option) =>
-                    option.value ===
-                    inscriptionId,
-                ) ?? null
-              }
-              onChange={
-                handleInscriptionChange
-              }
-              isClearable
-              isSearchable
-              placeholder="Sélectionner une inscription..."
-              noOptionsMessage={() =>
-                "Aucune inscription trouvée"
-              }
-              menuPortalTarget={
-                typeof document !==
-                "undefined"
-                  ? document.body
-                  : undefined
-              }
-              styles={{
-                menuPortal: (
-                  base,
-                ) => ({
-                  ...base,
-                  zIndex: 9999,
-                }),
-              }}
-            />
-          </div>
-
-          {/* INFOS INSCRIPTION */}
-
-          {selectedInscription && (
-            <div className="rounded-xl bg-base-200 p-4 text-sm">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div>
-                  <span className="opacity-50">
-                    Apprenant
-                  </span>
-
-                  <div className="font-semibold">
-                    {
-                      selectedInscription
-                        .apprenant
-                        .prenom
-                    }{" "}
-                    {
-                      selectedInscription
-                        .apprenant
-                        .nom
-                    }
-                  </div>
-                </div>
-
-                <div>
-                  <span className="opacity-50">
-                    Formation
-                  </span>
-
-                  <div className="font-semibold">
-                    {
-                      selectedInscription
-                        .session
-                        .formation
-                        .nom
-                    }
-                  </div>
-                </div>
-
-                <div>
-                  <span className="opacity-50">
-                    Nombre de factures ouvertes
-                  </span>
-
-                  <div className="font-semibold">
-                    {
-                      factureOptions.length
-                    }
-                  </div>
-                </div>
-              </div>
+              <span className="font-semibold text-slate-900 dark:text-white">
+                Paiement régulier
+              </span>
             </div>
-          )}
 
-          {/* FACTURE */}
+            <p className="text-sm leading-6 text-slate-500">
+              Paiement direct d'un apprenant
+              pour une formation, inscription,
+              brevet, certification ou autre
+              frais.
+            </p>
+          </button>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              Facture *
-            </label>
+          <button
+            type="button"
+            onClick={() =>
+              resetFormForType(
+                "REGLEMENT_FACTURE_CONVENTION"
+              )
+            }
+            disabled={isPending}
+            className={`rounded-2xl border p-5 text-left transition ${
+              type ===
+              "REGLEMENT_FACTURE_CONVENTION"
+                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/30 dark:ring-blue-900/40"
+                : "border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600"
+            } disabled:cursor-not-allowed disabled:opacity-60`}
+          >
+            <div className="mb-2 flex items-center gap-3">
+              <Receipt className="h-5 w-5 text-blue-600" />
 
-            <Select
-              options={
-                factureOptions
-              }
-              value={
-                factureOptions.find(
-                  (option) =>
-                    option.value ===
-                    factureId,
-                ) ?? null
-              }
-              onChange={
-                handleFactureChange
-              }
-              isClearable
-              isSearchable
-              isDisabled={
-                !inscriptionId
-              }
-              placeholder={
-                inscriptionId
-                  ? "Sélectionner une facture..."
-                  : "Sélectionnez d'abord une inscription"
-              }
-              noOptionsMessage={() =>
-                "Aucune facture avec solde"
-              }
-              menuPortalTarget={
-                typeof document !==
-                "undefined"
-                  ? document.body
-                  : undefined
-              }
-              styles={{
-                menuPortal: (
-                  base,
-                ) => ({
-                  ...base,
-                  zIndex: 9999,
-                }),
-              }}
-            />
-          </div>
-
-          {/* INFOS FACTURE */}
-
-          {selectedFacture && (
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div>
-                  <span className="text-sm opacity-50">
-                    Facture
-                  </span>
-
-                  <div className="font-semibold">
-                    {
-                      selectedFacture
-                        .numero
-                    }
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-sm opacity-50">
-                    Total
-                  </span>
-
-                  <div className="font-semibold">
-                    {money(
-                      selectedFacture.total,
-                    )}{" "}
-                    FCFA
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-sm opacity-50">
-                    Reste
-                  </span>
-
-                  <div className="font-semibold text-error">
-                    {money(
-                      selectedFacture.montantDu,
-                    )}{" "}
-                    FCFA
-                  </div>
-                </div>
-              </div>
+              <span className="font-semibold text-slate-900 dark:text-white">
+                Règlement facture convention
+              </span>
             </div>
-          )}
 
-          {/* ECHEANCE */}
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              Échéance
-            </label>
-
-            <Select
-              options={
-                echeanceOptions
-              }
-              value={
-                echeanceOptions.find(
-                  (option) =>
-                    option.value ===
-                    echeanceId,
-                ) ?? null
-              }
-              onChange={
-                handleEcheanceChange
-              }
-              isClearable
-              isSearchable
-              isDisabled={
-                !factureId ||
-                echeanceOptions.length ===
-                  0
-              }
-              placeholder={
-                !factureId
-                  ? "Sélectionnez d'abord une facture"
-                  : echeanceOptions.length
-                    ? "Sélectionner une échéance..."
-                    : "Aucune échéance avec solde"
-              }
-              noOptionsMessage={() =>
-                "Aucune échéance disponible"
-              }
-              menuPortalTarget={
-                typeof document !==
-                "undefined"
-                  ? document.body
-                  : undefined
-              }
-              styles={{
-                menuPortal: (
-                  base,
-                ) => ({
-                  ...base,
-                  zIndex: 9999,
-                }),
-              }}
-            />
-          </div>
+            <p className="text-sm leading-6 text-slate-500">
+              Règlement d'une échéance liée
+              à une facture créée à partir
+              d'une convention.
+            </p>
+          </button>
         </div>
       </div>
 
-      {/* PAIEMENT */}
+      {/* =====================================================
+          PAIEMENT RÉGULIER
+      ===================================================== */}
 
-      <div className="rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm">
-        <h2 className="mb-5 text-lg font-semibold">
-          Informations du paiement
-        </h2>
+      {type ===
+        "PAIEMENT_REGULIER" && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="mb-6">
+            <h2 className="font-semibold text-slate-900 dark:text-white">
+              Paiement régulier
+            </h2>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {/* MONTANT */}
+            <p className="mt-1 text-sm text-slate-500">
+              Sélectionnez une inscription puis
+              un frais restant à payer.
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            {/* Inscription */}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Inscription
+              </label>
+
+              <Select
+                options={
+                  inscriptionOptions
+                }
+                value={
+                  selectedInscriptionOption
+                }
+                onChange={
+                  handleInscriptionChange
+                }
+                isDisabled={isPending}
+                isClearable
+                isSearchable
+                placeholder="Rechercher une inscription..."
+                noOptionsMessage={() =>
+                  "Aucune inscription trouvée"
+                }
+                loadingMessage={() =>
+                  "Chargement..."
+                }
+                styles={
+                  selectStyles
+                }
+                menuPortalTarget={
+                  typeof document !==
+                  "undefined"
+                    ? document.body
+                    : undefined
+                }
+              />
+            </div>
+
+            {/* Frais */}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Frais
+              </label>
+
+              <Select
+                options={tarifOptions}
+                value={
+                  selectedTarifOption
+                }
+                onChange={
+                  handleTarifChange
+                }
+                isDisabled={
+                  !inscriptionId ||
+                  loadingTarifs ||
+                  isPending
+                }
+                isClearable
+                isSearchable
+                isLoading={
+                  loadingTarifs
+                }
+                placeholder={
+                  loadingTarifs
+                    ? "Chargement des frais..."
+                    : inscriptionId
+                      ? "Rechercher un frais..."
+                      : "Sélectionnez d'abord une inscription"
+                }
+                noOptionsMessage={() =>
+                  inscriptionId
+                    ? "Aucun frais restant"
+                    : "Sélectionnez une inscription"
+                }
+                styles={
+                  selectStyles
+                }
+                menuPortalTarget={
+                  typeof document !==
+                  "undefined"
+                    ? document.body
+                    : undefined
+                }
+              />
+            </div>
+          </div>
+
+          {/* DÉTAIL DU FRAIS */}
+
+          {selectedTarif && (
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              <InfoCard
+                label="Montant du frais"
+                value={`${selectedTarif.montant} ${selectedTarif.devise}`}
+              />
+
+              <InfoCard
+                label="Déjà payé"
+                value={`${selectedTarif.montantPaye} ${selectedTarif.devise}`}
+              />
+
+              <InfoCard
+                label="Reste à payer"
+                value={`${selectedTarif.montantRestant} ${selectedTarif.devise}`}
+                highlight
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =====================================================
+          FACTURE CONVENTION
+      ===================================================== */}
+
+      {type ===
+        "REGLEMENT_FACTURE_CONVENTION" && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="mb-6">
+            <h2 className="font-semibold text-slate-900 dark:text-white">
+              Règlement de facture
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Sélectionnez une facture puis
+              une échéance à régler.
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            {/* Facture */}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Facture
+              </label>
+
+              <Select
+                options={
+                  factureOptions
+                }
+                value={
+                  selectedFactureOption
+                }
+                onChange={
+                  handleFactureChange
+                }
+                isDisabled={isPending}
+                isClearable
+                isSearchable
+                placeholder="Rechercher une facture..."
+                noOptionsMessage={() =>
+                  "Aucune facture impayée trouvée"
+                }
+                styles={
+                  selectStyles
+                }
+                menuPortalTarget={
+                  typeof document !==
+                  "undefined"
+                    ? document.body
+                    : undefined
+                }
+              />
+            </div>
+
+            {/* Échéance */}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Échéance
+              </label>
+
+              <Select
+                options={
+                  echeanceOptions
+                }
+                value={
+                  selectedEcheanceOption
+                }
+                onChange={
+                  handleEcheanceChange
+                }
+                isDisabled={
+                  !factureId ||
+                  loadingEcheances ||
+                  isPending
+                }
+                isClearable
+                isSearchable
+                isLoading={
+                  loadingEcheances
+                }
+                placeholder={
+                  loadingEcheances
+                    ? "Chargement des échéances..."
+                    : factureId
+                      ? "Rechercher une échéance..."
+                      : "Sélectionnez d'abord une facture"
+                }
+                noOptionsMessage={() =>
+                  "Aucune échéance restante"
+                }
+                styles={
+                  selectStyles
+                }
+                menuPortalTarget={
+                  typeof document !==
+                  "undefined"
+                    ? document.body
+                    : undefined
+                }
+              />
+            </div>
+          </div>
+
+          {/* FACTURE */}
+
+          {selectedFacture && (
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              <InfoCard
+                label="Facture"
+                value={
+                  selectedFacture.numero
+                }
+              />
+
+              <InfoCard
+                label="Total facture"
+                value={`${selectedFacture.total} ${selectedFacture.convention.devise}`}
+              />
+
+              <InfoCard
+                label="Reste facture"
+                value={`${selectedFacture.montantDu} ${selectedFacture.convention.devise}`}
+                highlight
+              />
+            </div>
+          )}
+
+          {/* ÉCHÉANCE */}
+
+          {selectedEcheance && (
+            <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/40 dark:bg-blue-950/20">
+              <div className="grid gap-4 md:grid-cols-3">
+                <InfoCard
+                  label="Montant échéance"
+                  value={`${selectedEcheance.montant} ${selectedFacture?.convention.devise ?? ""}`}
+                />
+
+                <InfoCard
+                  label="Déjà payé"
+                  value={`${selectedEcheance.montantPaye} ${selectedFacture?.convention.devise ?? ""}`}
+                />
+
+                <InfoCard
+                  label="Reste échéance"
+                  value={`${selectedEcheance.montantDu} ${selectedFacture?.convention.devise ?? ""}`}
+                  highlight
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* =====================================================
+          INFORMATIONS RÈGLEMENT
+      ===================================================== */}
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="mb-6">
+          <h2 className="font-semibold text-slate-900 dark:text-white">
+            Informations du règlement
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Le montant correspond au versement
+            effectué maintenant.
+          </p>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          {/* Montant */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Montant *
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Montant du versement
             </label>
 
             <input
@@ -906,104 +1609,90 @@ export default function PaiementForm({
               value={montant}
               onChange={(event) =>
                 setMontant(
-                  event.target.value,
+                  event.target.value
                 )
               }
-              className="input input-bordered w-full"
+              placeholder="0.00"
+              disabled={isPending}
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950"
               required
             />
 
-            {selectedEcheance && (
-              <p className="mt-2 text-xs opacity-60">
-                Reste de l'échéance :{" "}
-                <strong>
-                  {money(
-                    selectedEcheance.montantDu,
-                  )}{" "}
-                  FCFA
-                </strong>
-              </p>
-            )}
-          </div>
+            {/* PAIEMENT RÉGULIER */}
 
-          {/* MODE */}
+            {type ===
+              "PAIEMENT_REGULIER" &&
+              selectedTarif && (
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-slate-500">
+                    Le paiement peut être effectué
+                    progressivement en plusieurs
+                    versements.
+                  </p>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              Mode de paiement *
-            </label>
-
-            <select
-              value={mode}
-              onChange={(event) =>
-                setMode(
-                  event.target.value,
-                )
-              }
-              className="select select-bordered w-full"
-            >
-              {modes.map(
-                (item) => (
-                  <option
-                    key={
-                      item.value
+                  <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                    Reste maximum autorisé :{" "}
+                    {
+                      selectedTarif.montantRestant
+                    }{" "}
+                    {
+                      selectedTarif.devise
                     }
-                    value={
-                      item.value
-                    }
-                  >
-                    {item.label}
-                  </option>
-                ),
+                  </p>
+                </div>
               )}
-            </select>
+
+            {/* CONVENTION */}
+
+            {type ===
+              "REGLEMENT_FACTURE_CONVENTION" &&
+              selectedEcheance && (
+                <p className="mt-2 text-xs font-medium text-blue-600 dark:text-blue-400">
+                  Reste maximum de cette échéance :{" "}
+                  {
+                    selectedEcheance.montantDu
+                  }{" "}
+                  {
+                    selectedFacture?.convention
+                      .devise
+                  }
+                </p>
+              )}
           </div>
 
-          {/* REFERENCE */}
+          {/* Mode */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Référence *
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Mode de paiement
             </label>
 
-            <input
-              type="text"
-              value={reference}
-              onChange={(event) =>
-                setReference(
-                  event.target.value,
-                )
+            <Select
+              options={modeOptions}
+              value={
+                selectedModeOption
               }
-              placeholder="Ex. PAY-2026-0001"
-              className="input input-bordered w-full"
-              required
+              onChange={
+                handleModeChange
+              }
+              isDisabled={isPending}
+              isSearchable={false}
+              styles={
+                selectStyles
+              }
+              menuPortalTarget={
+                typeof document !==
+                "undefined"
+                  ? document.body
+                  : undefined
+              }
             />
           </div>
 
-          {/* DATE */}
+          {/* Référence */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Date du paiement *
-            </label>
-
-            <input
-              type="date"
-              value={datePaiement}
-              onChange={(event) =>
-                setDatePaiement(
-                  event.target.value,
-                )
-              }
-              className="input input-bordered w-full"
-              required
-            />
-          </div>
-
-          {/* REFERENCE TRANSACTION */}
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Référence transaction
             </label>
 
@@ -1014,18 +1703,19 @@ export default function PaiementForm({
               }
               onChange={(event) =>
                 setReferenceTransaction(
-                  event.target.value,
+                  event.target.value
                 )
               }
-              placeholder="Mobile Money, banque..."
-              className="input input-bordered w-full"
+              placeholder="Ex. TXN-2026-00125"
+              disabled={isPending}
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950"
             />
           </div>
 
-          {/* NOTES */}
+          {/* Notes */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Notes
             </label>
 
@@ -1034,105 +1724,87 @@ export default function PaiementForm({
               value={notes}
               onChange={(event) =>
                 setNotes(
-                  event.target.value,
+                  event.target.value
                 )
               }
-              placeholder="Observation..."
-              className="input input-bordered w-full"
+              placeholder="Observation éventuelle..."
+              disabled={isPending}
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950"
             />
           </div>
         </div>
       </div>
 
-      {/* RESUME */}
+      {/* =====================================================
+          ACTION
+      ===================================================== */}
 
-      {selectedFacture && (
-        <div className="rounded-2xl border border-success/20 bg-success/5 p-5">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div>
-              <span className="text-sm opacity-60">
-                Total facture
-              </span>
-
-              <div className="text-lg font-bold">
-                {money(
-                  selectedFacture.total,
-                )}{" "}
-                FCFA
-              </div>
-            </div>
-
-            <div>
-              <span className="text-sm opacity-60">
-                Déjà payé
-              </span>
-
-              <div className="text-lg font-bold text-success">
-                {money(
-                  selectedFacture.montantPaye,
-                )}{" "}
-                FCFA
-              </div>
-            </div>
-
-            <div>
-              <span className="text-sm opacity-60">
-                Nouveau solde après paiement
-              </span>
-
-              <div className="text-lg font-bold text-primary">
-                {money(
-                  Math.max(
-                    numberValue(
-                      selectedFacture.montantDu,
-                    ) -
-                      numberValue(
-                        montant,
-                      ),
-                    0,
-                  ),
-                )}{" "}
-                FCFA
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ACTIONS */}
-
-      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-        <button
-          type="button"
-          onClick={() =>
-            router.push(
-              "/paiements",
-            )
-          }
-          className="btn btn-outline"
-          disabled={isPending}
-        >
-          Annuler
-        </button>
-
+      <div className="flex justify-end">
         <button
           type="submit"
-          className="btn btn-primary gap-2"
-          disabled={isPending}
+          disabled={
+            isPending ||
+            loadingTarifs ||
+            loadingEcheances ||
+            (type ===
+              "PAIEMENT_REGULIER" &&
+              (!inscriptionId ||
+                !tarifId ||
+                !selectedTarif)) ||
+            (type ===
+              "REGLEMENT_FACTURE_CONVENTION" &&
+              (!factureId ||
+                !echeanceId ||
+                !selectedFacture ||
+                !selectedEcheance))
+          }
+          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? (
             <>
-              <span className="loading loading-spinner loading-sm" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               Enregistrement...
             </>
           ) : (
             <>
-              <Save size={18} />
+              <CheckCircle2 className="h-4 w-4" />
               Enregistrer le paiement
             </>
           )}
         </button>
       </div>
     </form>
-  );
+  )
+}
+
+/* =========================================================
+INFO CARD
+========================================================= */
+
+function InfoCard({
+  label,
+  value,
+  highlight = false,
+}: {
+  label: string
+  value: string
+  highlight?: boolean
+}) {
+  return (
+    <div
+      className={`rounded-xl border p-4 ${
+        highlight
+          ? "border-blue-200 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/20"
+          : "border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-950"
+      }`}
+    >
+      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+        {label}
+      </p>
+
+      <p className="mt-1 text-lg font-bold text-slate-900 dark:text-white">
+        {value}
+      </p>
+    </div>
+  )
 }

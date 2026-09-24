@@ -256,6 +256,7 @@ export type TarifFormationWhereInput = {
   actif?: Prisma.BoolFilter<"TarifFormation"> | boolean
   creeLe?: Prisma.DateTimeFilter<"TarifFormation"> | Date | string
   modifieLe?: Prisma.DateTimeFilter<"TarifFormation"> | Date | string
+  paiements?: Prisma.PaiementListRelationFilter
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
   formation?: Prisma.XOR<Prisma.FormationScalarRelationFilter, Prisma.FormationWhereInput>
 }
@@ -271,6 +272,7 @@ export type TarifFormationOrderByWithRelationInput = {
   actif?: Prisma.SortOrder
   creeLe?: Prisma.SortOrder
   modifieLe?: Prisma.SortOrder
+  paiements?: Prisma.PaiementOrderByRelationAggregateInput
   centre?: Prisma.CentreFormationOrderByWithRelationInput
   formation?: Prisma.FormationOrderByWithRelationInput
 }
@@ -289,6 +291,7 @@ export type TarifFormationWhereUniqueInput = Prisma.AtLeast<{
   actif?: Prisma.BoolFilter<"TarifFormation"> | boolean
   creeLe?: Prisma.DateTimeFilter<"TarifFormation"> | Date | string
   modifieLe?: Prisma.DateTimeFilter<"TarifFormation"> | Date | string
+  paiements?: Prisma.PaiementListRelationFilter
   centre?: Prisma.XOR<Prisma.CentreFormationScalarRelationFilter, Prisma.CentreFormationWhereInput>
   formation?: Prisma.XOR<Prisma.FormationScalarRelationFilter, Prisma.FormationWhereInput>
 }, "id">
@@ -336,6 +339,7 @@ export type TarifFormationCreateInput = {
   actif?: boolean
   creeLe?: Date | string
   modifieLe?: Date | string
+  paiements?: Prisma.PaiementCreateNestedManyWithoutTarifFormationInput
   centre: Prisma.CentreFormationCreateNestedOneWithoutTarifsInput
   formation: Prisma.FormationCreateNestedOneWithoutTarifsInput
 }
@@ -351,6 +355,7 @@ export type TarifFormationUncheckedCreateInput = {
   actif?: boolean
   creeLe?: Date | string
   modifieLe?: Date | string
+  paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutTarifFormationInput
 }
 
 export type TarifFormationUpdateInput = {
@@ -362,6 +367,7 @@ export type TarifFormationUpdateInput = {
   actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paiements?: Prisma.PaiementUpdateManyWithoutTarifFormationNestedInput
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutTarifsNestedInput
   formation?: Prisma.FormationUpdateOneRequiredWithoutTarifsNestedInput
 }
@@ -377,6 +383,7 @@ export type TarifFormationUncheckedUpdateInput = {
   actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paiements?: Prisma.PaiementUncheckedUpdateManyWithoutTarifFormationNestedInput
 }
 
 export type TarifFormationCreateManyInput = {
@@ -473,6 +480,11 @@ export type TarifFormationSumOrderByAggregateInput = {
   montant?: Prisma.SortOrder
 }
 
+export type TarifFormationNullableScalarRelationFilter = {
+  is?: Prisma.TarifFormationWhereInput | null
+  isNot?: Prisma.TarifFormationWhereInput | null
+}
+
 export type TarifFormationCreateNestedManyWithoutCentreInput = {
   create?: Prisma.XOR<Prisma.TarifFormationCreateWithoutCentreInput, Prisma.TarifFormationUncheckedCreateWithoutCentreInput> | Prisma.TarifFormationCreateWithoutCentreInput[] | Prisma.TarifFormationUncheckedCreateWithoutCentreInput[]
   connectOrCreate?: Prisma.TarifFormationCreateOrConnectWithoutCentreInput | Prisma.TarifFormationCreateOrConnectWithoutCentreInput[]
@@ -561,6 +573,22 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type TarifFormationCreateNestedOneWithoutPaiementsInput = {
+  create?: Prisma.XOR<Prisma.TarifFormationCreateWithoutPaiementsInput, Prisma.TarifFormationUncheckedCreateWithoutPaiementsInput>
+  connectOrCreate?: Prisma.TarifFormationCreateOrConnectWithoutPaiementsInput
+  connect?: Prisma.TarifFormationWhereUniqueInput
+}
+
+export type TarifFormationUpdateOneWithoutPaiementsNestedInput = {
+  create?: Prisma.XOR<Prisma.TarifFormationCreateWithoutPaiementsInput, Prisma.TarifFormationUncheckedCreateWithoutPaiementsInput>
+  connectOrCreate?: Prisma.TarifFormationCreateOrConnectWithoutPaiementsInput
+  upsert?: Prisma.TarifFormationUpsertWithoutPaiementsInput
+  disconnect?: Prisma.TarifFormationWhereInput | boolean
+  delete?: Prisma.TarifFormationWhereInput | boolean
+  connect?: Prisma.TarifFormationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TarifFormationUpdateToOneWithWhereWithoutPaiementsInput, Prisma.TarifFormationUpdateWithoutPaiementsInput>, Prisma.TarifFormationUncheckedUpdateWithoutPaiementsInput>
+}
+
 export type TarifFormationCreateWithoutCentreInput = {
   id?: string
   nom: string
@@ -570,6 +598,7 @@ export type TarifFormationCreateWithoutCentreInput = {
   actif?: boolean
   creeLe?: Date | string
   modifieLe?: Date | string
+  paiements?: Prisma.PaiementCreateNestedManyWithoutTarifFormationInput
   formation: Prisma.FormationCreateNestedOneWithoutTarifsInput
 }
 
@@ -583,6 +612,7 @@ export type TarifFormationUncheckedCreateWithoutCentreInput = {
   actif?: boolean
   creeLe?: Date | string
   modifieLe?: Date | string
+  paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutTarifFormationInput
 }
 
 export type TarifFormationCreateOrConnectWithoutCentreInput = {
@@ -635,6 +665,7 @@ export type TarifFormationCreateWithoutFormationInput = {
   actif?: boolean
   creeLe?: Date | string
   modifieLe?: Date | string
+  paiements?: Prisma.PaiementCreateNestedManyWithoutTarifFormationInput
   centre: Prisma.CentreFormationCreateNestedOneWithoutTarifsInput
 }
 
@@ -648,6 +679,7 @@ export type TarifFormationUncheckedCreateWithoutFormationInput = {
   actif?: boolean
   creeLe?: Date | string
   modifieLe?: Date | string
+  paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutTarifFormationInput
 }
 
 export type TarifFormationCreateOrConnectWithoutFormationInput = {
@@ -675,6 +707,74 @@ export type TarifFormationUpdateManyWithWhereWithoutFormationInput = {
   data: Prisma.XOR<Prisma.TarifFormationUpdateManyMutationInput, Prisma.TarifFormationUncheckedUpdateManyWithoutFormationInput>
 }
 
+export type TarifFormationCreateWithoutPaiementsInput = {
+  id?: string
+  nom: string
+  description?: string | null
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
+  actif?: boolean
+  creeLe?: Date | string
+  modifieLe?: Date | string
+  centre: Prisma.CentreFormationCreateNestedOneWithoutTarifsInput
+  formation: Prisma.FormationCreateNestedOneWithoutTarifsInput
+}
+
+export type TarifFormationUncheckedCreateWithoutPaiementsInput = {
+  id?: string
+  centreId: string
+  formationId: string
+  nom: string
+  description?: string | null
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
+  actif?: boolean
+  creeLe?: Date | string
+  modifieLe?: Date | string
+}
+
+export type TarifFormationCreateOrConnectWithoutPaiementsInput = {
+  where: Prisma.TarifFormationWhereUniqueInput
+  create: Prisma.XOR<Prisma.TarifFormationCreateWithoutPaiementsInput, Prisma.TarifFormationUncheckedCreateWithoutPaiementsInput>
+}
+
+export type TarifFormationUpsertWithoutPaiementsInput = {
+  update: Prisma.XOR<Prisma.TarifFormationUpdateWithoutPaiementsInput, Prisma.TarifFormationUncheckedUpdateWithoutPaiementsInput>
+  create: Prisma.XOR<Prisma.TarifFormationCreateWithoutPaiementsInput, Prisma.TarifFormationUncheckedCreateWithoutPaiementsInput>
+  where?: Prisma.TarifFormationWhereInput
+}
+
+export type TarifFormationUpdateToOneWithWhereWithoutPaiementsInput = {
+  where?: Prisma.TarifFormationWhereInput
+  data: Prisma.XOR<Prisma.TarifFormationUpdateWithoutPaiementsInput, Prisma.TarifFormationUncheckedUpdateWithoutPaiementsInput>
+}
+
+export type TarifFormationUpdateWithoutPaiementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  nom?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
+  actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  centre?: Prisma.CentreFormationUpdateOneRequiredWithoutTarifsNestedInput
+  formation?: Prisma.FormationUpdateOneRequiredWithoutTarifsNestedInput
+}
+
+export type TarifFormationUncheckedUpdateWithoutPaiementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  centreId?: Prisma.StringFieldUpdateOperationsInput | string
+  formationId?: Prisma.StringFieldUpdateOperationsInput | string
+  nom?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
+  actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type TarifFormationCreateManyCentreInput = {
   id?: string
   formationId: string
@@ -696,6 +796,7 @@ export type TarifFormationUpdateWithoutCentreInput = {
   actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paiements?: Prisma.PaiementUpdateManyWithoutTarifFormationNestedInput
   formation?: Prisma.FormationUpdateOneRequiredWithoutTarifsNestedInput
 }
 
@@ -709,6 +810,7 @@ export type TarifFormationUncheckedUpdateWithoutCentreInput = {
   actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paiements?: Prisma.PaiementUncheckedUpdateManyWithoutTarifFormationNestedInput
 }
 
 export type TarifFormationUncheckedUpdateManyWithoutCentreInput = {
@@ -744,6 +846,7 @@ export type TarifFormationUpdateWithoutFormationInput = {
   actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paiements?: Prisma.PaiementUpdateManyWithoutTarifFormationNestedInput
   centre?: Prisma.CentreFormationUpdateOneRequiredWithoutTarifsNestedInput
 }
 
@@ -757,6 +860,7 @@ export type TarifFormationUncheckedUpdateWithoutFormationInput = {
   actif?: Prisma.BoolFieldUpdateOperationsInput | boolean
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paiements?: Prisma.PaiementUncheckedUpdateManyWithoutTarifFormationNestedInput
 }
 
 export type TarifFormationUncheckedUpdateManyWithoutFormationInput = {
@@ -772,6 +876,35 @@ export type TarifFormationUncheckedUpdateManyWithoutFormationInput = {
 }
 
 
+/**
+ * Count Type TarifFormationCountOutputType
+ */
+
+export type TarifFormationCountOutputType = {
+  paiements: number
+}
+
+export type TarifFormationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  paiements?: boolean | TarifFormationCountOutputTypeCountPaiementsArgs
+}
+
+/**
+ * TarifFormationCountOutputType without action
+ */
+export type TarifFormationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TarifFormationCountOutputType
+   */
+  select?: Prisma.TarifFormationCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * TarifFormationCountOutputType without action
+ */
+export type TarifFormationCountOutputTypeCountPaiementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaiementWhereInput
+}
+
 
 export type TarifFormationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -784,8 +917,10 @@ export type TarifFormationSelect<ExtArgs extends runtime.Types.Extensions.Intern
   actif?: boolean
   creeLe?: boolean
   modifieLe?: boolean
+  paiements?: boolean | Prisma.TarifFormation$paiementsArgs<ExtArgs>
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
   formation?: boolean | Prisma.FormationDefaultArgs<ExtArgs>
+  _count?: boolean | Prisma.TarifFormationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tarifFormation"]>
 
 export type TarifFormationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -833,8 +968,10 @@ export type TarifFormationSelectScalar = {
 
 export type TarifFormationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "formationId" | "nom" | "description" | "montant" | "devise" | "actif" | "creeLe" | "modifieLe", ExtArgs["result"]["tarifFormation"]>
 export type TarifFormationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  paiements?: boolean | Prisma.TarifFormation$paiementsArgs<ExtArgs>
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
   formation?: boolean | Prisma.FormationDefaultArgs<ExtArgs>
+  _count?: boolean | Prisma.TarifFormationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TarifFormationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
@@ -848,6 +985,7 @@ export type TarifFormationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Typ
 export type $TarifFormationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TarifFormation"
   objects: {
+    paiements: Prisma.$PaiementPayload<ExtArgs>[]
     centre: Prisma.$CentreFormationPayload<ExtArgs>
     formation: Prisma.$FormationPayload<ExtArgs>
   }
@@ -1256,6 +1394,7 @@ readonly fields: TarifFormationFieldRefs;
  */
 export interface Prisma__TarifFormationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  paiements<T extends Prisma.TarifFormation$paiementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TarifFormation$paiementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaiementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   centre<T extends Prisma.CentreFormationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CentreFormationDefaultArgs<ExtArgs>>): Prisma.Prisma__CentreFormationClient<runtime.Types.Result.GetResult<Prisma.$CentreFormationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   formation<T extends Prisma.FormationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FormationDefaultArgs<ExtArgs>>): Prisma.Prisma__FormationClient<runtime.Types.Result.GetResult<Prisma.$FormationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1693,6 +1832,30 @@ export type TarifFormationDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many TarifFormations to delete.
    */
   limit?: number
+}
+
+/**
+ * TarifFormation.paiements
+ */
+export type TarifFormation$paiementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Paiement
+   */
+  select?: Prisma.PaiementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Paiement
+   */
+  omit?: Prisma.PaiementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaiementInclude<ExtArgs> | null
+  where?: Prisma.PaiementWhereInput
+  orderBy?: Prisma.PaiementOrderByWithRelationInput | Prisma.PaiementOrderByWithRelationInput[]
+  cursor?: Prisma.PaiementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaiementScalarFieldEnum | Prisma.PaiementScalarFieldEnum[]
 }
 
 /**

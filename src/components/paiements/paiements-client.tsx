@@ -24,7 +24,7 @@ import Select from "react-select";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
 
-import { deletePaiement } from "@/actions/paiement.actions";
+import { deletePaiement } from "@/actions/paiement-actions";
 
 /**
  * ============================================================

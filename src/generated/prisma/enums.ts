@@ -19,6 +19,14 @@ export const StatutCentre = {
 export type StatutCentre = (typeof StatutCentre)[keyof typeof StatutCentre]
 
 
+export const TypePaiement = {
+  REGLEMENT_FACTURE_CONVENTION: 'REGLEMENT_FACTURE_CONVENTION',
+  PAIEMENT_REGULIER: 'PAIEMENT_REGULIER'
+} as const
+
+export type TypePaiement = (typeof TypePaiement)[keyof typeof TypePaiement]
+
+
 export const RoleSysteme = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   UTILISATEUR: 'UTILISATEUR'

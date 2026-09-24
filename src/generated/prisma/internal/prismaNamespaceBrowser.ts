@@ -74,6 +74,7 @@ export const ModelName = {
   NoteCritere: 'NoteCritere',
   ResultatFormation: 'ResultatFormation',
   Convention: 'Convention',
+  ConventionParticipant: 'ConventionParticipant',
   Facture: 'Facture',
   LigneFacture: 'LigneFacture',
   EcheancePaiement: 'EcheancePaiement',
@@ -480,30 +481,42 @@ export type ResultatFormationScalarFieldEnum = (typeof ResultatFormationScalarFi
 export const ConventionScalarFieldEnum = {
   id: 'id',
   centreId: 'centreId',
-  inscriptionId: 'inscriptionId',
   numero: 'numero',
-  nomOrganisme: 'nomOrganisme',
-  emailOrganisme: 'emailOrganisme',
-  telephoneOrganisme: 'telephoneOrganisme',
-  adresseOrganisme: 'adresseOrganisme',
-  nomContact: 'nomContact',
+  organisationNom: 'organisationNom',
+  organisationAdresse: 'organisationAdresse',
+  organisationEmail: 'organisationEmail',
+  organisationTelephone: 'organisationTelephone',
+  organisationContact: 'organisationContact',
   dateDebut: 'dateDebut',
   dateFin: 'dateFin',
   montant: 'montant',
+  devise: 'devise',
   statut: 'statut',
   dateSignature: 'dateSignature',
   observations: 'observations',
-  creeLe: 'creeLe',
-  modifieLe: 'modifieLe'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type ConventionScalarFieldEnum = (typeof ConventionScalarFieldEnum)[keyof typeof ConventionScalarFieldEnum]
 
 
+export const ConventionParticipantScalarFieldEnum = {
+  id: 'id',
+  conventionId: 'conventionId',
+  inscriptionId: 'inscriptionId',
+  montant: 'montant',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ConventionParticipantScalarFieldEnum = (typeof ConventionParticipantScalarFieldEnum)[keyof typeof ConventionParticipantScalarFieldEnum]
+
+
 export const FactureScalarFieldEnum = {
   id: 'id',
   centreId: 'centreId',
-  inscriptionId: 'inscriptionId',
+  conventionId: 'conventionId',
   numero: 'numero',
   dateEmission: 'dateEmission',
   dateEcheance: 'dateEcheance',
@@ -560,8 +573,11 @@ export const PaiementScalarFieldEnum = {
   inscriptionId: 'inscriptionId',
   factureId: 'factureId',
   echeanceId: 'echeanceId',
+  tarifFormationId: 'tarifFormationId',
+  type: 'type',
   reference: 'reference',
   montant: 'montant',
+  devise: 'devise',
   mode: 'mode',
   statut: 'statut',
   datePaiement: 'datePaiement',

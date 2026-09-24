@@ -19,13 +19,14 @@ type RouteProps = {
 
 /* ============================================================
    FORMAT REÇU
-   A8 : 52 mm × 90 mm
+   52 mm × 140 mm
+   Reçu thermique long et lisible
    ============================================================ */
 
 const MM = 72 / 25.4;
 
 const PAGE_WIDTH = 52 * MM;
-const PAGE_HEIGHT = 90 * MM;
+const PAGE_HEIGHT = 140 * MM;
 
 const MARGIN = 3.5 * MM;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
@@ -223,8 +224,7 @@ function drawCentered(
     );
 
   page.drawText(value, {
-    x:
-      (PAGE_WIDTH - width) / 2,
+    x: (PAGE_WIDTH - width) / 2,
     y,
     size,
     font,
@@ -274,14 +274,13 @@ function drawInfoRow(
   regularFont: PDFFont,
   boldFont: PDFFont,
 ) {
-  const labelSize = 5.4;
+  const labelSize = 5.2;
   const valueSize = 6.2;
 
-  const safeValue =
-    truncate(
-      value || "—",
-      27,
-    );
+  const safeValue = truncate(
+    value || "—",
+    28,
+  );
 
   page.drawText(
     cleanPdfText(label).toUpperCase(),
@@ -354,9 +353,7 @@ async function loadLogo(
       contentType.includes("png") ||
       lowerUrl.endsWith(".png")
     ) {
-      return await pdf.embedPng(
-        bytes,
-      );
+      return await pdf.embedPng(bytes);
     }
 
     if (
@@ -365,9 +362,7 @@ async function loadLogo(
       lowerUrl.endsWith(".jpg") ||
       lowerUrl.endsWith(".jpeg")
     ) {
-      return await pdf.embedJpg(
-        bytes,
-      );
+      return await pdf.embedJpg(bytes);
     }
 
     return null;
@@ -429,8 +424,7 @@ export async function GET(
       await prisma.paiement.findFirst({
         where: {
           id,
-          centreId:
-            context.centreId,
+          centreId: context.centreId,
         },
 
         select: {
@@ -442,10 +436,6 @@ export async function GET(
           factureId: true,
           echeanceId: true,
 
-          /*
-           * IMPORTANT :
-           * La devise appartient au paiement.
-           */
           devise: true,
 
           type: true,
@@ -458,10 +448,6 @@ export async function GET(
           referenceTransaction: true,
           notes: true,
 
-          /* ==================================================
-             APPRENANT
-             ================================================== */
-
           apprenant: {
             select: {
               id: true,
@@ -469,10 +455,6 @@ export async function GET(
               nom: true,
             },
           },
-
-          /* ==================================================
-             INSCRIPTION
-             ================================================== */
 
           inscription: {
             select: {
@@ -507,11 +489,6 @@ export async function GET(
             },
           },
 
-          /* ==================================================
-             TARIF FORMATION
-             Paiement régulier
-             ================================================== */
-
           tarifFormation: {
             select: {
               id: true,
@@ -522,11 +499,6 @@ export async function GET(
               actif: true,
             },
           },
-
-          /* ==================================================
-             FACTURE
-             Paiement convention
-             ================================================== */
 
           facture: {
             select: {
@@ -547,10 +519,6 @@ export async function GET(
               },
             },
           },
-
-          /* ==================================================
-             ÉCHÉANCE
-             ================================================== */
 
           echeance: {
             select: {
@@ -613,7 +581,7 @@ export async function GET(
     }
 
     /* ========================================================
-       DONNÉES APPRENANT
+       DONNÉES
        ======================================================== */
 
     const apprenant =
@@ -623,16 +591,10 @@ export async function GET(
 
     const nomApprenant =
       apprenant
-        ? `${safeText(
-            apprenant.prenom,
-          )} ${safeText(
+        ? `${safeText(apprenant.prenom)} ${safeText(
             apprenant.nom,
           )}`.trim()
         : "Apprenant non renseigné";
-
-    /* ========================================================
-       FORMATION / SESSION
-       ======================================================== */
 
     const session =
       paiement.inscription?.session;
@@ -645,14 +607,8 @@ export async function GET(
       session?.nom ||
       "Formation non renseignée";
 
-    /* ========================================================
-       TYPE DE PAIEMENT
-       ======================================================== */
-
     const typePaiement =
-      safeText(
-        paiement.type,
-      );
+      safeText(paiement.type);
 
     const estPaiementRegulier =
       typePaiement ===
@@ -662,76 +618,35 @@ export async function GET(
       typePaiement ===
       "REGLEMENT_FACTURE_CONVENTION";
 
-    /* ========================================================
-       FRAIS
-       ======================================================== */
-
     const nomFrais =
       paiement.tarifFormation?.nom ||
       "";
-
-    /* ========================================================
-       CONVENTION
-       ======================================================== */
 
     const convention =
       paiement.facture?.convention ??
       null;
 
     const numeroConvention =
-      convention?.numero ||
-      "";
+      convention?.numero || "";
 
     const organisationConvention =
-      convention?.organisationNom ||
-      "";
-
-    /* ========================================================
-       RÉFÉRENCE
-       ======================================================== */
+      convention?.organisationNom || "";
 
     const reference =
-      safeText(
-        paiement.reference,
-      ) || paiement.id;
-
-    /* ========================================================
-       DEVISE
-       ======================================================== */
-
-    /*
-     * La devise du reçu est celle du paiement.
-     *
-     * Paiement régulier :
-     *   Paiement.devise = TarifFormation.devise
-     *
-     * Convention :
-     *   Paiement.devise = Convention.devise
-     */
+      safeText(paiement.reference) ||
+      paiement.id;
 
     const devise =
-      safeText(
-        paiement.devise,
-      ) ||
+      safeText(paiement.devise) ||
       safeText(
         paiement.tarifFormation?.devise,
       ) ||
-      safeText(
-        convention?.devise,
-      ) ||
-      safeText(
-        centre.devise,
-      ) ||
+      safeText(convention?.devise) ||
+      safeText(centre.devise) ||
       "USD";
 
-    /* ========================================================
-       STATUT
-       ======================================================== */
-
     const statut =
-      safeText(
-        paiement.statut,
-      );
+      safeText(paiement.statut);
 
     /* ========================================================
        PDF
@@ -751,9 +666,7 @@ export async function GET(
     );
 
     pdf.setAuthor(
-      safeText(
-        centre.nom,
-      ) ||
+      safeText(centre.nom) ||
         "Centre de formation",
     );
 
@@ -793,19 +706,13 @@ export async function GET(
         : null;
 
     if (logo) {
-      const maxWidth =
-        11 * MM;
-
-      const maxHeight =
-        10 * MM;
+      const maxWidth = 12 * MM;
+      const maxHeight = 11 * MM;
 
       const scale =
         Math.min(
-          maxWidth /
-            logo.width,
-
-          maxHeight /
-            logo.height,
+          maxWidth / logo.width,
+          maxHeight / logo.height,
         );
 
       const logoWidth =
@@ -836,7 +743,7 @@ export async function GET(
 
       y -=
         logoHeight +
-        1.8 * MM;
+        2.5 * MM;
     }
 
     /* ========================================================
@@ -848,16 +755,15 @@ export async function GET(
       truncate(
         centre.nom ||
           "CENTRE DE FORMATION",
-        29,
+        32,
       ),
       y,
       boldFont,
-      10.2,
+      10.5,
       BLACK,
     );
 
-    y -=
-      3.8 * MM;
+    y -= 4 * MM;
 
     /* ========================================================
        CONTACT
@@ -875,18 +781,14 @@ export async function GET(
     if (contact) {
       drawCentered(
         page,
-        truncate(
-          contact,
-          42,
-        ),
+        truncate(contact, 44),
         y,
         regularFont,
-        5.0,
+        5.1,
         GRAY,
       );
 
-      y -=
-        2.8 * MM;
+      y -= 3 * MM;
     }
 
     /* ========================================================
@@ -906,18 +808,14 @@ export async function GET(
     if (address) {
       drawCentered(
         page,
-        truncate(
-          address,
-          44,
-        ),
+        truncate(address, 46),
         y,
         regularFont,
-        4.6,
+        4.8,
         MID_GRAY,
       );
 
-      y -=
-        2.8 * MM;
+      y -= 3 * MM;
     }
 
     /* ========================================================
@@ -940,8 +838,7 @@ export async function GET(
       color: BLACK,
     });
 
-    y -=
-      4.5 * MM;
+    y -= 5 * MM;
 
     /* ========================================================
        TITRE
@@ -952,12 +849,11 @@ export async function GET(
       "REÇU DE PAIEMENT",
       y,
       boldFont,
-      9.2,
+      9.5,
       BLACK,
     );
 
-    y -=
-      3.8 * MM;
+    y -= 4 * MM;
 
     /* ========================================================
        RÉFÉRENCE
@@ -965,47 +861,32 @@ export async function GET(
 
     drawCentered(
       page,
-      `REF. ${truncate(
-        reference,
-        23,
-      )}`,
+      `REF. ${truncate(reference, 24)}`,
       y,
       boldFont,
-      6.0,
+      6.2,
       DARK,
     );
 
-    y -=
-      4.8 * MM;
+    y -= 6 * MM;
 
     /* ========================================================
        APPRENANT
        ======================================================== */
 
     const learnerHeight =
-      11.5 * MM;
+      13 * MM;
 
     page.drawRectangle({
       x: MARGIN,
-
       y:
         y -
         learnerHeight,
-
-      width:
-        CONTENT_WIDTH,
-
-      height:
-        learnerHeight,
-
-      color:
-        VERY_LIGHT,
-
-      borderColor:
-        LIGHT_GRAY,
-
-      borderWidth:
-        0.65,
+      width: CONTENT_WIDTH,
+      height: learnerHeight,
+      color: VERY_LIGHT,
+      borderColor: LIGHT_GRAY,
+      borderWidth: 0.7,
     });
 
     page.drawText(
@@ -1013,13 +894,13 @@ export async function GET(
       {
         x:
           MARGIN +
-          2.2 * MM,
+          2.5 * MM,
 
         y:
           y -
-          3.2 * MM,
+          3.8 * MM,
 
-        size: 4.9,
+        size: 5,
 
         font:
           boldFont,
@@ -1032,18 +913,18 @@ export async function GET(
     page.drawText(
       truncate(
         nomApprenant,
-        31,
+        32,
       ),
       {
         x:
           MARGIN +
-          2.2 * MM,
+          2.5 * MM,
 
         y:
           y -
-          7.6 * MM,
+          8.8 * MM,
 
-        size: 7.6,
+        size: 8,
 
         font:
           boldFont,
@@ -1055,10 +936,10 @@ export async function GET(
 
     y -=
       learnerHeight +
-      4.2 * MM;
+      5 * MM;
 
     /* ========================================================
-       TYPE DE PAIEMENT
+       TYPE
        ======================================================== */
 
     drawInfoRow(
@@ -1072,18 +953,13 @@ export async function GET(
       boldFont,
     );
 
-    y -=
-      3.9 * MM;
+    y -= 4.5 * MM;
 
     /* ========================================================
-       LOGIQUE RÉGULIER / CONVENTION
+       PAIEMENT RÉGULIER
        ======================================================== */
 
     if (estPaiementRegulier) {
-      /* ======================================================
-         FRAIS
-         ====================================================== */
-
       drawInfoRow(
         page,
         "Frais",
@@ -1093,29 +969,19 @@ export async function GET(
         boldFont,
       );
 
-      y -=
-        3.9 * MM;
-
-      /* ======================================================
-         INSCRIPTION
-         ====================================================== */
+      y -= 4.5 * MM;
 
       drawInfoRow(
         page,
         "Inscription",
-        paiement.inscription
-          ?.numero || "—",
+        paiement.inscription?.numero ||
+          "—",
         y,
         regularFont,
         boldFont,
       );
 
-      y -=
-        3.9 * MM;
-
-      /* ======================================================
-         FORMATION
-         ====================================================== */
+      y -= 4.5 * MM;
 
       drawInfoRow(
         page,
@@ -1126,12 +992,7 @@ export async function GET(
         boldFont,
       );
 
-      y -=
-        3.9 * MM;
-
-      /* ======================================================
-         SESSION
-         ====================================================== */
+      y -= 4.5 * MM;
 
       if (session?.code) {
         drawInfoRow(
@@ -1143,47 +1004,38 @@ export async function GET(
           boldFont,
         );
 
-        y -=
-          3.9 * MM;
+        y -= 4.5 * MM;
       }
     }
 
-    if (estConvention) {
-      /* ======================================================
-         CONVENTION
-         ====================================================== */
+    /* ========================================================
+       CONVENTION
+       ======================================================== */
 
+    if (estConvention) {
       drawInfoRow(
         page,
         "Convention",
-        numeroConvention || "—",
+        numeroConvention ||
+          "—",
         y,
         regularFont,
         boldFont,
       );
 
-      y -=
-        3.9 * MM;
-
-      /* ======================================================
-         ORGANISATION
-         ====================================================== */
+      y -= 4.5 * MM;
 
       drawInfoRow(
         page,
         "Organisation",
-        organisationConvention || "—",
+        organisationConvention ||
+          "—",
         y,
         regularFont,
         boldFont,
       );
 
-      y -=
-        3.9 * MM;
-
-      /* ======================================================
-         FACTURE
-         ====================================================== */
+      y -= 4.5 * MM;
 
       drawInfoRow(
         page,
@@ -1195,12 +1047,7 @@ export async function GET(
         boldFont,
       );
 
-      y -=
-        3.9 * MM;
-
-      /* ======================================================
-         ÉCHÉANCE
-         ====================================================== */
+      y -= 4.5 * MM;
 
       if (paiement.echeance?.numero) {
         drawInfoRow(
@@ -1212,18 +1059,17 @@ export async function GET(
           boldFont,
         );
 
-        y -=
-          3.9 * MM;
+        y -= 4.5 * MM;
       }
     }
 
     /* ========================================================
-       MODE DE PAIEMENT
+       MODE
        ======================================================== */
 
     drawInfoRow(
       page,
-      "Paiement",
+      "Mode",
       formatMode(
         safeText(
           paiement.mode,
@@ -1234,8 +1080,7 @@ export async function GET(
       boldFont,
     );
 
-    y -=
-      3.9 * MM;
+    y -= 4.5 * MM;
 
     /* ========================================================
        DATE
@@ -1260,8 +1105,7 @@ export async function GET(
     if (
       paiement.referenceTransaction
     ) {
-      y -=
-        3.9 * MM;
+      y -= 4.5 * MM;
 
       drawInfoRow(
         page,
@@ -1273,15 +1117,31 @@ export async function GET(
       );
     }
 
-    y -=
-      5.0 * MM;
+    /* ========================================================
+       NOTES
+       ======================================================== */
+
+    if (paiement.notes) {
+      y -= 4.5 * MM;
+
+      drawInfoRow(
+        page,
+        "Note",
+        paiement.notes,
+        y,
+        regularFont,
+        boldFont,
+      );
+    }
+
+    y -= 6 * MM;
 
     /* ========================================================
        MONTANT
        ======================================================== */
 
     const amountHeight =
-      16 * MM;
+      20 * MM;
 
     page.drawRectangle({
       x: MARGIN,
@@ -1310,9 +1170,9 @@ export async function GET(
       page,
       "MONTANT PAYÉ",
       y -
-        4.1 * MM,
+        5 * MM,
       regularFont,
-      5.4,
+      5.8,
       GRAY,
     );
 
@@ -1323,42 +1183,38 @@ export async function GET(
         devise,
       ),
       y -
-        10.8 * MM,
+        13 * MM,
       boldFont,
-      13.8,
+      14.5,
       BLACK,
     );
 
     y -=
       amountHeight +
-      4.2 * MM;
+      6 * MM;
 
     /* ========================================================
        STATUT
        ======================================================== */
 
     const statusText =
-      formatStatut(
-        statut,
-      );
+      formatStatut(statut);
 
     const statusColor =
-      getStatusColor(
-        statut,
-      );
+      getStatusColor(statut);
 
     const statusFontSize =
-      5.8;
+      6;
 
     const statusWidth =
       boldFont.widthOfTextAtSize(
         statusText.toUpperCase(),
         statusFontSize,
       ) +
-      8 * MM;
+      9 * MM;
 
     const statusHeight =
-      5.8 * MM;
+      6.5 * MM;
 
     page.drawRectangle({
       x:
@@ -1384,64 +1240,62 @@ export async function GET(
       page,
       statusText.toUpperCase(),
       y -
-        3.9 * MM,
+        4.3 * MM,
       boldFont,
       statusFontSize,
       WHITE,
     );
 
-    /* ========================================================
-       FOOTER
-       ======================================================== */
+    y -=
+      statusHeight +
+      7 * MM;
 
-    const footerLineY =
-      5.8 * MM;
+    /* ========================================================
+       PIED DE PAGE
+       ======================================================== */
 
     page.drawLine({
       start: {
         x: MARGIN,
-        y:
-          footerLineY +
-          5 * MM,
+        y,
       },
 
       end: {
         x:
-          PAGE_WIDTH -
-          MARGIN,
-
-        y:
-          footerLineY +
-          5 * MM,
+          PAGE_WIDTH - MARGIN,
+        y,
       },
 
-      thickness: 0.45,
+      thickness: 0.5,
 
       color:
         LIGHT_GRAY,
     });
 
+    y -= 4 * MM;
+
     drawCentered(
       page,
       "Merci pour votre paiement.",
-      footerLineY +
-        2.8 * MM,
+      y,
       boldFont,
-      5.0,
+      5.2,
       DARK,
     );
+
+    y -= 3.5 * MM;
 
     drawCentered(
       page,
       "Reçu officiel",
-      footerLineY,
+      y,
       regularFont,
-      3.8,
+      4,
       GRAY,
     );
 
     /* ========================================================
-       GÉNÉRATION
+       GÉNÉRATION PDF
        ======================================================== */
 
     const pdfBytes =
@@ -1461,9 +1315,7 @@ export async function GET(
         );
 
     return new NextResponse(
-      Buffer.from(
-        pdfBytes,
-      ),
+      Buffer.from(pdfBytes),
       {
         status: 200,
 

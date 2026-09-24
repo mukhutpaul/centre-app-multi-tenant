@@ -420,6 +420,7 @@ export const ModelName = {
   NoteCritere: 'NoteCritere',
   ResultatFormation: 'ResultatFormation',
   Convention: 'Convention',
+  ConventionParticipant: 'ConventionParticipant',
   Facture: 'Facture',
   LigneFacture: 'LigneFacture',
   EcheancePaiement: 'EcheancePaiement',
@@ -455,7 +456,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "centreFormation" | "utilisateur" | "membre" | "apprenant" | "formateur" | "formation" | "moduleFormation" | "competence" | "sessionFormation" | "moduleSession" | "formateurSession" | "formateurModuleSession" | "salle" | "planning" | "inscription" | "presence" | "tarifFormation" | "modeleEvaluation" | "critereEvaluation" | "evaluationResultat" | "noteCritere" | "resultatFormation" | "convention" | "facture" | "ligneFacture" | "echeancePaiement" | "paiement" | "jury" | "membreJury" | "evaluationJury" | "certification" | "document" | "campagneFormation" | "parametreCentre" | "notification" | "invitationUtilisateur" | "sessionUtilisateur" | "journalAudit" | "planSaaS" | "limitePlanSaaS" | "abonnementSaaS" | "factureSaaS" | "paiementSaaS"
+    modelProps: "centreFormation" | "utilisateur" | "membre" | "apprenant" | "formateur" | "formation" | "moduleFormation" | "competence" | "sessionFormation" | "moduleSession" | "formateurSession" | "formateurModuleSession" | "salle" | "planning" | "inscription" | "presence" | "tarifFormation" | "modeleEvaluation" | "critereEvaluation" | "evaluationResultat" | "noteCritere" | "resultatFormation" | "convention" | "conventionParticipant" | "facture" | "ligneFacture" | "echeancePaiement" | "paiement" | "jury" | "membreJury" | "evaluationJury" | "certification" | "document" | "campagneFormation" | "parametreCentre" | "notification" | "invitationUtilisateur" | "sessionUtilisateur" | "journalAudit" | "planSaaS" | "limitePlanSaaS" | "abonnementSaaS" | "factureSaaS" | "paiementSaaS"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2158,6 +2159,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ConventionCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ConventionCountAggregateOutputType> | number
+        }
+      }
+    }
+    ConventionParticipant: {
+      payload: Prisma.$ConventionParticipantPayload<ExtArgs>
+      fields: Prisma.ConventionParticipantFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ConventionParticipantFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ConventionParticipantFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>
+        }
+        findFirst: {
+          args: Prisma.ConventionParticipantFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ConventionParticipantFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>
+        }
+        findMany: {
+          args: Prisma.ConventionParticipantFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>[]
+        }
+        create: {
+          args: Prisma.ConventionParticipantCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>
+        }
+        createMany: {
+          args: Prisma.ConventionParticipantCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ConventionParticipantCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>[]
+        }
+        delete: {
+          args: Prisma.ConventionParticipantDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>
+        }
+        update: {
+          args: Prisma.ConventionParticipantUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>
+        }
+        deleteMany: {
+          args: Prisma.ConventionParticipantDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ConventionParticipantUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ConventionParticipantUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>[]
+        }
+        upsert: {
+          args: Prisma.ConventionParticipantUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConventionParticipantPayload>
+        }
+        aggregate: {
+          args: Prisma.ConventionParticipantAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConventionParticipant>
+        }
+        groupBy: {
+          args: Prisma.ConventionParticipantGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConventionParticipantGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ConventionParticipantCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConventionParticipantCountAggregateOutputType> | number
         }
       }
     }
@@ -4048,30 +4123,42 @@ export type ResultatFormationScalarFieldEnum = (typeof ResultatFormationScalarFi
 export const ConventionScalarFieldEnum = {
   id: 'id',
   centreId: 'centreId',
-  inscriptionId: 'inscriptionId',
   numero: 'numero',
-  nomOrganisme: 'nomOrganisme',
-  emailOrganisme: 'emailOrganisme',
-  telephoneOrganisme: 'telephoneOrganisme',
-  adresseOrganisme: 'adresseOrganisme',
-  nomContact: 'nomContact',
+  organisationNom: 'organisationNom',
+  organisationAdresse: 'organisationAdresse',
+  organisationEmail: 'organisationEmail',
+  organisationTelephone: 'organisationTelephone',
+  organisationContact: 'organisationContact',
   dateDebut: 'dateDebut',
   dateFin: 'dateFin',
   montant: 'montant',
+  devise: 'devise',
   statut: 'statut',
   dateSignature: 'dateSignature',
   observations: 'observations',
-  creeLe: 'creeLe',
-  modifieLe: 'modifieLe'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type ConventionScalarFieldEnum = (typeof ConventionScalarFieldEnum)[keyof typeof ConventionScalarFieldEnum]
 
 
+export const ConventionParticipantScalarFieldEnum = {
+  id: 'id',
+  conventionId: 'conventionId',
+  inscriptionId: 'inscriptionId',
+  montant: 'montant',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ConventionParticipantScalarFieldEnum = (typeof ConventionParticipantScalarFieldEnum)[keyof typeof ConventionParticipantScalarFieldEnum]
+
+
 export const FactureScalarFieldEnum = {
   id: 'id',
   centreId: 'centreId',
-  inscriptionId: 'inscriptionId',
+  conventionId: 'conventionId',
   numero: 'numero',
   dateEmission: 'dateEmission',
   dateEcheance: 'dateEcheance',
@@ -4128,8 +4215,11 @@ export const PaiementScalarFieldEnum = {
   inscriptionId: 'inscriptionId',
   factureId: 'factureId',
   echeanceId: 'echeanceId',
+  tarifFormationId: 'tarifFormationId',
+  type: 'type',
   reference: 'reference',
   montant: 'montant',
+  devise: 'devise',
   mode: 'mode',
   statut: 'statut',
   datePaiement: 'datePaiement',
@@ -4596,6 +4686,13 @@ export type EnumStatutEcheanceFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'TypePaiement'
+ */
+export type EnumTypePaiementFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TypePaiement'>
+    
+
+
+/**
  * Reference to a field of type 'ModePaiement'
  */
 export type EnumModePaiementFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ModePaiement'>
@@ -4866,6 +4963,7 @@ export type GlobalOmitConfig = {
   noteCritere?: Prisma.NoteCritereOmit
   resultatFormation?: Prisma.ResultatFormationOmit
   convention?: Prisma.ConventionOmit
+  conventionParticipant?: Prisma.ConventionParticipantOmit
   facture?: Prisma.FactureOmit
   ligneFacture?: Prisma.LigneFactureOmit
   echeancePaiement?: Prisma.EcheancePaiementOmit

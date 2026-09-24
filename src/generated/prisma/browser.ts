@@ -133,6 +133,11 @@ export type ResultatFormation = Prisma.ResultatFormationModel
  */
 export type Convention = Prisma.ConventionModel
 /**
+ * Model ConventionParticipant
+ * 
+ */
+export type ConventionParticipant = Prisma.ConventionParticipantModel
+/**
  * Model Facture
  * 
  */

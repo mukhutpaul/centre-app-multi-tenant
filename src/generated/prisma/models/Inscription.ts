@@ -266,8 +266,7 @@ export type InscriptionWhereInput = {
   modifieLe?: Prisma.DateTimeFilter<"Inscription"> | Date | string
   apprenant?: Prisma.XOR<Prisma.ApprenantScalarRelationFilter, Prisma.ApprenantWhereInput>
   session?: Prisma.XOR<Prisma.SessionFormationScalarRelationFilter, Prisma.SessionFormationWhereInput>
-  convention?: Prisma.XOR<Prisma.ConventionNullableScalarRelationFilter, Prisma.ConventionWhereInput> | null
-  factures?: Prisma.FactureListRelationFilter
+  conventions?: Prisma.ConventionParticipantListRelationFilter
   paiements?: Prisma.PaiementListRelationFilter
   echeances?: Prisma.EcheancePaiementListRelationFilter
   presences?: Prisma.PresenceListRelationFilter
@@ -290,8 +289,7 @@ export type InscriptionOrderByWithRelationInput = {
   modifieLe?: Prisma.SortOrder
   apprenant?: Prisma.ApprenantOrderByWithRelationInput
   session?: Prisma.SessionFormationOrderByWithRelationInput
-  convention?: Prisma.ConventionOrderByWithRelationInput
-  factures?: Prisma.FactureOrderByRelationAggregateInput
+  conventions?: Prisma.ConventionParticipantOrderByRelationAggregateInput
   paiements?: Prisma.PaiementOrderByRelationAggregateInput
   echeances?: Prisma.EcheancePaiementOrderByRelationAggregateInput
   presences?: Prisma.PresenceOrderByRelationAggregateInput
@@ -319,8 +317,7 @@ export type InscriptionWhereUniqueInput = Prisma.AtLeast<{
   modifieLe?: Prisma.DateTimeFilter<"Inscription"> | Date | string
   apprenant?: Prisma.XOR<Prisma.ApprenantScalarRelationFilter, Prisma.ApprenantWhereInput>
   session?: Prisma.XOR<Prisma.SessionFormationScalarRelationFilter, Prisma.SessionFormationWhereInput>
-  convention?: Prisma.XOR<Prisma.ConventionNullableScalarRelationFilter, Prisma.ConventionWhereInput> | null
-  factures?: Prisma.FactureListRelationFilter
+  conventions?: Prisma.ConventionParticipantListRelationFilter
   paiements?: Prisma.PaiementListRelationFilter
   echeances?: Prisma.EcheancePaiementListRelationFilter
   presences?: Prisma.PresenceListRelationFilter
@@ -377,8 +374,7 @@ export type InscriptionCreateInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
@@ -399,8 +395,7 @@ export type InscriptionUncheckedCreateInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
@@ -421,8 +416,7 @@ export type InscriptionUpdateInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
@@ -443,8 +437,7 @@ export type InscriptionUncheckedUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -707,34 +700,18 @@ export type InscriptionUpdateOneRequiredWithoutResultatFormationNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.InscriptionUpdateToOneWithWhereWithoutResultatFormationInput, Prisma.InscriptionUpdateWithoutResultatFormationInput>, Prisma.InscriptionUncheckedUpdateWithoutResultatFormationInput>
 }
 
-export type InscriptionCreateNestedOneWithoutConventionInput = {
-  create?: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionInput, Prisma.InscriptionUncheckedCreateWithoutConventionInput>
-  connectOrCreate?: Prisma.InscriptionCreateOrConnectWithoutConventionInput
+export type InscriptionCreateNestedOneWithoutConventionsInput = {
+  create?: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionsInput, Prisma.InscriptionUncheckedCreateWithoutConventionsInput>
+  connectOrCreate?: Prisma.InscriptionCreateOrConnectWithoutConventionsInput
   connect?: Prisma.InscriptionWhereUniqueInput
 }
 
-export type InscriptionUpdateOneRequiredWithoutConventionNestedInput = {
-  create?: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionInput, Prisma.InscriptionUncheckedCreateWithoutConventionInput>
-  connectOrCreate?: Prisma.InscriptionCreateOrConnectWithoutConventionInput
-  upsert?: Prisma.InscriptionUpsertWithoutConventionInput
+export type InscriptionUpdateOneRequiredWithoutConventionsNestedInput = {
+  create?: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionsInput, Prisma.InscriptionUncheckedCreateWithoutConventionsInput>
+  connectOrCreate?: Prisma.InscriptionCreateOrConnectWithoutConventionsInput
+  upsert?: Prisma.InscriptionUpsertWithoutConventionsInput
   connect?: Prisma.InscriptionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.InscriptionUpdateToOneWithWhereWithoutConventionInput, Prisma.InscriptionUpdateWithoutConventionInput>, Prisma.InscriptionUncheckedUpdateWithoutConventionInput>
-}
-
-export type InscriptionCreateNestedOneWithoutFacturesInput = {
-  create?: Prisma.XOR<Prisma.InscriptionCreateWithoutFacturesInput, Prisma.InscriptionUncheckedCreateWithoutFacturesInput>
-  connectOrCreate?: Prisma.InscriptionCreateOrConnectWithoutFacturesInput
-  connect?: Prisma.InscriptionWhereUniqueInput
-}
-
-export type InscriptionUpdateOneWithoutFacturesNestedInput = {
-  create?: Prisma.XOR<Prisma.InscriptionCreateWithoutFacturesInput, Prisma.InscriptionUncheckedCreateWithoutFacturesInput>
-  connectOrCreate?: Prisma.InscriptionCreateOrConnectWithoutFacturesInput
-  upsert?: Prisma.InscriptionUpsertWithoutFacturesInput
-  disconnect?: Prisma.InscriptionWhereInput | boolean
-  delete?: Prisma.InscriptionWhereInput | boolean
-  connect?: Prisma.InscriptionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.InscriptionUpdateToOneWithWhereWithoutFacturesInput, Prisma.InscriptionUpdateWithoutFacturesInput>, Prisma.InscriptionUncheckedUpdateWithoutFacturesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.InscriptionUpdateToOneWithWhereWithoutConventionsInput, Prisma.InscriptionUpdateWithoutConventionsInput>, Prisma.InscriptionUncheckedUpdateWithoutConventionsInput>
 }
 
 export type InscriptionCreateNestedOneWithoutEcheancesInput = {
@@ -794,8 +771,7 @@ export type InscriptionCreateWithoutApprenantInput = {
   creeLe?: Date | string
   modifieLe?: Date | string
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
@@ -815,8 +791,7 @@ export type InscriptionUncheckedCreateWithoutApprenantInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
@@ -878,8 +853,7 @@ export type InscriptionCreateWithoutSessionInput = {
   creeLe?: Date | string
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
@@ -899,8 +873,7 @@ export type InscriptionUncheckedCreateWithoutSessionInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
@@ -946,8 +919,7 @@ export type InscriptionCreateWithoutPresencesInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   evaluations?: Prisma.EvaluationResultatCreateNestedManyWithoutInscriptionInput
@@ -967,8 +939,7 @@ export type InscriptionUncheckedCreateWithoutPresencesInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   evaluations?: Prisma.EvaluationResultatUncheckedCreateNestedManyWithoutInscriptionInput
@@ -1004,8 +975,7 @@ export type InscriptionUpdateWithoutPresencesInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   evaluations?: Prisma.EvaluationResultatUpdateManyWithoutInscriptionNestedInput
@@ -1025,8 +995,7 @@ export type InscriptionUncheckedUpdateWithoutPresencesInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   evaluations?: Prisma.EvaluationResultatUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1046,8 +1015,7 @@ export type InscriptionCreateWithoutEvaluationsInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
@@ -1067,8 +1035,7 @@ export type InscriptionUncheckedCreateWithoutEvaluationsInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
@@ -1104,8 +1071,7 @@ export type InscriptionUpdateWithoutEvaluationsInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
@@ -1125,8 +1091,7 @@ export type InscriptionUncheckedUpdateWithoutEvaluationsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1146,8 +1111,7 @@ export type InscriptionCreateWithoutResultatFormationInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
@@ -1167,8 +1131,7 @@ export type InscriptionUncheckedCreateWithoutResultatFormationInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
@@ -1204,8 +1167,7 @@ export type InscriptionUpdateWithoutResultatFormationInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
@@ -1225,8 +1187,7 @@ export type InscriptionUncheckedUpdateWithoutResultatFormationInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1234,7 +1195,7 @@ export type InscriptionUncheckedUpdateWithoutResultatFormationInput = {
   evaluationsJury?: Prisma.EvaluationJuryUncheckedUpdateManyWithoutInscriptionNestedInput
 }
 
-export type InscriptionCreateWithoutConventionInput = {
+export type InscriptionCreateWithoutConventionsInput = {
   id?: string
   numero: string
   statut?: $Enums.StatutInscription
@@ -1246,7 +1207,6 @@ export type InscriptionCreateWithoutConventionInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
@@ -1255,7 +1215,7 @@ export type InscriptionCreateWithoutConventionInput = {
   resultatFormation?: Prisma.ResultatFormationCreateNestedOneWithoutInscriptionInput
 }
 
-export type InscriptionUncheckedCreateWithoutConventionInput = {
+export type InscriptionUncheckedCreateWithoutConventionsInput = {
   id?: string
   apprenantId: string
   sessionId: string
@@ -1267,7 +1227,6 @@ export type InscriptionUncheckedCreateWithoutConventionInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
@@ -1276,23 +1235,23 @@ export type InscriptionUncheckedCreateWithoutConventionInput = {
   resultatFormation?: Prisma.ResultatFormationUncheckedCreateNestedOneWithoutInscriptionInput
 }
 
-export type InscriptionCreateOrConnectWithoutConventionInput = {
+export type InscriptionCreateOrConnectWithoutConventionsInput = {
   where: Prisma.InscriptionWhereUniqueInput
-  create: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionInput, Prisma.InscriptionUncheckedCreateWithoutConventionInput>
+  create: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionsInput, Prisma.InscriptionUncheckedCreateWithoutConventionsInput>
 }
 
-export type InscriptionUpsertWithoutConventionInput = {
-  update: Prisma.XOR<Prisma.InscriptionUpdateWithoutConventionInput, Prisma.InscriptionUncheckedUpdateWithoutConventionInput>
-  create: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionInput, Prisma.InscriptionUncheckedCreateWithoutConventionInput>
+export type InscriptionUpsertWithoutConventionsInput = {
+  update: Prisma.XOR<Prisma.InscriptionUpdateWithoutConventionsInput, Prisma.InscriptionUncheckedUpdateWithoutConventionsInput>
+  create: Prisma.XOR<Prisma.InscriptionCreateWithoutConventionsInput, Prisma.InscriptionUncheckedCreateWithoutConventionsInput>
   where?: Prisma.InscriptionWhereInput
 }
 
-export type InscriptionUpdateToOneWithWhereWithoutConventionInput = {
+export type InscriptionUpdateToOneWithWhereWithoutConventionsInput = {
   where?: Prisma.InscriptionWhereInput
-  data: Prisma.XOR<Prisma.InscriptionUpdateWithoutConventionInput, Prisma.InscriptionUncheckedUpdateWithoutConventionInput>
+  data: Prisma.XOR<Prisma.InscriptionUpdateWithoutConventionsInput, Prisma.InscriptionUncheckedUpdateWithoutConventionsInput>
 }
 
-export type InscriptionUpdateWithoutConventionInput = {
+export type InscriptionUpdateWithoutConventionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   numero?: Prisma.StringFieldUpdateOperationsInput | string
   statut?: Prisma.EnumStatutInscriptionFieldUpdateOperationsInput | $Enums.StatutInscription
@@ -1304,7 +1263,6 @@ export type InscriptionUpdateWithoutConventionInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
@@ -1313,7 +1271,7 @@ export type InscriptionUpdateWithoutConventionInput = {
   resultatFormation?: Prisma.ResultatFormationUpdateOneWithoutInscriptionNestedInput
 }
 
-export type InscriptionUncheckedUpdateWithoutConventionInput = {
+export type InscriptionUncheckedUpdateWithoutConventionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   apprenantId?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1325,107 +1283,6 @@ export type InscriptionUncheckedUpdateWithoutConventionInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
-  paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
-  echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
-  presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
-  evaluations?: Prisma.EvaluationResultatUncheckedUpdateManyWithoutInscriptionNestedInput
-  evaluationsJury?: Prisma.EvaluationJuryUncheckedUpdateManyWithoutInscriptionNestedInput
-  resultatFormation?: Prisma.ResultatFormationUncheckedUpdateOneWithoutInscriptionNestedInput
-}
-
-export type InscriptionCreateWithoutFacturesInput = {
-  id?: string
-  numero: string
-  statut?: $Enums.StatutInscription
-  typeFinancement?: $Enums.TypeFinancement
-  dateInscription?: Date | string
-  montantConvenu?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  notes?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
-  apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
-  session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
-  echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
-  presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
-  evaluations?: Prisma.EvaluationResultatCreateNestedManyWithoutInscriptionInput
-  evaluationsJury?: Prisma.EvaluationJuryCreateNestedManyWithoutInscriptionInput
-  resultatFormation?: Prisma.ResultatFormationCreateNestedOneWithoutInscriptionInput
-}
-
-export type InscriptionUncheckedCreateWithoutFacturesInput = {
-  id?: string
-  apprenantId: string
-  sessionId: string
-  numero: string
-  statut?: $Enums.StatutInscription
-  typeFinancement?: $Enums.TypeFinancement
-  dateInscription?: Date | string
-  montantConvenu?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  notes?: string | null
-  creeLe?: Date | string
-  modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
-  echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
-  presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
-  evaluations?: Prisma.EvaluationResultatUncheckedCreateNestedManyWithoutInscriptionInput
-  evaluationsJury?: Prisma.EvaluationJuryUncheckedCreateNestedManyWithoutInscriptionInput
-  resultatFormation?: Prisma.ResultatFormationUncheckedCreateNestedOneWithoutInscriptionInput
-}
-
-export type InscriptionCreateOrConnectWithoutFacturesInput = {
-  where: Prisma.InscriptionWhereUniqueInput
-  create: Prisma.XOR<Prisma.InscriptionCreateWithoutFacturesInput, Prisma.InscriptionUncheckedCreateWithoutFacturesInput>
-}
-
-export type InscriptionUpsertWithoutFacturesInput = {
-  update: Prisma.XOR<Prisma.InscriptionUpdateWithoutFacturesInput, Prisma.InscriptionUncheckedUpdateWithoutFacturesInput>
-  create: Prisma.XOR<Prisma.InscriptionCreateWithoutFacturesInput, Prisma.InscriptionUncheckedCreateWithoutFacturesInput>
-  where?: Prisma.InscriptionWhereInput
-}
-
-export type InscriptionUpdateToOneWithWhereWithoutFacturesInput = {
-  where?: Prisma.InscriptionWhereInput
-  data: Prisma.XOR<Prisma.InscriptionUpdateWithoutFacturesInput, Prisma.InscriptionUncheckedUpdateWithoutFacturesInput>
-}
-
-export type InscriptionUpdateWithoutFacturesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  numero?: Prisma.StringFieldUpdateOperationsInput | string
-  statut?: Prisma.EnumStatutInscriptionFieldUpdateOperationsInput | $Enums.StatutInscription
-  typeFinancement?: Prisma.EnumTypeFinancementFieldUpdateOperationsInput | $Enums.TypeFinancement
-  dateInscription?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  montantConvenu?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
-  session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
-  echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
-  presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
-  evaluations?: Prisma.EvaluationResultatUpdateManyWithoutInscriptionNestedInput
-  evaluationsJury?: Prisma.EvaluationJuryUpdateManyWithoutInscriptionNestedInput
-  resultatFormation?: Prisma.ResultatFormationUpdateOneWithoutInscriptionNestedInput
-}
-
-export type InscriptionUncheckedUpdateWithoutFacturesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  apprenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
-  numero?: Prisma.StringFieldUpdateOperationsInput | string
-  statut?: Prisma.EnumStatutInscriptionFieldUpdateOperationsInput | $Enums.StatutInscription
-  typeFinancement?: Prisma.EnumTypeFinancementFieldUpdateOperationsInput | $Enums.TypeFinancement
-  dateInscription?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  montantConvenu?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1446,8 +1303,7 @@ export type InscriptionCreateWithoutEcheancesInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
   evaluations?: Prisma.EvaluationResultatCreateNestedManyWithoutInscriptionInput
@@ -1467,8 +1323,7 @@ export type InscriptionUncheckedCreateWithoutEcheancesInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
   evaluations?: Prisma.EvaluationResultatUncheckedCreateNestedManyWithoutInscriptionInput
@@ -1504,8 +1359,7 @@ export type InscriptionUpdateWithoutEcheancesInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
   evaluations?: Prisma.EvaluationResultatUpdateManyWithoutInscriptionNestedInput
@@ -1525,8 +1379,7 @@ export type InscriptionUncheckedUpdateWithoutEcheancesInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
   evaluations?: Prisma.EvaluationResultatUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1546,8 +1399,7 @@ export type InscriptionCreateWithoutPaiementsInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
   evaluations?: Prisma.EvaluationResultatCreateNestedManyWithoutInscriptionInput
@@ -1567,8 +1419,7 @@ export type InscriptionUncheckedCreateWithoutPaiementsInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
   evaluations?: Prisma.EvaluationResultatUncheckedCreateNestedManyWithoutInscriptionInput
@@ -1604,8 +1455,7 @@ export type InscriptionUpdateWithoutPaiementsInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
   evaluations?: Prisma.EvaluationResultatUpdateManyWithoutInscriptionNestedInput
@@ -1625,8 +1475,7 @@ export type InscriptionUncheckedUpdateWithoutPaiementsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
   evaluations?: Prisma.EvaluationResultatUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1646,8 +1495,7 @@ export type InscriptionCreateWithoutEvaluationsJuryInput = {
   modifieLe?: Date | string
   apprenant: Prisma.ApprenantCreateNestedOneWithoutInscriptionsInput
   session: Prisma.SessionFormationCreateNestedOneWithoutInscriptionsInput
-  convention?: Prisma.ConventionCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceCreateNestedManyWithoutInscriptionInput
@@ -1667,8 +1515,7 @@ export type InscriptionUncheckedCreateWithoutEvaluationsJuryInput = {
   notes?: string | null
   creeLe?: Date | string
   modifieLe?: Date | string
-  convention?: Prisma.ConventionUncheckedCreateNestedOneWithoutInscriptionInput
-  factures?: Prisma.FactureUncheckedCreateNestedManyWithoutInscriptionInput
+  conventions?: Prisma.ConventionParticipantUncheckedCreateNestedManyWithoutInscriptionInput
   paiements?: Prisma.PaiementUncheckedCreateNestedManyWithoutInscriptionInput
   echeances?: Prisma.EcheancePaiementUncheckedCreateNestedManyWithoutInscriptionInput
   presences?: Prisma.PresenceUncheckedCreateNestedManyWithoutInscriptionInput
@@ -1704,8 +1551,7 @@ export type InscriptionUpdateWithoutEvaluationsJuryInput = {
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
@@ -1725,8 +1571,7 @@ export type InscriptionUncheckedUpdateWithoutEvaluationsJuryInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1758,8 +1603,7 @@ export type InscriptionUpdateWithoutApprenantInput = {
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   session?: Prisma.SessionFormationUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
@@ -1779,8 +1623,7 @@ export type InscriptionUncheckedUpdateWithoutApprenantInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1826,8 +1669,7 @@ export type InscriptionUpdateWithoutSessionInput = {
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   apprenant?: Prisma.ApprenantUpdateOneRequiredWithoutInscriptionsNestedInput
-  convention?: Prisma.ConventionUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUpdateManyWithoutInscriptionNestedInput
@@ -1847,8 +1689,7 @@ export type InscriptionUncheckedUpdateWithoutSessionInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  convention?: Prisma.ConventionUncheckedUpdateOneWithoutInscriptionNestedInput
-  factures?: Prisma.FactureUncheckedUpdateManyWithoutInscriptionNestedInput
+  conventions?: Prisma.ConventionParticipantUncheckedUpdateManyWithoutInscriptionNestedInput
   paiements?: Prisma.PaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   echeances?: Prisma.EcheancePaiementUncheckedUpdateManyWithoutInscriptionNestedInput
   presences?: Prisma.PresenceUncheckedUpdateManyWithoutInscriptionNestedInput
@@ -1876,7 +1717,7 @@ export type InscriptionUncheckedUpdateManyWithoutSessionInput = {
  */
 
 export type InscriptionCountOutputType = {
-  factures: number
+  conventions: number
   paiements: number
   echeances: number
   presences: number
@@ -1885,7 +1726,7 @@ export type InscriptionCountOutputType = {
 }
 
 export type InscriptionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  factures?: boolean | InscriptionCountOutputTypeCountFacturesArgs
+  conventions?: boolean | InscriptionCountOutputTypeCountConventionsArgs
   paiements?: boolean | InscriptionCountOutputTypeCountPaiementsArgs
   echeances?: boolean | InscriptionCountOutputTypeCountEcheancesArgs
   presences?: boolean | InscriptionCountOutputTypeCountPresencesArgs
@@ -1906,8 +1747,8 @@ export type InscriptionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
 /**
  * InscriptionCountOutputType without action
  */
-export type InscriptionCountOutputTypeCountFacturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FactureWhereInput
+export type InscriptionCountOutputTypeCountConventionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConventionParticipantWhereInput
 }
 
 /**
@@ -1960,8 +1801,7 @@ export type InscriptionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   modifieLe?: boolean
   apprenant?: boolean | Prisma.ApprenantDefaultArgs<ExtArgs>
   session?: boolean | Prisma.SessionFormationDefaultArgs<ExtArgs>
-  convention?: boolean | Prisma.Inscription$conventionArgs<ExtArgs>
-  factures?: boolean | Prisma.Inscription$facturesArgs<ExtArgs>
+  conventions?: boolean | Prisma.Inscription$conventionsArgs<ExtArgs>
   paiements?: boolean | Prisma.Inscription$paiementsArgs<ExtArgs>
   echeances?: boolean | Prisma.Inscription$echeancesArgs<ExtArgs>
   presences?: boolean | Prisma.Inscription$presencesArgs<ExtArgs>
@@ -2021,8 +1861,7 @@ export type InscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type InscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   apprenant?: boolean | Prisma.ApprenantDefaultArgs<ExtArgs>
   session?: boolean | Prisma.SessionFormationDefaultArgs<ExtArgs>
-  convention?: boolean | Prisma.Inscription$conventionArgs<ExtArgs>
-  factures?: boolean | Prisma.Inscription$facturesArgs<ExtArgs>
+  conventions?: boolean | Prisma.Inscription$conventionsArgs<ExtArgs>
   paiements?: boolean | Prisma.Inscription$paiementsArgs<ExtArgs>
   echeances?: boolean | Prisma.Inscription$echeancesArgs<ExtArgs>
   presences?: boolean | Prisma.Inscription$presencesArgs<ExtArgs>
@@ -2045,8 +1884,7 @@ export type $InscriptionPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     apprenant: Prisma.$ApprenantPayload<ExtArgs>
     session: Prisma.$SessionFormationPayload<ExtArgs>
-    convention: Prisma.$ConventionPayload<ExtArgs> | null
-    factures: Prisma.$FacturePayload<ExtArgs>[]
+    conventions: Prisma.$ConventionParticipantPayload<ExtArgs>[]
     paiements: Prisma.$PaiementPayload<ExtArgs>[]
     echeances: Prisma.$EcheancePaiementPayload<ExtArgs>[]
     presences: Prisma.$PresencePayload<ExtArgs>[]
@@ -2462,8 +2300,7 @@ export interface Prisma__InscriptionClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   apprenant<T extends Prisma.ApprenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ApprenantDefaultArgs<ExtArgs>>): Prisma.Prisma__ApprenantClient<runtime.Types.Result.GetResult<Prisma.$ApprenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   session<T extends Prisma.SessionFormationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SessionFormationDefaultArgs<ExtArgs>>): Prisma.Prisma__SessionFormationClient<runtime.Types.Result.GetResult<Prisma.$SessionFormationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  convention<T extends Prisma.Inscription$conventionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Inscription$conventionArgs<ExtArgs>>): Prisma.Prisma__ConventionClient<runtime.Types.Result.GetResult<Prisma.$ConventionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  factures<T extends Prisma.Inscription$facturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Inscription$facturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FacturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conventions<T extends Prisma.Inscription$conventionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Inscription$conventionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConventionParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   paiements<T extends Prisma.Inscription$paiementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Inscription$paiementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaiementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   echeances<T extends Prisma.Inscription$echeancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Inscription$echeancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EcheancePaiementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   presences<T extends Prisma.Inscription$presencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Inscription$presencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PresencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2909,46 +2746,27 @@ export type InscriptionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * Inscription.convention
+ * Inscription.conventions
  */
-export type Inscription$conventionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Inscription$conventionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Convention
+   * Select specific fields to fetch from the ConventionParticipant
    */
-  select?: Prisma.ConventionSelect<ExtArgs> | null
+  select?: Prisma.ConventionParticipantSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Convention
+   * Omit specific fields from the ConventionParticipant
    */
-  omit?: Prisma.ConventionOmit<ExtArgs> | null
+  omit?: Prisma.ConventionParticipantOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ConventionInclude<ExtArgs> | null
-  where?: Prisma.ConventionWhereInput
-}
-
-/**
- * Inscription.factures
- */
-export type Inscription$facturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Facture
-   */
-  select?: Prisma.FactureSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Facture
-   */
-  omit?: Prisma.FactureOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FactureInclude<ExtArgs> | null
-  where?: Prisma.FactureWhereInput
-  orderBy?: Prisma.FactureOrderByWithRelationInput | Prisma.FactureOrderByWithRelationInput[]
-  cursor?: Prisma.FactureWhereUniqueInput
+  include?: Prisma.ConventionParticipantInclude<ExtArgs> | null
+  where?: Prisma.ConventionParticipantWhereInput
+  orderBy?: Prisma.ConventionParticipantOrderByWithRelationInput | Prisma.ConventionParticipantOrderByWithRelationInput[]
+  cursor?: Prisma.ConventionParticipantWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.FactureScalarFieldEnum | Prisma.FactureScalarFieldEnum[]
+  distinct?: Prisma.ConventionParticipantScalarFieldEnum | Prisma.ConventionParticipantScalarFieldEnum[]
 }
 
 /**

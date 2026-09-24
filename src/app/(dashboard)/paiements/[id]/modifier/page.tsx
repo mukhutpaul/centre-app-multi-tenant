@@ -1,39 +1,62 @@
 import {
-  getPaiementById,
+  getPaiement,
   getPaiementFormData,
-} from "@/actions/paiement.actions";
-import PaiementEditForm from "@/components/paiements/paiement-edit-form";
-import { notFound } from "next/navigation";
+} from "@/actions/paiement-actions"
+import PaiementEditForm from "@/components/paiements/paiement-edit-form"
+import { notFound } from "next/navigation"
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"
 
 type Props = {
   params: Promise<{
-    id: string;
-  }>;
-};
+    id: string
+  }>
+}
 
 export default async function ModifierPaiementPage({
   params,
 }: Props) {
-  const { id } = await params;
+  const { id } = await params
 
-  const [paiement, data] =
-    await Promise.all([
-      getPaiementById(id),
-      getPaiementFormData(),
-    ]);
+  const [
+    paiementResult,
+    formDataResult,
+  ] = await Promise.all([
+    getPaiement(id),
+    getPaiementFormData(),
+  ])
 
-  if (!paiement) {
-    notFound();
+  // ============================================================
+  // PAIEMENT
+  // ============================================================
+
+  if (
+    !paiementResult.success ||
+    !paiementResult.data
+  ) {
+    notFound()
+  }
+
+  // ============================================================
+  // DONNÉES DU FORMULAIRE
+  // ============================================================
+
+  if (
+    !formDataResult.success ||
+    !formDataResult.data
+  ) {
+    throw new Error(
+      formDataResult.message ||
+        "Impossible de charger les données du formulaire."
+    )
   }
 
   return (
     <div className="w-full">
       <PaiementEditForm
-        paiement={paiement}
-        data={data}
+        paiement={paiementResult.data}
+        data={formDataResult}
       />
     </div>
-  );
+  )
 }

@@ -20,7 +20,7 @@ import Swal from "sweetalert2";
 
 import {
   deleteFacture,
-} from "@/actions/facture.actions";
+} from "@/actions/facture-actions";
 
 type Facture = any;
 

@@ -18,7 +18,7 @@ import {
   ReceiptText,
 } from "lucide-react";
 
-import { updateFacture } from "@/actions/facture.actions";
+import { updateFacture } from "@/actions/facture-actions";
 
 /* =========================================================
    TYPES

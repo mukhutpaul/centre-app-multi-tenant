@@ -34,7 +34,7 @@ import Swal from "sweetalert2";
 
 import {
   createPaiement,
-} from "@/actions/paiement.actions";
+} from "@/actions/paiement-actions";
 
 import {
   generateEcheancier,

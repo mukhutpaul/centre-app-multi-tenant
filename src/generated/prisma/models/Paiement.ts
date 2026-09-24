@@ -41,8 +41,11 @@ export type PaiementMinAggregateOutputType = {
   inscriptionId: string | null
   factureId: string | null
   echeanceId: string | null
+  tarifFormationId: string | null
+  type: $Enums.TypePaiement | null
   reference: string | null
   montant: runtime.Decimal | null
+  devise: string | null
   mode: $Enums.ModePaiement | null
   statut: $Enums.StatutPaiement | null
   datePaiement: Date | null
@@ -59,8 +62,11 @@ export type PaiementMaxAggregateOutputType = {
   inscriptionId: string | null
   factureId: string | null
   echeanceId: string | null
+  tarifFormationId: string | null
+  type: $Enums.TypePaiement | null
   reference: string | null
   montant: runtime.Decimal | null
+  devise: string | null
   mode: $Enums.ModePaiement | null
   statut: $Enums.StatutPaiement | null
   datePaiement: Date | null
@@ -77,8 +83,11 @@ export type PaiementCountAggregateOutputType = {
   inscriptionId: number
   factureId: number
   echeanceId: number
+  tarifFormationId: number
+  type: number
   reference: number
   montant: number
+  devise: number
   mode: number
   statut: number
   datePaiement: number
@@ -105,8 +114,11 @@ export type PaiementMinAggregateInputType = {
   inscriptionId?: true
   factureId?: true
   echeanceId?: true
+  tarifFormationId?: true
+  type?: true
   reference?: true
   montant?: true
+  devise?: true
   mode?: true
   statut?: true
   datePaiement?: true
@@ -123,8 +135,11 @@ export type PaiementMaxAggregateInputType = {
   inscriptionId?: true
   factureId?: true
   echeanceId?: true
+  tarifFormationId?: true
+  type?: true
   reference?: true
   montant?: true
+  devise?: true
   mode?: true
   statut?: true
   datePaiement?: true
@@ -141,8 +156,11 @@ export type PaiementCountAggregateInputType = {
   inscriptionId?: true
   factureId?: true
   echeanceId?: true
+  tarifFormationId?: true
+  type?: true
   reference?: true
   montant?: true
+  devise?: true
   mode?: true
   statut?: true
   datePaiement?: true
@@ -246,8 +264,11 @@ export type PaiementGroupByOutputType = {
   inscriptionId: string | null
   factureId: string | null
   echeanceId: string | null
+  tarifFormationId: string | null
+  type: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal
+  devise: string
   mode: $Enums.ModePaiement
   statut: $Enums.StatutPaiement
   datePaiement: Date | null
@@ -287,8 +308,11 @@ export type PaiementWhereInput = {
   inscriptionId?: Prisma.StringNullableFilter<"Paiement"> | string | null
   factureId?: Prisma.StringNullableFilter<"Paiement"> | string | null
   echeanceId?: Prisma.StringNullableFilter<"Paiement"> | string | null
+  tarifFormationId?: Prisma.StringNullableFilter<"Paiement"> | string | null
+  type?: Prisma.EnumTypePaiementFilter<"Paiement"> | $Enums.TypePaiement
   reference?: Prisma.StringFilter<"Paiement"> | string
   montant?: Prisma.DecimalFilter<"Paiement"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFilter<"Paiement"> | string
   mode?: Prisma.EnumModePaiementFilter<"Paiement"> | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFilter<"Paiement"> | $Enums.StatutPaiement
   datePaiement?: Prisma.DateTimeNullableFilter<"Paiement"> | Date | string | null
@@ -301,6 +325,7 @@ export type PaiementWhereInput = {
   inscription?: Prisma.XOR<Prisma.InscriptionNullableScalarRelationFilter, Prisma.InscriptionWhereInput> | null
   facture?: Prisma.XOR<Prisma.FactureNullableScalarRelationFilter, Prisma.FactureWhereInput> | null
   echeance?: Prisma.XOR<Prisma.EcheancePaiementNullableScalarRelationFilter, Prisma.EcheancePaiementWhereInput> | null
+  tarifFormation?: Prisma.XOR<Prisma.TarifFormationNullableScalarRelationFilter, Prisma.TarifFormationWhereInput> | null
 }
 
 export type PaiementOrderByWithRelationInput = {
@@ -310,8 +335,11 @@ export type PaiementOrderByWithRelationInput = {
   inscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   factureId?: Prisma.SortOrderInput | Prisma.SortOrder
   echeanceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  tarifFormationId?: Prisma.SortOrderInput | Prisma.SortOrder
+  type?: Prisma.SortOrder
   reference?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   mode?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   datePaiement?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -324,6 +352,7 @@ export type PaiementOrderByWithRelationInput = {
   inscription?: Prisma.InscriptionOrderByWithRelationInput
   facture?: Prisma.FactureOrderByWithRelationInput
   echeance?: Prisma.EcheancePaiementOrderByWithRelationInput
+  tarifFormation?: Prisma.TarifFormationOrderByWithRelationInput
 }
 
 export type PaiementWhereUniqueInput = Prisma.AtLeast<{
@@ -337,8 +366,11 @@ export type PaiementWhereUniqueInput = Prisma.AtLeast<{
   inscriptionId?: Prisma.StringNullableFilter<"Paiement"> | string | null
   factureId?: Prisma.StringNullableFilter<"Paiement"> | string | null
   echeanceId?: Prisma.StringNullableFilter<"Paiement"> | string | null
+  tarifFormationId?: Prisma.StringNullableFilter<"Paiement"> | string | null
+  type?: Prisma.EnumTypePaiementFilter<"Paiement"> | $Enums.TypePaiement
   reference?: Prisma.StringFilter<"Paiement"> | string
   montant?: Prisma.DecimalFilter<"Paiement"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFilter<"Paiement"> | string
   mode?: Prisma.EnumModePaiementFilter<"Paiement"> | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFilter<"Paiement"> | $Enums.StatutPaiement
   datePaiement?: Prisma.DateTimeNullableFilter<"Paiement"> | Date | string | null
@@ -351,6 +383,7 @@ export type PaiementWhereUniqueInput = Prisma.AtLeast<{
   inscription?: Prisma.XOR<Prisma.InscriptionNullableScalarRelationFilter, Prisma.InscriptionWhereInput> | null
   facture?: Prisma.XOR<Prisma.FactureNullableScalarRelationFilter, Prisma.FactureWhereInput> | null
   echeance?: Prisma.XOR<Prisma.EcheancePaiementNullableScalarRelationFilter, Prisma.EcheancePaiementWhereInput> | null
+  tarifFormation?: Prisma.XOR<Prisma.TarifFormationNullableScalarRelationFilter, Prisma.TarifFormationWhereInput> | null
 }, "id" | "centreId_reference">
 
 export type PaiementOrderByWithAggregationInput = {
@@ -360,8 +393,11 @@ export type PaiementOrderByWithAggregationInput = {
   inscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
   factureId?: Prisma.SortOrderInput | Prisma.SortOrder
   echeanceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  tarifFormationId?: Prisma.SortOrderInput | Prisma.SortOrder
+  type?: Prisma.SortOrder
   reference?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   mode?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   datePaiement?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -386,8 +422,11 @@ export type PaiementScalarWhereWithAggregatesInput = {
   inscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Paiement"> | string | null
   factureId?: Prisma.StringNullableWithAggregatesFilter<"Paiement"> | string | null
   echeanceId?: Prisma.StringNullableWithAggregatesFilter<"Paiement"> | string | null
+  tarifFormationId?: Prisma.StringNullableWithAggregatesFilter<"Paiement"> | string | null
+  type?: Prisma.EnumTypePaiementWithAggregatesFilter<"Paiement"> | $Enums.TypePaiement
   reference?: Prisma.StringWithAggregatesFilter<"Paiement"> | string
   montant?: Prisma.DecimalWithAggregatesFilter<"Paiement"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringWithAggregatesFilter<"Paiement"> | string
   mode?: Prisma.EnumModePaiementWithAggregatesFilter<"Paiement"> | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementWithAggregatesFilter<"Paiement"> | $Enums.StatutPaiement
   datePaiement?: Prisma.DateTimeNullableWithAggregatesFilter<"Paiement"> | Date | string | null
@@ -399,8 +438,10 @@ export type PaiementScalarWhereWithAggregatesInput = {
 
 export type PaiementCreateInput = {
   id?: string
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -413,6 +454,7 @@ export type PaiementCreateInput = {
   inscription?: Prisma.InscriptionCreateNestedOneWithoutPaiementsInput
   facture?: Prisma.FactureCreateNestedOneWithoutPaiementsInput
   echeance?: Prisma.EcheancePaiementCreateNestedOneWithoutPaiementsInput
+  tarifFormation?: Prisma.TarifFormationCreateNestedOneWithoutPaiementsInput
 }
 
 export type PaiementUncheckedCreateInput = {
@@ -422,8 +464,11 @@ export type PaiementUncheckedCreateInput = {
   inscriptionId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -435,8 +480,10 @@ export type PaiementUncheckedCreateInput = {
 
 export type PaiementUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -449,6 +496,7 @@ export type PaiementUpdateInput = {
   inscription?: Prisma.InscriptionUpdateOneWithoutPaiementsNestedInput
   facture?: Prisma.FactureUpdateOneWithoutPaiementsNestedInput
   echeance?: Prisma.EcheancePaiementUpdateOneWithoutPaiementsNestedInput
+  tarifFormation?: Prisma.TarifFormationUpdateOneWithoutPaiementsNestedInput
 }
 
 export type PaiementUncheckedUpdateInput = {
@@ -458,8 +506,11 @@ export type PaiementUncheckedUpdateInput = {
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -476,8 +527,11 @@ export type PaiementCreateManyInput = {
   inscriptionId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -489,8 +543,10 @@ export type PaiementCreateManyInput = {
 
 export type PaiementUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -507,8 +563,11 @@ export type PaiementUncheckedUpdateManyInput = {
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -540,8 +599,11 @@ export type PaiementCountOrderByAggregateInput = {
   inscriptionId?: Prisma.SortOrder
   factureId?: Prisma.SortOrder
   echeanceId?: Prisma.SortOrder
+  tarifFormationId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   reference?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   mode?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   datePaiement?: Prisma.SortOrder
@@ -562,8 +624,11 @@ export type PaiementMaxOrderByAggregateInput = {
   inscriptionId?: Prisma.SortOrder
   factureId?: Prisma.SortOrder
   echeanceId?: Prisma.SortOrder
+  tarifFormationId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   reference?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   mode?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   datePaiement?: Prisma.SortOrder
@@ -580,8 +645,11 @@ export type PaiementMinOrderByAggregateInput = {
   inscriptionId?: Prisma.SortOrder
   factureId?: Prisma.SortOrder
   echeanceId?: Prisma.SortOrder
+  tarifFormationId?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   reference?: Prisma.SortOrder
   montant?: Prisma.SortOrder
+  devise?: Prisma.SortOrder
   mode?: Prisma.SortOrder
   statut?: Prisma.SortOrder
   datePaiement?: Prisma.SortOrder
@@ -721,6 +789,48 @@ export type PaiementUncheckedUpdateManyWithoutInscriptionNestedInput = {
   deleteMany?: Prisma.PaiementScalarWhereInput | Prisma.PaiementScalarWhereInput[]
 }
 
+export type PaiementCreateNestedManyWithoutTarifFormationInput = {
+  create?: Prisma.XOR<Prisma.PaiementCreateWithoutTarifFormationInput, Prisma.PaiementUncheckedCreateWithoutTarifFormationInput> | Prisma.PaiementCreateWithoutTarifFormationInput[] | Prisma.PaiementUncheckedCreateWithoutTarifFormationInput[]
+  connectOrCreate?: Prisma.PaiementCreateOrConnectWithoutTarifFormationInput | Prisma.PaiementCreateOrConnectWithoutTarifFormationInput[]
+  createMany?: Prisma.PaiementCreateManyTarifFormationInputEnvelope
+  connect?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+}
+
+export type PaiementUncheckedCreateNestedManyWithoutTarifFormationInput = {
+  create?: Prisma.XOR<Prisma.PaiementCreateWithoutTarifFormationInput, Prisma.PaiementUncheckedCreateWithoutTarifFormationInput> | Prisma.PaiementCreateWithoutTarifFormationInput[] | Prisma.PaiementUncheckedCreateWithoutTarifFormationInput[]
+  connectOrCreate?: Prisma.PaiementCreateOrConnectWithoutTarifFormationInput | Prisma.PaiementCreateOrConnectWithoutTarifFormationInput[]
+  createMany?: Prisma.PaiementCreateManyTarifFormationInputEnvelope
+  connect?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+}
+
+export type PaiementUpdateManyWithoutTarifFormationNestedInput = {
+  create?: Prisma.XOR<Prisma.PaiementCreateWithoutTarifFormationInput, Prisma.PaiementUncheckedCreateWithoutTarifFormationInput> | Prisma.PaiementCreateWithoutTarifFormationInput[] | Prisma.PaiementUncheckedCreateWithoutTarifFormationInput[]
+  connectOrCreate?: Prisma.PaiementCreateOrConnectWithoutTarifFormationInput | Prisma.PaiementCreateOrConnectWithoutTarifFormationInput[]
+  upsert?: Prisma.PaiementUpsertWithWhereUniqueWithoutTarifFormationInput | Prisma.PaiementUpsertWithWhereUniqueWithoutTarifFormationInput[]
+  createMany?: Prisma.PaiementCreateManyTarifFormationInputEnvelope
+  set?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  disconnect?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  delete?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  connect?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  update?: Prisma.PaiementUpdateWithWhereUniqueWithoutTarifFormationInput | Prisma.PaiementUpdateWithWhereUniqueWithoutTarifFormationInput[]
+  updateMany?: Prisma.PaiementUpdateManyWithWhereWithoutTarifFormationInput | Prisma.PaiementUpdateManyWithWhereWithoutTarifFormationInput[]
+  deleteMany?: Prisma.PaiementScalarWhereInput | Prisma.PaiementScalarWhereInput[]
+}
+
+export type PaiementUncheckedUpdateManyWithoutTarifFormationNestedInput = {
+  create?: Prisma.XOR<Prisma.PaiementCreateWithoutTarifFormationInput, Prisma.PaiementUncheckedCreateWithoutTarifFormationInput> | Prisma.PaiementCreateWithoutTarifFormationInput[] | Prisma.PaiementUncheckedCreateWithoutTarifFormationInput[]
+  connectOrCreate?: Prisma.PaiementCreateOrConnectWithoutTarifFormationInput | Prisma.PaiementCreateOrConnectWithoutTarifFormationInput[]
+  upsert?: Prisma.PaiementUpsertWithWhereUniqueWithoutTarifFormationInput | Prisma.PaiementUpsertWithWhereUniqueWithoutTarifFormationInput[]
+  createMany?: Prisma.PaiementCreateManyTarifFormationInputEnvelope
+  set?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  disconnect?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  delete?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  connect?: Prisma.PaiementWhereUniqueInput | Prisma.PaiementWhereUniqueInput[]
+  update?: Prisma.PaiementUpdateWithWhereUniqueWithoutTarifFormationInput | Prisma.PaiementUpdateWithWhereUniqueWithoutTarifFormationInput[]
+  updateMany?: Prisma.PaiementUpdateManyWithWhereWithoutTarifFormationInput | Prisma.PaiementUpdateManyWithWhereWithoutTarifFormationInput[]
+  deleteMany?: Prisma.PaiementScalarWhereInput | Prisma.PaiementScalarWhereInput[]
+}
+
 export type PaiementCreateNestedManyWithoutFactureInput = {
   create?: Prisma.XOR<Prisma.PaiementCreateWithoutFactureInput, Prisma.PaiementUncheckedCreateWithoutFactureInput> | Prisma.PaiementCreateWithoutFactureInput[] | Prisma.PaiementUncheckedCreateWithoutFactureInput[]
   connectOrCreate?: Prisma.PaiementCreateOrConnectWithoutFactureInput | Prisma.PaiementCreateOrConnectWithoutFactureInput[]
@@ -805,6 +915,10 @@ export type PaiementUncheckedUpdateManyWithoutEcheanceNestedInput = {
   deleteMany?: Prisma.PaiementScalarWhereInput | Prisma.PaiementScalarWhereInput[]
 }
 
+export type EnumTypePaiementFieldUpdateOperationsInput = {
+  set?: $Enums.TypePaiement
+}
+
 export type EnumModePaiementFieldUpdateOperationsInput = {
   set?: $Enums.ModePaiement
 }
@@ -815,8 +929,10 @@ export type EnumStatutPaiementFieldUpdateOperationsInput = {
 
 export type PaiementCreateWithoutCentreInput = {
   id?: string
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -828,6 +944,7 @@ export type PaiementCreateWithoutCentreInput = {
   inscription?: Prisma.InscriptionCreateNestedOneWithoutPaiementsInput
   facture?: Prisma.FactureCreateNestedOneWithoutPaiementsInput
   echeance?: Prisma.EcheancePaiementCreateNestedOneWithoutPaiementsInput
+  tarifFormation?: Prisma.TarifFormationCreateNestedOneWithoutPaiementsInput
 }
 
 export type PaiementUncheckedCreateWithoutCentreInput = {
@@ -836,8 +953,11 @@ export type PaiementUncheckedCreateWithoutCentreInput = {
   inscriptionId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -882,8 +1002,11 @@ export type PaiementScalarWhereInput = {
   inscriptionId?: Prisma.StringNullableFilter<"Paiement"> | string | null
   factureId?: Prisma.StringNullableFilter<"Paiement"> | string | null
   echeanceId?: Prisma.StringNullableFilter<"Paiement"> | string | null
+  tarifFormationId?: Prisma.StringNullableFilter<"Paiement"> | string | null
+  type?: Prisma.EnumTypePaiementFilter<"Paiement"> | $Enums.TypePaiement
   reference?: Prisma.StringFilter<"Paiement"> | string
   montant?: Prisma.DecimalFilter<"Paiement"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFilter<"Paiement"> | string
   mode?: Prisma.EnumModePaiementFilter<"Paiement"> | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFilter<"Paiement"> | $Enums.StatutPaiement
   datePaiement?: Prisma.DateTimeNullableFilter<"Paiement"> | Date | string | null
@@ -895,8 +1018,10 @@ export type PaiementScalarWhereInput = {
 
 export type PaiementCreateWithoutApprenantInput = {
   id?: string
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -908,6 +1033,7 @@ export type PaiementCreateWithoutApprenantInput = {
   inscription?: Prisma.InscriptionCreateNestedOneWithoutPaiementsInput
   facture?: Prisma.FactureCreateNestedOneWithoutPaiementsInput
   echeance?: Prisma.EcheancePaiementCreateNestedOneWithoutPaiementsInput
+  tarifFormation?: Prisma.TarifFormationCreateNestedOneWithoutPaiementsInput
 }
 
 export type PaiementUncheckedCreateWithoutApprenantInput = {
@@ -916,8 +1042,11 @@ export type PaiementUncheckedCreateWithoutApprenantInput = {
   inscriptionId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -954,8 +1083,10 @@ export type PaiementUpdateManyWithWhereWithoutApprenantInput = {
 
 export type PaiementCreateWithoutInscriptionInput = {
   id?: string
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -967,6 +1098,7 @@ export type PaiementCreateWithoutInscriptionInput = {
   apprenant?: Prisma.ApprenantCreateNestedOneWithoutPaiementsInput
   facture?: Prisma.FactureCreateNestedOneWithoutPaiementsInput
   echeance?: Prisma.EcheancePaiementCreateNestedOneWithoutPaiementsInput
+  tarifFormation?: Prisma.TarifFormationCreateNestedOneWithoutPaiementsInput
 }
 
 export type PaiementUncheckedCreateWithoutInscriptionInput = {
@@ -975,8 +1107,11 @@ export type PaiementUncheckedCreateWithoutInscriptionInput = {
   apprenantId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1011,10 +1146,77 @@ export type PaiementUpdateManyWithWhereWithoutInscriptionInput = {
   data: Prisma.XOR<Prisma.PaiementUpdateManyMutationInput, Prisma.PaiementUncheckedUpdateManyWithoutInscriptionInput>
 }
 
-export type PaiementCreateWithoutFactureInput = {
+export type PaiementCreateWithoutTarifFormationInput = {
   id?: string
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
+  mode: $Enums.ModePaiement
+  statut?: $Enums.StatutPaiement
+  datePaiement?: Date | string | null
+  referenceTransaction?: string | null
+  notes?: string | null
+  creeLe?: Date | string
+  modifieLe?: Date | string
+  centre: Prisma.CentreFormationCreateNestedOneWithoutPaiementsInput
+  apprenant?: Prisma.ApprenantCreateNestedOneWithoutPaiementsInput
+  inscription?: Prisma.InscriptionCreateNestedOneWithoutPaiementsInput
+  facture?: Prisma.FactureCreateNestedOneWithoutPaiementsInput
+  echeance?: Prisma.EcheancePaiementCreateNestedOneWithoutPaiementsInput
+}
+
+export type PaiementUncheckedCreateWithoutTarifFormationInput = {
+  id?: string
+  centreId: string
+  apprenantId?: string | null
+  inscriptionId?: string | null
+  factureId?: string | null
+  echeanceId?: string | null
+  type?: $Enums.TypePaiement
+  reference: string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
+  mode: $Enums.ModePaiement
+  statut?: $Enums.StatutPaiement
+  datePaiement?: Date | string | null
+  referenceTransaction?: string | null
+  notes?: string | null
+  creeLe?: Date | string
+  modifieLe?: Date | string
+}
+
+export type PaiementCreateOrConnectWithoutTarifFormationInput = {
+  where: Prisma.PaiementWhereUniqueInput
+  create: Prisma.XOR<Prisma.PaiementCreateWithoutTarifFormationInput, Prisma.PaiementUncheckedCreateWithoutTarifFormationInput>
+}
+
+export type PaiementCreateManyTarifFormationInputEnvelope = {
+  data: Prisma.PaiementCreateManyTarifFormationInput | Prisma.PaiementCreateManyTarifFormationInput[]
+}
+
+export type PaiementUpsertWithWhereUniqueWithoutTarifFormationInput = {
+  where: Prisma.PaiementWhereUniqueInput
+  update: Prisma.XOR<Prisma.PaiementUpdateWithoutTarifFormationInput, Prisma.PaiementUncheckedUpdateWithoutTarifFormationInput>
+  create: Prisma.XOR<Prisma.PaiementCreateWithoutTarifFormationInput, Prisma.PaiementUncheckedCreateWithoutTarifFormationInput>
+}
+
+export type PaiementUpdateWithWhereUniqueWithoutTarifFormationInput = {
+  where: Prisma.PaiementWhereUniqueInput
+  data: Prisma.XOR<Prisma.PaiementUpdateWithoutTarifFormationInput, Prisma.PaiementUncheckedUpdateWithoutTarifFormationInput>
+}
+
+export type PaiementUpdateManyWithWhereWithoutTarifFormationInput = {
+  where: Prisma.PaiementScalarWhereInput
+  data: Prisma.XOR<Prisma.PaiementUpdateManyMutationInput, Prisma.PaiementUncheckedUpdateManyWithoutTarifFormationInput>
+}
+
+export type PaiementCreateWithoutFactureInput = {
+  id?: string
+  type?: $Enums.TypePaiement
+  reference: string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1026,6 +1228,7 @@ export type PaiementCreateWithoutFactureInput = {
   apprenant?: Prisma.ApprenantCreateNestedOneWithoutPaiementsInput
   inscription?: Prisma.InscriptionCreateNestedOneWithoutPaiementsInput
   echeance?: Prisma.EcheancePaiementCreateNestedOneWithoutPaiementsInput
+  tarifFormation?: Prisma.TarifFormationCreateNestedOneWithoutPaiementsInput
 }
 
 export type PaiementUncheckedCreateWithoutFactureInput = {
@@ -1034,8 +1237,11 @@ export type PaiementUncheckedCreateWithoutFactureInput = {
   apprenantId?: string | null
   inscriptionId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1072,8 +1278,10 @@ export type PaiementUpdateManyWithWhereWithoutFactureInput = {
 
 export type PaiementCreateWithoutEcheanceInput = {
   id?: string
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1085,6 +1293,7 @@ export type PaiementCreateWithoutEcheanceInput = {
   apprenant?: Prisma.ApprenantCreateNestedOneWithoutPaiementsInput
   inscription?: Prisma.InscriptionCreateNestedOneWithoutPaiementsInput
   facture?: Prisma.FactureCreateNestedOneWithoutPaiementsInput
+  tarifFormation?: Prisma.TarifFormationCreateNestedOneWithoutPaiementsInput
 }
 
 export type PaiementUncheckedCreateWithoutEcheanceInput = {
@@ -1093,8 +1302,11 @@ export type PaiementUncheckedCreateWithoutEcheanceInput = {
   apprenantId?: string | null
   inscriptionId?: string | null
   factureId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1135,8 +1347,11 @@ export type PaiementCreateManyCentreInput = {
   inscriptionId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1148,8 +1363,10 @@ export type PaiementCreateManyCentreInput = {
 
 export type PaiementUpdateWithoutCentreInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1161,6 +1378,7 @@ export type PaiementUpdateWithoutCentreInput = {
   inscription?: Prisma.InscriptionUpdateOneWithoutPaiementsNestedInput
   facture?: Prisma.FactureUpdateOneWithoutPaiementsNestedInput
   echeance?: Prisma.EcheancePaiementUpdateOneWithoutPaiementsNestedInput
+  tarifFormation?: Prisma.TarifFormationUpdateOneWithoutPaiementsNestedInput
 }
 
 export type PaiementUncheckedUpdateWithoutCentreInput = {
@@ -1169,8 +1387,11 @@ export type PaiementUncheckedUpdateWithoutCentreInput = {
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1186,8 +1407,11 @@ export type PaiementUncheckedUpdateManyWithoutCentreInput = {
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1203,8 +1427,11 @@ export type PaiementCreateManyApprenantInput = {
   inscriptionId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1216,8 +1443,10 @@ export type PaiementCreateManyApprenantInput = {
 
 export type PaiementUpdateWithoutApprenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1229,6 +1458,7 @@ export type PaiementUpdateWithoutApprenantInput = {
   inscription?: Prisma.InscriptionUpdateOneWithoutPaiementsNestedInput
   facture?: Prisma.FactureUpdateOneWithoutPaiementsNestedInput
   echeance?: Prisma.EcheancePaiementUpdateOneWithoutPaiementsNestedInput
+  tarifFormation?: Prisma.TarifFormationUpdateOneWithoutPaiementsNestedInput
 }
 
 export type PaiementUncheckedUpdateWithoutApprenantInput = {
@@ -1237,8 +1467,11 @@ export type PaiementUncheckedUpdateWithoutApprenantInput = {
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1254,8 +1487,11 @@ export type PaiementUncheckedUpdateManyWithoutApprenantInput = {
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1271,8 +1507,11 @@ export type PaiementCreateManyInscriptionInput = {
   apprenantId?: string | null
   factureId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1284,8 +1523,10 @@ export type PaiementCreateManyInscriptionInput = {
 
 export type PaiementUpdateWithoutInscriptionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1297,6 +1538,7 @@ export type PaiementUpdateWithoutInscriptionInput = {
   apprenant?: Prisma.ApprenantUpdateOneWithoutPaiementsNestedInput
   facture?: Prisma.FactureUpdateOneWithoutPaiementsNestedInput
   echeance?: Prisma.EcheancePaiementUpdateOneWithoutPaiementsNestedInput
+  tarifFormation?: Prisma.TarifFormationUpdateOneWithoutPaiementsNestedInput
 }
 
 export type PaiementUncheckedUpdateWithoutInscriptionInput = {
@@ -1305,8 +1547,11 @@ export type PaiementUncheckedUpdateWithoutInscriptionInput = {
   apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1322,8 +1567,91 @@ export type PaiementUncheckedUpdateManyWithoutInscriptionInput = {
   apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
+  mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
+  statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
+  datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referenceTransaction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PaiementCreateManyTarifFormationInput = {
+  id?: string
+  centreId: string
+  apprenantId?: string | null
+  inscriptionId?: string | null
+  factureId?: string | null
+  echeanceId?: string | null
+  type?: $Enums.TypePaiement
+  reference: string
+  montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
+  mode: $Enums.ModePaiement
+  statut?: $Enums.StatutPaiement
+  datePaiement?: Date | string | null
+  referenceTransaction?: string | null
+  notes?: string | null
+  creeLe?: Date | string
+  modifieLe?: Date | string
+}
+
+export type PaiementUpdateWithoutTarifFormationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
+  reference?: Prisma.StringFieldUpdateOperationsInput | string
+  montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
+  mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
+  statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
+  datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referenceTransaction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  centre?: Prisma.CentreFormationUpdateOneRequiredWithoutPaiementsNestedInput
+  apprenant?: Prisma.ApprenantUpdateOneWithoutPaiementsNestedInput
+  inscription?: Prisma.InscriptionUpdateOneWithoutPaiementsNestedInput
+  facture?: Prisma.FactureUpdateOneWithoutPaiementsNestedInput
+  echeance?: Prisma.EcheancePaiementUpdateOneWithoutPaiementsNestedInput
+}
+
+export type PaiementUncheckedUpdateWithoutTarifFormationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  centreId?: Prisma.StringFieldUpdateOperationsInput | string
+  apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
+  reference?: Prisma.StringFieldUpdateOperationsInput | string
+  montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
+  mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
+  statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
+  datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referenceTransaction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creeLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  modifieLe?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PaiementUncheckedUpdateManyWithoutTarifFormationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  centreId?: Prisma.StringFieldUpdateOperationsInput | string
+  apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
+  reference?: Prisma.StringFieldUpdateOperationsInput | string
+  montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1339,8 +1667,11 @@ export type PaiementCreateManyFactureInput = {
   apprenantId?: string | null
   inscriptionId?: string | null
   echeanceId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1352,8 +1683,10 @@ export type PaiementCreateManyFactureInput = {
 
 export type PaiementUpdateWithoutFactureInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1365,6 +1698,7 @@ export type PaiementUpdateWithoutFactureInput = {
   apprenant?: Prisma.ApprenantUpdateOneWithoutPaiementsNestedInput
   inscription?: Prisma.InscriptionUpdateOneWithoutPaiementsNestedInput
   echeance?: Prisma.EcheancePaiementUpdateOneWithoutPaiementsNestedInput
+  tarifFormation?: Prisma.TarifFormationUpdateOneWithoutPaiementsNestedInput
 }
 
 export type PaiementUncheckedUpdateWithoutFactureInput = {
@@ -1373,8 +1707,11 @@ export type PaiementUncheckedUpdateWithoutFactureInput = {
   apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1390,8 +1727,11 @@ export type PaiementUncheckedUpdateManyWithoutFactureInput = {
   apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   echeanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1407,8 +1747,11 @@ export type PaiementCreateManyEcheanceInput = {
   apprenantId?: string | null
   inscriptionId?: string | null
   factureId?: string | null
+  tarifFormationId?: string | null
+  type?: $Enums.TypePaiement
   reference: string
   montant: runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: string
   mode: $Enums.ModePaiement
   statut?: $Enums.StatutPaiement
   datePaiement?: Date | string | null
@@ -1420,8 +1763,10 @@ export type PaiementCreateManyEcheanceInput = {
 
 export type PaiementUpdateWithoutEcheanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1433,6 +1778,7 @@ export type PaiementUpdateWithoutEcheanceInput = {
   apprenant?: Prisma.ApprenantUpdateOneWithoutPaiementsNestedInput
   inscription?: Prisma.InscriptionUpdateOneWithoutPaiementsNestedInput
   facture?: Prisma.FactureUpdateOneWithoutPaiementsNestedInput
+  tarifFormation?: Prisma.TarifFormationUpdateOneWithoutPaiementsNestedInput
 }
 
 export type PaiementUncheckedUpdateWithoutEcheanceInput = {
@@ -1441,8 +1787,11 @@ export type PaiementUncheckedUpdateWithoutEcheanceInput = {
   apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1458,8 +1807,11 @@ export type PaiementUncheckedUpdateManyWithoutEcheanceInput = {
   apprenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   factureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tarifFormationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTypePaiementFieldUpdateOperationsInput | $Enums.TypePaiement
   reference?: Prisma.StringFieldUpdateOperationsInput | string
   montant?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  devise?: Prisma.StringFieldUpdateOperationsInput | string
   mode?: Prisma.EnumModePaiementFieldUpdateOperationsInput | $Enums.ModePaiement
   statut?: Prisma.EnumStatutPaiementFieldUpdateOperationsInput | $Enums.StatutPaiement
   datePaiement?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1478,8 +1830,11 @@ export type PaiementSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   inscriptionId?: boolean
   factureId?: boolean
   echeanceId?: boolean
+  tarifFormationId?: boolean
+  type?: boolean
   reference?: boolean
   montant?: boolean
+  devise?: boolean
   mode?: boolean
   statut?: boolean
   datePaiement?: boolean
@@ -1492,6 +1847,7 @@ export type PaiementSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   inscription?: boolean | Prisma.Paiement$inscriptionArgs<ExtArgs>
   facture?: boolean | Prisma.Paiement$factureArgs<ExtArgs>
   echeance?: boolean | Prisma.Paiement$echeanceArgs<ExtArgs>
+  tarifFormation?: boolean | Prisma.Paiement$tarifFormationArgs<ExtArgs>
 }, ExtArgs["result"]["paiement"]>
 
 export type PaiementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1501,8 +1857,11 @@ export type PaiementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   inscriptionId?: boolean
   factureId?: boolean
   echeanceId?: boolean
+  tarifFormationId?: boolean
+  type?: boolean
   reference?: boolean
   montant?: boolean
+  devise?: boolean
   mode?: boolean
   statut?: boolean
   datePaiement?: boolean
@@ -1515,6 +1874,7 @@ export type PaiementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   inscription?: boolean | Prisma.Paiement$inscriptionArgs<ExtArgs>
   facture?: boolean | Prisma.Paiement$factureArgs<ExtArgs>
   echeance?: boolean | Prisma.Paiement$echeanceArgs<ExtArgs>
+  tarifFormation?: boolean | Prisma.Paiement$tarifFormationArgs<ExtArgs>
 }, ExtArgs["result"]["paiement"]>
 
 export type PaiementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1524,8 +1884,11 @@ export type PaiementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   inscriptionId?: boolean
   factureId?: boolean
   echeanceId?: boolean
+  tarifFormationId?: boolean
+  type?: boolean
   reference?: boolean
   montant?: boolean
+  devise?: boolean
   mode?: boolean
   statut?: boolean
   datePaiement?: boolean
@@ -1538,6 +1901,7 @@ export type PaiementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   inscription?: boolean | Prisma.Paiement$inscriptionArgs<ExtArgs>
   facture?: boolean | Prisma.Paiement$factureArgs<ExtArgs>
   echeance?: boolean | Prisma.Paiement$echeanceArgs<ExtArgs>
+  tarifFormation?: boolean | Prisma.Paiement$tarifFormationArgs<ExtArgs>
 }, ExtArgs["result"]["paiement"]>
 
 export type PaiementSelectScalar = {
@@ -1547,8 +1911,11 @@ export type PaiementSelectScalar = {
   inscriptionId?: boolean
   factureId?: boolean
   echeanceId?: boolean
+  tarifFormationId?: boolean
+  type?: boolean
   reference?: boolean
   montant?: boolean
+  devise?: boolean
   mode?: boolean
   statut?: boolean
   datePaiement?: boolean
@@ -1558,13 +1925,14 @@ export type PaiementSelectScalar = {
   modifieLe?: boolean
 }
 
-export type PaiementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "apprenantId" | "inscriptionId" | "factureId" | "echeanceId" | "reference" | "montant" | "mode" | "statut" | "datePaiement" | "referenceTransaction" | "notes" | "creeLe" | "modifieLe", ExtArgs["result"]["paiement"]>
+export type PaiementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "centreId" | "apprenantId" | "inscriptionId" | "factureId" | "echeanceId" | "tarifFormationId" | "type" | "reference" | "montant" | "devise" | "mode" | "statut" | "datePaiement" | "referenceTransaction" | "notes" | "creeLe" | "modifieLe", ExtArgs["result"]["paiement"]>
 export type PaiementInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
   apprenant?: boolean | Prisma.Paiement$apprenantArgs<ExtArgs>
   inscription?: boolean | Prisma.Paiement$inscriptionArgs<ExtArgs>
   facture?: boolean | Prisma.Paiement$factureArgs<ExtArgs>
   echeance?: boolean | Prisma.Paiement$echeanceArgs<ExtArgs>
+  tarifFormation?: boolean | Prisma.Paiement$tarifFormationArgs<ExtArgs>
 }
 export type PaiementIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
@@ -1572,6 +1940,7 @@ export type PaiementIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   inscription?: boolean | Prisma.Paiement$inscriptionArgs<ExtArgs>
   facture?: boolean | Prisma.Paiement$factureArgs<ExtArgs>
   echeance?: boolean | Prisma.Paiement$echeanceArgs<ExtArgs>
+  tarifFormation?: boolean | Prisma.Paiement$tarifFormationArgs<ExtArgs>
 }
 export type PaiementIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   centre?: boolean | Prisma.CentreFormationDefaultArgs<ExtArgs>
@@ -1579,6 +1948,7 @@ export type PaiementIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   inscription?: boolean | Prisma.Paiement$inscriptionArgs<ExtArgs>
   facture?: boolean | Prisma.Paiement$factureArgs<ExtArgs>
   echeance?: boolean | Prisma.Paiement$echeanceArgs<ExtArgs>
+  tarifFormation?: boolean | Prisma.Paiement$tarifFormationArgs<ExtArgs>
 }
 
 export type $PaiementPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1589,6 +1959,7 @@ export type $PaiementPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     inscription: Prisma.$InscriptionPayload<ExtArgs> | null
     facture: Prisma.$FacturePayload<ExtArgs> | null
     echeance: Prisma.$EcheancePaiementPayload<ExtArgs> | null
+    tarifFormation: Prisma.$TarifFormationPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1597,8 +1968,11 @@ export type $PaiementPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     inscriptionId: string | null
     factureId: string | null
     echeanceId: string | null
+    tarifFormationId: string | null
+    type: $Enums.TypePaiement
     reference: string
     montant: runtime.Decimal
+    devise: string
     mode: $Enums.ModePaiement
     statut: $Enums.StatutPaiement
     datePaiement: Date | null
@@ -2005,6 +2379,7 @@ export interface Prisma__PaiementClient<T, Null = never, ExtArgs extends runtime
   inscription<T extends Prisma.Paiement$inscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paiement$inscriptionArgs<ExtArgs>>): Prisma.Prisma__InscriptionClient<runtime.Types.Result.GetResult<Prisma.$InscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   facture<T extends Prisma.Paiement$factureArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paiement$factureArgs<ExtArgs>>): Prisma.Prisma__FactureClient<runtime.Types.Result.GetResult<Prisma.$FacturePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   echeance<T extends Prisma.Paiement$echeanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paiement$echeanceArgs<ExtArgs>>): Prisma.Prisma__EcheancePaiementClient<runtime.Types.Result.GetResult<Prisma.$EcheancePaiementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tarifFormation<T extends Prisma.Paiement$tarifFormationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Paiement$tarifFormationArgs<ExtArgs>>): Prisma.Prisma__TarifFormationClient<runtime.Types.Result.GetResult<Prisma.$TarifFormationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2040,8 +2415,11 @@ export interface PaiementFieldRefs {
   readonly inscriptionId: Prisma.FieldRef<"Paiement", 'String'>
   readonly factureId: Prisma.FieldRef<"Paiement", 'String'>
   readonly echeanceId: Prisma.FieldRef<"Paiement", 'String'>
+  readonly tarifFormationId: Prisma.FieldRef<"Paiement", 'String'>
+  readonly type: Prisma.FieldRef<"Paiement", 'TypePaiement'>
   readonly reference: Prisma.FieldRef<"Paiement", 'String'>
   readonly montant: Prisma.FieldRef<"Paiement", 'Decimal'>
+  readonly devise: Prisma.FieldRef<"Paiement", 'String'>
   readonly mode: Prisma.FieldRef<"Paiement", 'ModePaiement'>
   readonly statut: Prisma.FieldRef<"Paiement", 'StatutPaiement'>
   readonly datePaiement: Prisma.FieldRef<"Paiement", 'DateTime'>
@@ -2521,6 +2899,25 @@ export type Paiement$echeanceArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.EcheancePaiementInclude<ExtArgs> | null
   where?: Prisma.EcheancePaiementWhereInput
+}
+
+/**
+ * Paiement.tarifFormation
+ */
+export type Paiement$tarifFormationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TarifFormation
+   */
+  select?: Prisma.TarifFormationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TarifFormation
+   */
+  omit?: Prisma.TarifFormationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TarifFormationInclude<ExtArgs> | null
+  where?: Prisma.TarifFormationWhereInput
 }
 
 /**

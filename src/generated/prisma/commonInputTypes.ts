@@ -575,6 +575,13 @@ export type EnumStatutEcheanceWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumStatutEcheanceFilter<$PrismaModel>
 }
 
+export type EnumTypePaiementFilter<$PrismaModel = never> = {
+  equals?: $Enums.TypePaiement | Prisma.EnumTypePaiementFieldRefInput<$PrismaModel>
+  in?: $Enums.TypePaiement[]
+  notIn?: $Enums.TypePaiement[]
+  not?: Prisma.NestedEnumTypePaiementFilter<$PrismaModel> | $Enums.TypePaiement
+}
+
 export type EnumModePaiementFilter<$PrismaModel = never> = {
   equals?: $Enums.ModePaiement | Prisma.EnumModePaiementFieldRefInput<$PrismaModel>
   in?: $Enums.ModePaiement[]
@@ -587,6 +594,16 @@ export type EnumStatutPaiementFilter<$PrismaModel = never> = {
   in?: $Enums.StatutPaiement[]
   notIn?: $Enums.StatutPaiement[]
   not?: Prisma.NestedEnumStatutPaiementFilter<$PrismaModel> | $Enums.StatutPaiement
+}
+
+export type EnumTypePaiementWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TypePaiement | Prisma.EnumTypePaiementFieldRefInput<$PrismaModel>
+  in?: $Enums.TypePaiement[]
+  notIn?: $Enums.TypePaiement[]
+  not?: Prisma.NestedEnumTypePaiementWithAggregatesFilter<$PrismaModel> | $Enums.TypePaiement
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTypePaiementFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTypePaiementFilter<$PrismaModel>
 }
 
 export type EnumModePaiementWithAggregatesFilter<$PrismaModel = never> = {
@@ -1374,6 +1391,13 @@ export type NestedEnumStatutEcheanceWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumStatutEcheanceFilter<$PrismaModel>
 }
 
+export type NestedEnumTypePaiementFilter<$PrismaModel = never> = {
+  equals?: $Enums.TypePaiement | Prisma.EnumTypePaiementFieldRefInput<$PrismaModel>
+  in?: $Enums.TypePaiement[]
+  notIn?: $Enums.TypePaiement[]
+  not?: Prisma.NestedEnumTypePaiementFilter<$PrismaModel> | $Enums.TypePaiement
+}
+
 export type NestedEnumModePaiementFilter<$PrismaModel = never> = {
   equals?: $Enums.ModePaiement | Prisma.EnumModePaiementFieldRefInput<$PrismaModel>
   in?: $Enums.ModePaiement[]
@@ -1386,6 +1410,16 @@ export type NestedEnumStatutPaiementFilter<$PrismaModel = never> = {
   in?: $Enums.StatutPaiement[]
   notIn?: $Enums.StatutPaiement[]
   not?: Prisma.NestedEnumStatutPaiementFilter<$PrismaModel> | $Enums.StatutPaiement
+}
+
+export type NestedEnumTypePaiementWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TypePaiement | Prisma.EnumTypePaiementFieldRefInput<$PrismaModel>
+  in?: $Enums.TypePaiement[]
+  notIn?: $Enums.TypePaiement[]
+  not?: Prisma.NestedEnumTypePaiementWithAggregatesFilter<$PrismaModel> | $Enums.TypePaiement
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTypePaiementFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTypePaiementFilter<$PrismaModel>
 }
 
 export type NestedEnumModePaiementWithAggregatesFilter<$PrismaModel = never> = {
