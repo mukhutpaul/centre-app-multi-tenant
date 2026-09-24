@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -8,6 +9,7 @@ import {
   Clock3,
   FileText,
   Plus,
+  Printer,
   Search,
   Trash2,
   Wallet,
@@ -18,9 +20,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
-import {
-  deleteFacture,
-} from "@/actions/facture-actions";
+import { deleteFacture } from "@/actions/facture-actions";
 
 type Facture = any;
 
@@ -71,11 +71,7 @@ function formatDate(value: unknown) {
    BADGE STATUT
 ========================================================= */
 
-function StatusBadge({
-  statut,
-}: {
-  statut: string;
-}) {
+function StatusBadge({ statut }: { statut: string }) {
   const config: Record<
     string,
     {
@@ -114,14 +110,11 @@ function StatusBadge({
     },
   };
 
-  const current =
-    config[statut] ||
-    config.BROUILLON;
+  const current = config[statut] || config.BROUILLON;
 
   return (
     <span className={current.className}>
       {current.icon}
-
       {statutLabels[statut] || statut}
     </span>
   );
@@ -147,9 +140,7 @@ function StatCard({
       <div className="card-body p-5">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm opacity-60">
-              {title}
-            </p>
+            <p className="text-sm opacity-60">{title}</p>
 
             <p className="text-2xl font-bold mt-1">
               {value}
@@ -179,67 +170,61 @@ export default function FacturesClient({
 }: Props) {
   const router = useRouter();
 
-  const [
-    isDeleting,
-    startDelete,
-  ] = useTransition();
+  const [isDeleting, startDelete] = useTransition();
 
-  const [
-    search,
-    setSearch,
-  ] = useState("");
+  const [search, setSearch] = useState("");
 
-  const [
-    statutFilter,
-    setStatutFilter,
-  ] = useState("TOUS");
+  const [statutFilter, setStatutFilter] = useState("TOUS");
 
   /* =======================================================
-     DEVise sécurisée
+     DEVISE SÉCURISÉE
   ======================================================= */
 
-  const deviseAffichee =
-    devise?.trim() || "USD";
+  const deviseAffichee = devise?.trim() || "USD";
+
+  /* =======================================================
+     IMPRESSION FACTURE
+  ======================================================= */
+
+  const handlePrint = (id: string) => {
+    window.open(
+      `/factures/${id}/imprimer`,
+      "_blank",
+    );
+  };
 
   /* =======================================================
      FILTRAGE
   ======================================================= */
 
   const filteredFactures = useMemo(() => {
-    const term =
-      search
-        .trim()
-        .toLowerCase();
+    const term = search.trim().toLowerCase();
 
-    return factures.filter(
-      (facture) => {
-        const apprenant =
-          facture.inscription
-            ?.apprenant;
+    return factures.filter((facture) => {
+      const apprenant =
+        facture.inscription?.apprenant;
 
-        const nom =
-          `${apprenant?.nom || ""} ${
-            apprenant?.prenom || ""
-          }`.toLowerCase();
+      const nom =
+        `${apprenant?.nom || ""} ${
+          apprenant?.prenom || ""
+        }`.toLowerCase();
 
-        const matchesSearch =
-          !term ||
-          facture.numero
-            ?.toLowerCase()
-            .includes(term) ||
-          nom.includes(term);
+      const matchesSearch =
+        !term ||
+        facture.numero
+          ?.toLowerCase()
+          .includes(term) ||
+        nom.includes(term);
 
-        const matchesStatus =
-          statutFilter === "TOUS" ||
-          facture.statut ===
-            statutFilter;
+      const matchesStatus =
+        statutFilter === "TOUS" ||
+        facture.statut === statutFilter;
 
-        return (
-          matchesSearch &&
-          matchesStatus
-        );
-      },
-    );
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
+    });
   }, [
     factures,
     search,
@@ -280,65 +265,48 @@ export default function FacturesClient({
      SUPPRESSION FACTURE
   ======================================================= */
 
-  const handleDelete = (
-    id: string,
-  ) => {
-    startDelete(
-      async () => {
-        const confirmation =
-          await Swal.fire({
-            icon: "warning",
-            title:
-              "Supprimer cette facture ?",
-            text:
-              "Cette opération est irréversible.",
-            showCancelButton: true,
-            confirmButtonText:
-              "Oui, supprimer",
-            cancelButtonText:
-              "Annuler",
-            confirmButtonColor:
-              "#dc2626",
-            cancelButtonColor:
-              "#64748b",
-            reverseButtons: true,
-          });
+  const handleDelete = (id: string) => {
+    startDelete(async () => {
+      const confirmation =
+        await Swal.fire({
+          icon: "warning",
+          title: "Supprimer cette facture ?",
+          text: "Cette opération est irréversible.",
+          showCancelButton: true,
+          confirmButtonText: "Oui, supprimer",
+          cancelButtonText: "Annuler",
+          confirmButtonColor: "#dc2626",
+          cancelButtonColor: "#64748b",
+          reverseButtons: true,
+        });
 
-        if (
-          !confirmation.isConfirmed
-        ) {
-          return;
-        }
+      if (!confirmation.isConfirmed) {
+        return;
+      }
 
-        try {
-          await deleteFacture(id);
+      try {
+        await deleteFacture(id);
 
-          await Swal.fire({
-            icon: "success",
-            title:
-              "Facture supprimée",
-            text:
-              "La facture a été supprimée avec succès.",
-            confirmButtonText:
-              "OK",
-          });
+        await Swal.fire({
+          icon: "success",
+          title: "Facture supprimée",
+          text: "La facture a été supprimée avec succès.",
+          confirmButtonText: "OK",
+        });
 
-          router.refresh();
-        } catch (error) {
-          await Swal.fire({
-            icon: "error",
-            title:
-              "Suppression impossible",
-            text:
-              error instanceof Error
-                ? error.message
-                : "Une erreur est survenue.",
-            confirmButtonText:
-              "Fermer",
-          });
-        }
-      },
-    );
+        router.refresh();
+      } catch (error) {
+        await Swal.fire({
+          icon: "error",
+          title: "Suppression impossible",
+          text:
+            error instanceof Error
+              ? error.message
+              : "Une erreur est survenue.",
+          confirmButtonText: "Fermer",
+        });
+      }
+    });
   };
 
   return (
@@ -352,7 +320,6 @@ export default function FacturesClient({
 
         <div>
           <div className="flex items-center gap-2">
-
             <FileText
               className="text-primary"
               size={28}
@@ -361,7 +328,6 @@ export default function FacturesClient({
             <h1 className="text-2xl md:text-3xl font-bold">
               Factures
             </h1>
-
           </div>
 
           <p className="text-sm opacity-60 mt-1">
@@ -372,18 +338,15 @@ export default function FacturesClient({
 
         <button
           type="button"
-          className="btn btn-primary gap-2"
+          className="btn btn-primary gap-2 cursor-pointer"
           onClick={() =>
-            router.push(
-              "/factures/nouveau",
-            )
+            router.push("/factures/nouveau")
           }
         >
           <Plus size={18} />
 
           Nouvelle facture
         </button>
-
       </div>
 
       {/* ===================================================
@@ -394,37 +357,24 @@ export default function FacturesClient({
 
         <StatCard
           title="Total facturé"
-          value={`${formatMoney(
-            stats.total,
-          )} ${deviseAffichee}`}
+          value={`${formatMoney(stats.total)} ${deviseAffichee}`}
           description={`${factures.length} facture(s)`}
-          icon={
-            <FileText size={23} />
-          }
+          icon={<FileText size={23} />}
         />
 
         <StatCard
           title="Total encaissé"
-          value={`${formatMoney(
-            stats.paye,
-          )} ${deviseAffichee}`}
+          value={`${formatMoney(stats.paye)} ${deviseAffichee}`}
           description="Paiements effectués"
-          icon={
-            <Wallet size={23} />
-          }
+          icon={<Wallet size={23} />}
         />
 
         <StatCard
           title="Reste à recouvrer"
-          value={`${formatMoney(
-            stats.du,
-          )} ${deviseAffichee}`}
+          value={`${formatMoney(stats.du)} ${deviseAffichee}`}
           description="Montants encore dus"
-          icon={
-            <Clock3 size={23} />
-          }
+          icon={<Clock3 size={23} />}
         />
-
       </div>
 
       {/* ===================================================
@@ -450,24 +400,18 @@ export default function FacturesClient({
                 className="grow"
                 value={search}
                 onChange={(e) =>
-                  setSearch(
-                    e.target.value,
-                  )
+                  setSearch(e.target.value)
                 }
               />
-
             </label>
 
             <select
-              className="select select-bordered w-full"
+              className="select select-bordered w-full cursor-pointer"
               value={statutFilter}
               onChange={(e) =>
-                setStatutFilter(
-                  e.target.value,
-                )
+                setStatutFilter(e.target.value)
               }
             >
-
               <option value="TOUS">
                 Tous les statuts
               </option>
@@ -495,13 +439,10 @@ export default function FacturesClient({
               <option value="ANNULEE">
                 Annulée
               </option>
-
             </select>
 
           </div>
-
         </div>
-
       </div>
 
       {/* ===================================================
@@ -513,7 +454,6 @@ export default function FacturesClient({
         <table className="table table-zebra">
 
           <thead>
-
             <tr>
               <th>Facture</th>
               <th>Apprenant</th>
@@ -527,7 +467,6 @@ export default function FacturesClient({
                 Actions
               </th>
             </tr>
-
           </thead>
 
           <tbody>
@@ -535,225 +474,158 @@ export default function FacturesClient({
             {filteredFactures.length === 0 ? (
 
               <tr>
-
                 <td
                   colSpan={9}
                   className="text-center py-16"
                 >
-
                   <div className="flex flex-col items-center gap-3 opacity-60">
 
-                    <FileText
-                      size={42}
-                    />
+                    <FileText size={42} />
 
                     <p className="font-semibold">
                       Aucune facture
                     </p>
 
                     <p className="text-sm">
-                      Aucun résultat ne
-                      correspond à vos
-                      critères.
+                      Aucun résultat ne correspond à vos critères.
                     </p>
 
                   </div>
-
                 </td>
-
               </tr>
 
             ) : (
 
-              filteredFactures.map(
-                (facture) => {
+              filteredFactures.map((facture) => {
 
-                  const apprenant =
-                    facture
-                      .inscription
-                      ?.apprenant;
+                const apprenant =
+                  facture.inscription?.apprenant;
 
-                  const formation =
-                    facture
-                      .inscription
-                      ?.session
-                      ?.formation;
+                const formation =
+                  facture.inscription
+                    ?.session?.formation;
 
-                  return (
+                return (
+                  <tr key={facture.id}>
 
-                    <tr
-                      key={
-                        facture.id
-                      }
-                    >
+                    <td>
+                      <div className="font-bold">
+                        {facture.numero}
+                      </div>
 
-                      <td>
+                      <div className="text-xs opacity-50">
+                        {facture.echeances?.length || 0} échéance(s)
+                      </div>
+                    </td>
 
-                        <div className="font-bold">
-                          {
-                            facture.numero
+                    <td>
+                      <div className="font-medium">
+                        {apprenant?.nom}{" "}
+                        {apprenant?.prenom}
+                      </div>
+
+                      <div className="text-xs opacity-50">
+                        {facture.inscription?.numero}
+                      </div>
+                    </td>
+
+                    <td>
+                      {formation?.nom || "—"}
+                    </td>
+
+                    <td>
+                      {formatDate(
+                        facture.dateEmission,
+                      )}
+                    </td>
+
+                    <td className="font-semibold">
+                      {formatMoney(facture.total)}{" "}
+                      {deviseAffichee}
+                    </td>
+
+                    <td className="text-success font-medium">
+                      {formatMoney(facture.montantPaye)}{" "}
+                      {deviseAffichee}
+                    </td>
+
+                    <td className="text-warning font-medium">
+                      {formatMoney(facture.montantDu)}{" "}
+                      {deviseAffichee}
+                    </td>
+
+                    <td>
+                      <StatusBadge
+                        statut={facture.statut}
+                      />
+                    </td>
+
+                    <td>
+                      <div className="flex justify-end items-center gap-2">
+
+                        {/* VOIR */}
+
+                        <button
+                          type="button"
+                          title="Voir la facture"
+                          className="btn btn-sm btn-ghost gap-1 cursor-pointer"
+                          onClick={() =>
+                            router.push(
+                              `/factures/${facture.id}`,
+                            )
                           }
-                        </div>
+                        >
+                          Voir
 
-                        <div className="text-xs opacity-50">
-                          {
-                            facture
-                              .echeances
-                              ?.length ||
-                            0
-                          } échéance(s)
-                        </div>
+                          <ArrowRight size={15} />
+                        </button>
 
-                      </td>
+                        {/* IMPRIMER */}
 
-                      <td>
-
-                        <div className="font-medium">
-
-                          {
-                            apprenant
-                              ?.nom
-                          }{" "}
-
-                          {
-                            apprenant
-                              ?.prenom
+                        <button
+                          type="button"
+                          title="Imprimer la facture et ses échéances"
+                          aria-label="Imprimer la facture et ses échéances"
+                          className="btn btn-sm btn-outline btn-primary gap-2 cursor-pointer"
+                          onClick={() =>
+                            handlePrint(facture.id)
                           }
+                        >
+                          <Printer size={16} />
 
-                        </div>
+                          <span>
+                            Imprimer
+                          </span>
+                        </button>
 
-                        <div className="text-xs opacity-50">
+                        {/* SUPPRIMER */}
 
-                          {
-                            facture
-                              .inscription
-                              ?.numero
-                          }
-
-                        </div>
-
-                      </td>
-
-                      <td>
-
-                        {
-                          formation
-                            ?.nom ||
-                          "—"
-                        }
-
-                      </td>
-
-                      <td>
-
-                        {formatDate(
-                          facture.dateEmission,
-                        )}
-
-                      </td>
-
-                      <td className="font-semibold">
-
-                        {formatMoney(
-                          facture.total,
-                        )}{" "}
-
-                        {deviseAffichee}
-
-                      </td>
-
-                      <td className="text-success font-medium">
-
-                        {formatMoney(
-                          facture.montantPaye,
-                        )}{" "}
-
-                        {deviseAffichee}
-
-                      </td>
-
-                      <td className="text-warning font-medium">
-
-                        {formatMoney(
-                          facture.montantDu,
-                        )}{" "}
-
-                        {deviseAffichee}
-
-                      </td>
-
-                      <td>
-
-                        <StatusBadge
-                          statut={
-                            facture.statut
-                          }
-                        />
-
-                      </td>
-
-                      <td>
-
-                        <div className="flex justify-end gap-1">
-
+                        {facture.statut !== "ANNULEE" && (
                           <button
                             type="button"
-                            className="btn btn-sm btn-ghost gap-1"
+                            title="Supprimer la facture"
+                            aria-label="Supprimer la facture"
+                            className="btn btn-sm btn-ghost text-error cursor-pointer"
+                            disabled={isDeleting}
                             onClick={() =>
-                              router.push(
-                                `/factures/${facture.id}`,
+                              handleDelete(
+                                facture.id,
                               )
                             }
                           >
-
-                            Voir
-
-                            <ArrowRight
-                              size={15}
-                            />
-
+                            <Trash2 size={16} />
                           </button>
+                        )}
 
-                          {facture.statut !==
-                            "ANNULEE" && (
-
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-ghost text-error"
-                              disabled={
-                                isDeleting
-                              }
-                              onClick={() =>
-                                handleDelete(
-                                  facture.id,
-                                )
-                              }
-                            >
-
-                              <Trash2
-                                size={16}
-                              />
-
-                            </button>
-
-                          )}
-
-                        </div>
-
-                      </td>
-
-                    </tr>
-
-                  );
-                },
-              )
-
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
 
           </tbody>
-
         </table>
-
       </div>
 
       {/* ===================================================
@@ -778,166 +650,133 @@ export default function FacturesClient({
               </p>
 
             </div>
-
           </div>
 
         ) : (
 
-          filteredFactures.map(
-            (facture) => {
+          filteredFactures.map((facture) => {
 
-              const apprenant =
-                facture.inscription
-                  ?.apprenant;
+            const apprenant =
+              facture.inscription?.apprenant;
 
-              return (
+            return (
+              <div
+                key={facture.id}
+                className="card bg-base-100 border border-base-300 shadow-sm"
+              >
 
-                <div
-                  key={facture.id}
-                  className="card bg-base-100 border border-base-300 shadow-sm"
-                >
+                <div className="card-body p-4">
 
-                  <div className="card-body p-4">
+                  <div className="flex justify-between gap-3">
 
-                    <div className="flex justify-between gap-3">
+                    <div>
+                      <p className="font-bold">
+                        {facture.numero}
+                      </p>
 
-                      <div>
-
-                        <p className="font-bold">
-                          {
-                            facture.numero
-                          }
-                        </p>
-
-                        <p className="text-sm opacity-60">
-
-                          {
-                            apprenant
-                              ?.nom
-                          }{" "}
-
-                          {
-                            apprenant
-                              ?.prenom
-                          }
-
-                        </p>
-
-                      </div>
-
-                      <StatusBadge
-                        statut={
-                          facture.statut
-                        }
-                      />
-
+                      <p className="text-sm opacity-60">
+                        {apprenant?.nom}{" "}
+                        {apprenant?.prenom}
+                      </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mt-3">
+                    <StatusBadge
+                      statut={facture.statut}
+                    />
 
-                      <div>
+                  </div>
 
-                        <p className="text-xs opacity-50">
-                          Total
-                        </p>
+                  <div className="grid grid-cols-2 gap-3 mt-3">
 
-                        <p className="font-semibold">
+                    <div>
+                      <p className="text-xs opacity-50">
+                        Total
+                      </p>
 
-                          {formatMoney(
-                            facture.total,
-                          )}{" "}
-
-                          {deviseAffichee}
-
-                        </p>
-
-                      </div>
-
-                      <div>
-
-                        <p className="text-xs opacity-50">
-                          Dû
-                        </p>
-
-                        <p className="font-semibold text-warning">
-
-                          {formatMoney(
-                            facture.montantDu,
-                          )}{" "}
-
-                          {deviseAffichee}
-
-                        </p>
-
-                      </div>
-
-                      <div>
-
-                        <p className="text-xs opacity-50">
-                          Émission
-                        </p>
-
-                        <p className="text-sm">
-
-                          {formatDate(
-                            facture.dateEmission,
-                          )}
-
-                        </p>
-
-                      </div>
-
-                      <div>
-
-                        <p className="text-xs opacity-50">
-                          Échéances
-                        </p>
-
-                        <p className="text-sm">
-
-                          {
-                            facture
-                              .echeances
-                              ?.length ||
-                            0
-                          }
-
-                        </p>
-
-                      </div>
-
+                      <p className="font-semibold">
+                        {formatMoney(facture.total)}{" "}
+                        {deviseAffichee}
+                      </p>
                     </div>
 
-                    <div className="card-actions justify-end mt-2">
+                    <div>
+                      <p className="text-xs opacity-50">
+                        Dû
+                      </p>
 
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-primary"
-                        onClick={() =>
-                          router.push(
-                            `/factures/${facture.id}`,
-                          )
-                        }
-                      >
+                      <p className="font-semibold text-warning">
+                        {formatMoney(facture.montantDu)}{" "}
+                        {deviseAffichee}
+                      </p>
+                    </div>
 
-                        Voir la facture
+                    <div>
+                      <p className="text-xs opacity-50">
+                        Émission
+                      </p>
 
-                        <ArrowRight
-                          size={15}
-                        />
+                      <p className="text-sm">
+                        {formatDate(
+                          facture.dateEmission,
+                        )}
+                      </p>
+                    </div>
 
-                      </button>
+                    <div>
+                      <p className="text-xs opacity-50">
+                        Échéances
+                      </p>
 
+                      <p className="text-sm">
+                        {facture.echeances?.length || 0}
+                      </p>
                     </div>
 
                   </div>
 
+                  {/* ACTIONS MOBILE */}
+
+                  <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+
+                    {/* IMPRIMER */}
+
+                    <button
+                      type="button"
+                      title="Imprimer la facture et ses échéances"
+                      aria-label="Imprimer la facture et ses échéances"
+                      className="btn btn-sm btn-outline btn-primary gap-2 cursor-pointer"
+                      onClick={() =>
+                        handlePrint(facture.id)
+                      }
+                    >
+                      <Printer size={16} />
+
+                      Imprimer
+                    </button>
+
+                    {/* VOIR */}
+
+                    <button
+                      type="button"
+                      title="Voir la facture"
+                      className="btn btn-sm btn-primary gap-2 cursor-pointer"
+                      onClick={() =>
+                        router.push(
+                          `/factures/${facture.id}`,
+                        )
+                      }
+                    >
+                      Voir la facture
+
+                      <ArrowRight size={15} />
+                    </button>
+
+                  </div>
+
                 </div>
-
-              );
-            },
-          )
-
+              </div>
+            );
+          })
         )}
 
       </div>
@@ -948,9 +787,7 @@ export default function FacturesClient({
 
       <div className="text-sm opacity-50 flex items-center gap-2">
 
-        <CalendarDays
-          size={15}
-        />
+        <CalendarDays size={15} />
 
         {filteredFactures.length} facture(s)
         affichée(s)

@@ -1019,3 +1019,143 @@ export async function getFacture(
     }
   }
 }
+
+
+/* =========================================================
+   SUPPRESSION D'UNE FACTURE
+========================================================= */
+
+export async function deleteFacture(
+  factureId: string
+): Promise<Result> {
+  try {
+    const centreId = await getCentreId()
+
+    if (!factureId) {
+      return {
+        success: false,
+        message: "Identifiant de facture obligatoire.",
+      }
+    }
+
+    /* -----------------------------------------------------
+       TRANSACTION
+    ----------------------------------------------------- */
+
+    await prisma.$transaction(async (tx) => {
+      /* ---------------------------------------------------
+         1. VÉRIFIER LA FACTURE
+      --------------------------------------------------- */
+
+      const facture = await tx.facture.findFirst({
+        where: {
+          id: factureId,
+          centreId,
+        },
+
+        include: {
+          lignes: {
+            select: {
+              id: true,
+            },
+          },
+
+          echeances: {
+            select: {
+              id: true,
+            },
+          },
+
+          paiements: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      })
+
+      if (!facture) {
+        throw new Error(
+          "Facture introuvable ou non autorisée."
+        )
+      }
+
+      /* ---------------------------------------------------
+         2. EMPÊCHER LA SUPPRESSION SI DES PAIEMENTS EXISTENT
+         ---------------------------------------------------
+
+         Une facture qui possède déjà des paiements ne doit
+         normalement pas être supprimée afin de préserver
+         l'historique financier.
+      --------------------------------------------------- */
+
+      if (facture.paiements.length > 0) {
+        throw new Error(
+          "Cette facture ne peut pas être supprimée car elle possède déjà un ou plusieurs paiements."
+        )
+      }
+
+      /* ---------------------------------------------------
+         3. SUPPRIMER LES ÉCHÉANCES
+      --------------------------------------------------- */
+
+      if (facture.echeances.length > 0) {
+        await tx.echeancePaiement.deleteMany({
+          where: {
+            factureId: facture.id,
+            centreId,
+          },
+        })
+      }
+
+      /* ---------------------------------------------------
+         4. SUPPRIMER LES LIGNES
+      --------------------------------------------------- */
+
+      if (facture.lignes.length > 0) {
+        await tx.ligneFacture.deleteMany({
+          where: {
+            factureId: facture.id,
+          },
+        })
+      }
+
+      /* ---------------------------------------------------
+         5. SUPPRIMER LA FACTURE
+      --------------------------------------------------- */
+
+      await tx.facture.delete({
+        where: {
+          id: facture.id,
+        },
+      })
+    })
+
+    /* -----------------------------------------------------
+       REVALIDATION
+    ----------------------------------------------------- */
+
+    revalidatePath("/factures")
+    revalidatePath("/factures/nouveau")
+    revalidatePath("/echeances")
+    revalidatePath("/paiements")
+
+    return {
+      success: true,
+      message: "Facture supprimée avec succès.",
+    }
+  } catch (error) {
+    console.error(
+      "Erreur deleteFacture:",
+      error
+    )
+
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Impossible de supprimer la facture.",
+    }
+  }
+}
