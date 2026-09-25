@@ -310,7 +310,7 @@ model CentreFormation {
 
   logoUrl String?
 
-  devise        String @default("XAF")
+  devise        String @default("USD")
   fuseauHoraire String @default("Africa/Douala")
 
   dateCreation   DateTime  @default(now())
@@ -1680,7 +1680,7 @@ model AbonnementSaaS {
   prochaineEcheance DateTime?
 
   prix   Decimal
-  devise String  @default("XAF")
+  devise String  @default("USD")
 
   centre CentreFormation @relation(fields: [centreId], references: [id])
   plan   PlanSaaS        @relation(fields: [planId], references: [id])
