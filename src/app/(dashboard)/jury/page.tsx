@@ -8,13 +8,14 @@ import {
 } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import Select from "react-select";
 import Swal from "sweetalert2";
 
 import {
   CalendarDays,
+  CheckCircle2,
+  ChevronRight,
   ClipboardCheck,
   Edit3,
   FileText,
@@ -23,6 +24,7 @@ import {
   MapPin,
   Plus,
   Search,
+  ShieldCheck,
   Trash2,
   Users,
   X,
@@ -249,16 +251,16 @@ function getStatutBadge(
 ) {
   switch (statut) {
     case "PLANIFIE":
-      return "badge-info";
+      return "badge-info badge-outline";
 
     case "EN_COURS":
-      return "badge-warning";
+      return "badge-warning badge-outline";
 
     case "TERMINE":
-      return "badge-success";
+      return "badge-success badge-outline";
 
     case "ANNULE":
-      return "badge-error";
+      return "badge-error badge-outline";
 
     default:
       return "badge-ghost";
@@ -291,8 +293,6 @@ function getDecisionBadge(
 ========================================================= */
 
 export default function JuryPage() {
-  const router = useRouter();
-
   const [
     isPending,
     startTransition,
@@ -447,7 +447,7 @@ export default function JuryPage() {
     );
 
   /* =======================================================
-     JURYS FILTRÉS
+     FILTRE
   ======================================================= */
 
   const filteredJurys =
@@ -517,6 +517,23 @@ export default function JuryPage() {
         "TERMINE",
     ).length;
 
+  const totalMembres =
+    jurys.reduce(
+      (total, jury) =>
+        total +
+        (jury.membresCount || 0),
+      0,
+    );
+
+  const totalEvaluations =
+    jurys.reduce(
+      (total, jury) =>
+        total +
+        (jury.evaluationsCount ||
+          0),
+      0,
+    );
+
   /* =======================================================
      RESET
   ======================================================= */
@@ -533,7 +550,7 @@ export default function JuryPage() {
   }
 
   /* =======================================================
-     OPEN CREATE
+     CREATE
   ======================================================= */
 
   function openCreate() {
@@ -542,7 +559,7 @@ export default function JuryPage() {
   }
 
   /* =======================================================
-     OPEN EDIT
+     EDIT
   ======================================================= */
 
   function openEdit(
@@ -752,16 +769,26 @@ export default function JuryPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[500px] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2
-            size={40}
-            className="animate-spin text-primary"
-          />
+      <div className="flex min-h-[70vh] items-center justify-center bg-base-200">
+        <div className="flex flex-col items-center gap-4">
 
-          <p className="text-sm opacity-60">
-            Chargement des jurys...
-          </p>
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+            <Loader2
+              size={34}
+              className="animate-spin text-primary"
+            />
+          </div>
+
+          <div className="text-center">
+            <p className="font-bold">
+              Chargement des jurys
+            </p>
+
+            <p className="mt-1 text-sm opacity-50">
+              Préparation de votre espace de délibération...
+            </p>
+          </div>
+
         </div>
       </div>
     );
@@ -772,36 +799,52 @@ export default function JuryPage() {
   ======================================================= */
 
   return (
-    <div className="min-h-screen bg-base-200 p-4 md:p-6">
+    <div className="min-h-screen bg-base-200 p-3 sm:p-5 lg:p-7">
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1500px]">
 
         {/* =================================================
             HEADER
         ================================================= */}
 
-        <div className="mb-6 rounded-3xl bg-gradient-to-r from-primary to-secondary p-6 text-primary-content shadow-xl">
+        <section className="relative mb-6 overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-primary to-secondary p-6 text-primary-content shadow-xl md:p-8">
 
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
 
-            <div className="flex items-center gap-4">
+          <div className="absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15">
-                <Gavel size={30} />
+          <div className="relative z-10 flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
+
+            <div className="flex items-start gap-4">
+
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 shadow-inner backdrop-blur">
+                <Gavel
+                  size={28}
+                />
               </div>
 
               <div>
 
-                <p className="text-sm opacity-80">
-                  Administration académique
-                </p>
+                <div className="mb-2 flex flex-wrap items-center gap-2">
 
-                <h1 className="text-2xl font-black md:text-3xl">
-                  Jurys
+                  <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">
+                    Administration académique
+                  </span>
+
+                  <span className="rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur">
+                    Délibérations
+                  </span>
+
+                </div>
+
+                <h1 className="text-3xl font-black tracking-tight md:text-4xl">
+                  Gestion des jurys
                 </h1>
 
-                <p className="mt-1 text-sm opacity-80">
-                  Organisez les jurys et les délibérations.
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-primary-content/75 md:text-base">
+                  Organisez vos jurys, gérez les membres,
+                  suivez les évaluations et centralisez
+                  les décisions de délibération.
                 </p>
 
               </div>
@@ -811,7 +854,7 @@ export default function JuryPage() {
             <button
               type="button"
               onClick={openCreate}
-              className="btn cursor-pointer border-0 bg-white text-primary hover:bg-white/90"
+              className="btn cursor-pointer border-0 bg-white px-5 text-primary shadow-lg hover:bg-base-100"
             >
               <Plus size={18} />
               Nouveau jury
@@ -819,93 +862,213 @@ export default function JuryPage() {
 
           </div>
 
-        </div>
+        </section>
 
         {/* =================================================
-            STATS
+            KPI
         ================================================= */}
 
-        <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <section className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
 
-          <div className="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
-            <div className="flex items-center justify-between">
+          <div className="group rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+
+            <div className="flex items-start justify-between">
+
               <div>
-                <p className="text-xs opacity-60">
+
+                <p className="text-xs font-semibold uppercase tracking-wider opacity-50">
                   Total jurys
                 </p>
 
-                <p className="mt-1 text-2xl font-black">
+                <p className="mt-2 text-3xl font-black">
                   {totalJurys}
                 </p>
+
+                <p className="mt-1 text-xs opacity-50">
+                  Jurys enregistrés
+                </p>
+
               </div>
 
-              <Gavel className="text-primary" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Gavel size={21} />
+              </div>
+
             </div>
+
           </div>
 
-          <div className="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
-            <div className="flex items-center justify-between">
+          <div className="group rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+
+            <div className="flex items-start justify-between">
+
               <div>
-                <p className="text-xs opacity-60">
+
+                <p className="text-xs font-semibold uppercase tracking-wider opacity-50">
                   Planifiés
                 </p>
 
-                <p className="mt-1 text-2xl font-black">
+                <p className="mt-2 text-3xl font-black">
                   {jurysPlanifies}
                 </p>
+
+                <p className="mt-1 text-xs opacity-50">
+                  En attente
+                </p>
+
               </div>
 
-              <CalendarDays className="text-info" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-info/10 text-info">
+                <CalendarDays size={21} />
+              </div>
+
             </div>
+
           </div>
 
-          <div className="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
-            <div className="flex items-center justify-between">
+          <div className="group rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+
+            <div className="flex items-start justify-between">
+
               <div>
-                <p className="text-xs opacity-60">
+
+                <p className="text-xs font-semibold uppercase tracking-wider opacity-50">
                   En cours
                 </p>
 
-                <p className="mt-1 text-2xl font-black">
+                <p className="mt-2 text-3xl font-black">
                   {jurysEnCours}
                 </p>
+
+                <p className="mt-1 text-xs opacity-50">
+                  Délibérations actives
+                </p>
+
               </div>
 
-              <ClipboardCheck className="text-warning" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-warning/10 text-warning">
+                <ClipboardCheck size={21} />
+              </div>
+
             </div>
+
           </div>
 
-          <div className="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
-            <div className="flex items-center justify-between">
+          <div className="group rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+
+            <div className="flex items-start justify-between">
+
               <div>
-                <p className="text-xs opacity-60">
+
+                <p className="text-xs font-semibold uppercase tracking-wider opacity-50">
                   Terminés
                 </p>
 
-                <p className="mt-1 text-2xl font-black">
+                <p className="mt-2 text-3xl font-black">
                   {jurysTermines}
+                </p>
+
+                <p className="mt-1 text-xs opacity-50">
+                  Délibérations clôturées
+                </p>
+
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success/10 text-success">
+                <CheckCircle2 size={21} />
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* =================================================
+            MINI STATS
+        ================================================= */}
+
+        <section className="mb-6 grid gap-3 md:grid-cols-2">
+
+          <div className="flex items-center justify-between rounded-2xl border border-base-300 bg-base-100 px-5 py-4 shadow-sm">
+
+            <div className="flex items-center gap-3">
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+                <Users size={19} />
+              </div>
+
+              <div>
+                <p className="text-sm font-bold">
+                  Membres de jury
+                </p>
+
+                <p className="text-xs opacity-50">
+                  Total associé aux jurys
                 </p>
               </div>
 
-              <FileText className="text-success" />
             </div>
+
+            <span className="text-xl font-black">
+              {totalMembres}
+            </span>
+
           </div>
 
-        </div>
+          <div className="flex items-center justify-between rounded-2xl border border-base-300 bg-base-100 px-5 py-4 shadow-sm">
+
+            <div className="flex items-center gap-3">
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <ClipboardCheck size={19} />
+              </div>
+
+              <div>
+                <p className="text-sm font-bold">
+                  Évaluations jury
+                </p>
+
+                <p className="text-xs opacity-50">
+                  Évaluations enregistrées
+                </p>
+              </div>
+
+            </div>
+
+            <span className="text-xl font-black">
+              {totalEvaluations}
+            </span>
+
+          </div>
+
+        </section>
 
         {/* =================================================
             FILTRES
         ================================================= */}
 
-        <div className="mb-6 rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
+        <section className="mb-5 rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
 
-          <div className="grid gap-3 md:grid-cols-[1fr_220px_auto]">
+          <div className="mb-4 flex flex-col gap-1">
+
+            <h2 className="font-bold">
+              Rechercher et filtrer
+            </h2>
+
+            <p className="text-xs opacity-50">
+              Retrouvez rapidement un jury, une session ou une formation.
+            </p>
+
+          </div>
+
+          <div className="grid gap-3 lg:grid-cols-[1fr_230px_auto]">
 
             <div className="relative">
 
               <Search
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40"
+                className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 opacity-40"
               />
 
               <input
@@ -915,7 +1078,7 @@ export default function JuryPage() {
                     event.target.value,
                   )
                 }
-                className="input input-bordered w-full pl-10"
+                className="input input-bordered h-11 w-full pl-10"
                 placeholder="Rechercher un jury, une session, une formation..."
               />
 
@@ -931,7 +1094,7 @@ export default function JuryPage() {
                     | "TOUS",
                 )
               }
-              className="select select-bordered w-full cursor-pointer"
+              className="select select-bordered h-11 w-full cursor-pointer"
             >
               <option value="TOUS">
                 Tous les statuts
@@ -961,74 +1124,116 @@ export default function JuryPage() {
                   "TOUS",
                 );
               }}
-              className="btn btn-ghost cursor-pointer"
+              className="btn btn-ghost h-11 cursor-pointer"
             >
+              <X size={16} />
               Réinitialiser
             </button>
 
           </div>
 
-        </div>
+        </section>
 
         {/* =================================================
-            TABLE
+            TABLE HEADER
         ================================================= */}
 
-        <div className="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm">
+        <section className="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm">
 
-          <div className="border-b border-base-300 p-5">
+          <div className="flex flex-col gap-4 border-b border-base-300 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
 
-            <div className="flex items-center justify-between">
+            <div>
 
-              <div>
-                <h2 className="font-bold">
+              <div className="flex items-center gap-2">
+
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Gavel size={17} />
+                </div>
+
+                <h2 className="font-black">
                   Liste des jurys
                 </h2>
 
-                <p className="text-sm opacity-60">
-                  {filteredJurys.length} jury
-                  {filteredJurys.length >
-                  1
-                    ? "s"
-                    : ""}{" "}
-                  affiché
-                  {filteredJurys.length >
-                  1
-                    ? "s"
-                    : ""}
-                </p>
               </div>
+
+              <p className="mt-1 text-sm opacity-50">
+                {filteredJurys.length} résultat
+                {filteredJurys.length > 1
+                  ? "s"
+                  : ""}{" "}
+                affiché
+                {filteredJurys.length > 1
+                  ? "s"
+                  : ""}
+              </p>
+
+            </div>
+
+            <div className="flex items-center gap-2">
+
+              <span className="badge badge-ghost">
+                {jurys.length} total
+              </span>
+
+              {statutFilter !==
+                "TOUS" && (
+                <span className="badge badge-primary badge-outline">
+                  {getStatutLabel(
+                    statutFilter,
+                  )}
+                </span>
+              )}
 
             </div>
 
           </div>
+
+          {/* =================================================
+              TABLE
+          ================================================= */}
 
           <div className="overflow-x-auto">
 
             <table className="table">
 
               <thead>
-                <tr>
 
-                  <th>Jury</th>
+                <tr className="bg-base-200/50 text-xs uppercase tracking-wide">
 
-                  <th>Formation / Session</th>
+                  <th className="py-4">
+                    Jury
+                  </th>
 
-                  <th>Date</th>
+                  <th>
+                    Formation / Session
+                  </th>
 
-                  <th>Statut</th>
+                  <th>
+                    Date
+                  </th>
 
-                  <th>Membres</th>
+                  <th>
+                    Statut
+                  </th>
 
-                  <th>Évaluations</th>
+                  <th>
+                    Membres
+                  </th>
 
-                  <th>Décision</th>
+                  <th>
+                    Évaluations
+                  </th>
+
+                  <th>
+                    Décision
+                  </th>
 
                   <th className="text-right">
                     Actions
                   </th>
 
                 </tr>
+
               </thead>
 
               <tbody>
@@ -1039,33 +1244,37 @@ export default function JuryPage() {
 
                     <td
                       colSpan={8}
-                      className="py-16 text-center"
+                      className="py-20"
                     >
 
-                      <Gavel
-                        size={46}
-                        className="mx-auto opacity-20"
-                      />
+                      <div className="flex flex-col items-center text-center">
 
-                      <p className="mt-3 font-semibold">
-                        Aucun jury trouvé
-                      </p>
+                        <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-base-200 text-base-content/30">
+                          <Gavel size={36} />
+                        </div>
 
-                      <p className="text-sm opacity-60">
-                        Créez votre premier jury
-                        pour commencer les délibérations.
-                      </p>
+                        <h3 className="mt-5 text-lg font-black">
+                          Aucun jury trouvé
+                        </h3>
 
-                      <button
-                        type="button"
-                        onClick={
-                          openCreate
-                        }
-                        className="btn btn-primary btn-sm mt-4 cursor-pointer"
-                      >
-                        <Plus size={16} />
-                        Créer un jury
-                      </button>
+                        <p className="mt-1 max-w-md text-sm opacity-50">
+                          Aucun jury ne correspond
+                          aux critères de recherche
+                          actuels.
+                        </p>
+
+                        <button
+                          type="button"
+                          onClick={
+                            openCreate
+                          }
+                          className="btn btn-primary mt-5 cursor-pointer"
+                        >
+                          <Plus size={17} />
+                          Créer un jury
+                        </button>
+
+                      </div>
 
                     </td>
 
@@ -1075,28 +1284,28 @@ export default function JuryPage() {
                     (jury) => (
                       <tr
                         key={jury.id}
-                        className="hover"
+                        className="group hover:bg-base-200/40"
                       >
 
                         {/* JURY */}
 
-                        <td>
+                        <td className="min-w-[250px]">
 
                           <div className="flex items-center gap-3">
 
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
                               <Gavel
                                 size={19}
                               />
                             </div>
 
-                            <div>
+                            <div className="min-w-0">
 
-                              <p className="font-bold">
+                              <p className="truncate font-bold">
                                 {jury.nom}
                               </p>
 
-                              <p className="text-xs opacity-50">
+                              <p className="mt-0.5 text-xs opacity-50">
                                 Créé le{" "}
                                 {formatDate(
                                   jury.creeLe,
@@ -1109,34 +1318,40 @@ export default function JuryPage() {
 
                         </td>
 
-                        {/* SESSION */}
+                        {/* FORMATION / SESSION */}
 
-                        <td>
+                        <td className="min-w-[250px]">
 
-                          <div>
+                          <p className="font-semibold">
+                            {
+                              jury
+                                .session
+                                .formation
+                                .nom
+                            }
+                          </p>
 
-                            <p className="font-semibold">
+                          <div className="mt-1 flex items-center gap-1.5 text-xs opacity-55">
+
+                            <span>
                               {
                                 jury
                                   .session
-                                  .formation
                                   .nom
                               }
-                            </p>
+                            </span>
 
-                            <p className="text-xs opacity-60">
-                              {
-                                jury
-                                  .session
-                                  .nom
-                              }{" "}
-                              ·{" "}
+                            <span>
+                              •
+                            </span>
+
+                            <span className="font-mono">
                               {
                                 jury
                                   .session
                                   .code
                               }
-                            </p>
+                            </span>
 
                           </div>
 
@@ -1144,34 +1359,39 @@ export default function JuryPage() {
 
                         {/* DATE */}
 
-                        <td>
+                        <td className="min-w-[170px]">
 
                           <div className="flex items-center gap-2">
 
-                            <CalendarDays
-                              size={15}
-                              className="opacity-50"
-                            />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-base-200">
+                              <CalendarDays
+                                size={15}
+                                className="opacity-60"
+                              />
+                            </div>
 
-                            <span>
-                              {formatDate(
-                                jury.datePrevue,
+                            <div>
+
+                              <p className="font-semibold">
+                                {formatDate(
+                                  jury.datePrevue,
+                                )}
+                              </p>
+
+                              {jury.lieu && (
+                                <p className="mt-0.5 flex items-center gap-1 text-xs opacity-50">
+                                  <MapPin
+                                    size={11}
+                                  />
+                                  {
+                                    jury.lieu
+                                  }
+                                </p>
                               )}
-                            </span>
+
+                            </div>
 
                           </div>
-
-                          {jury.lieu && (
-                            <div className="mt-1 flex items-center gap-2 text-xs opacity-50">
-                              <MapPin
-                                size={13}
-                              />
-
-                              {
-                                jury.lieu
-                              }
-                            </div>
-                          )}
 
                         </td>
 
@@ -1182,11 +1402,15 @@ export default function JuryPage() {
                           <span
                             className={`badge ${getStatutBadge(
                               jury.statut,
-                            )}`}
+                            )} gap-1.5 whitespace-nowrap`}
                           >
+
+                            <span className="h-1.5 w-1.5 rounded-full bg-current" />
+
                             {getStatutLabel(
                               jury.statut,
                             )}
+
                           </span>
 
                         </td>
@@ -1197,12 +1421,13 @@ export default function JuryPage() {
 
                           <div className="flex items-center gap-2">
 
-                            <Users
-                              size={15}
-                              className="opacity-50"
-                            />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/10 text-secondary">
+                              <Users
+                                size={15}
+                              />
+                            </div>
 
-                            <span className="font-semibold">
+                            <span className="font-bold">
                               {
                                 jury.membresCount
                               }
@@ -1218,12 +1443,13 @@ export default function JuryPage() {
 
                           <div className="flex items-center gap-2">
 
-                            <ClipboardCheck
-                              size={15}
-                              className="opacity-50"
-                            />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                              <ClipboardCheck
+                                size={15}
+                              />
+                            </div>
 
-                            <span className="font-semibold">
+                            <span className="font-bold">
                               {
                                 jury.evaluationsCount
                               }
@@ -1240,7 +1466,7 @@ export default function JuryPage() {
                           <span
                             className={`badge ${getDecisionBadge(
                               jury.decision,
-                            )}`}
+                            )} whitespace-nowrap`}
                           >
                             {getDecisionLabel(
                               jury.decision,
@@ -1257,9 +1483,12 @@ export default function JuryPage() {
 
                             <Link
                               href={`/jury/${jury.id}`}
-                              className="btn btn-primary btn-sm cursor-pointer"
+                              className="btn btn-primary btn-sm cursor-pointer gap-1.5"
                             >
                               Gérer
+                              <ChevronRight
+                                size={15}
+                              />
                             </Link>
 
                             <button
@@ -1287,7 +1516,7 @@ export default function JuryPage() {
                               disabled={
                                 isPending
                               }
-                              className="btn btn-ghost btn-sm cursor-pointer text-error"
+                              className="btn btn-ghost btn-sm cursor-pointer text-error hover:bg-error/10"
                               title="Supprimer"
                             >
                               <Trash2
@@ -1310,12 +1539,12 @@ export default function JuryPage() {
 
           </div>
 
-        </div>
+        </section>
 
       </div>
 
       {/* =====================================================
-          MODAL CREATE / UPDATE
+          MODAL
       ===================================================== */}
 
       {modalOpen && (
@@ -1324,50 +1553,77 @@ export default function JuryPage() {
           className="modal modal-open"
         >
 
-          <div className="modal-box max-w-3xl">
+          <div className="modal-box max-w-3xl overflow-hidden p-0">
 
-            <div className="mb-6 flex items-center justify-between">
+            {/* HEADER MODAL */}
 
-              <div>
+            <div className="relative overflow-hidden bg-gradient-to-br from-primary to-secondary p-6 text-primary-content">
 
-                <h3 className="text-xl font-black">
-                  {editingJury
-                    ? "Modifier le jury"
-                    : "Créer un jury"}
-                </h3>
+              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10" />
 
-                <p className="text-sm opacity-60">
-                  Configurez la session et les informations du jury.
-                </p>
+              <div className="relative flex items-start justify-between gap-4">
+
+                <div className="flex items-center gap-3">
+
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15">
+                    {editingJury ? (
+                      <Edit3 size={22} />
+                    ) : (
+                      <Gavel size={22} />
+                    )}
+                  </div>
+
+                  <div>
+
+                    <h3 className="text-xl font-black">
+                      {editingJury
+                        ? "Modifier le jury"
+                        : "Créer un jury"}
+                    </h3>
+
+                    <p className="mt-1 text-sm text-primary-content/70">
+                      {editingJury
+                        ? "Modifiez les informations de cette délibération."
+                        : "Configurez une nouvelle session de jury."}
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setModalOpen(
+                      false,
+                    );
+                    resetForm();
+                  }}
+                  className="btn btn-circle btn-sm border-0 bg-white/10 text-white hover:bg-white/20 cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
 
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setModalOpen(
-                    false,
-                  );
-                  resetForm();
-                }}
-                className="btn btn-circle btn-ghost cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-
             </div>
+
+            {/* FORM */}
 
             <form
               onSubmit={handleSubmit}
-              className="space-y-5"
+              className="space-y-5 p-6"
             >
 
               {/* SESSION */}
 
               <div>
 
-                <label className="mb-2 block text-sm font-semibold">
-                  Session de formation *
+                <label className="mb-2 block text-sm font-bold">
+                  Session de formation
+                  <span className="ml-1 text-error">
+                    *
+                  </span>
                 </label>
 
                 <Select
@@ -1405,8 +1661,11 @@ export default function JuryPage() {
 
               <label className="form-control">
 
-                <span className="mb-2 text-sm font-semibold">
-                  Nom du jury *
+                <span className="mb-2 text-sm font-bold">
+                  Nom du jury
+                  <span className="ml-1 text-error">
+                    *
+                  </span>
                 </span>
 
                 <input
@@ -1423,13 +1682,13 @@ export default function JuryPage() {
 
               </label>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              {/* DATE / LIEU */}
 
-                {/* DATE */}
+              <div className="grid gap-4 md:grid-cols-2">
 
                 <label className="form-control">
 
-                  <span className="mb-2 text-sm font-semibold">
+                  <span className="mb-2 text-sm font-bold">
                     Date prévue
                   </span>
 
@@ -1451,11 +1710,9 @@ export default function JuryPage() {
 
                 </label>
 
-                {/* LIEU */}
-
                 <label className="form-control">
 
-                  <span className="mb-2 text-sm font-semibold">
+                  <span className="mb-2 text-sm font-bold">
                     Lieu
                   </span>
 
@@ -1475,13 +1732,13 @@ export default function JuryPage() {
 
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              {/* STATUT / DECISION */}
 
-                {/* STATUT */}
+              <div className="grid gap-4 md:grid-cols-2">
 
                 <div>
 
-                  <label className="mb-2 block text-sm font-semibold">
+                  <label className="mb-2 block text-sm font-bold">
                     Statut
                   </label>
 
@@ -1515,11 +1772,9 @@ export default function JuryPage() {
 
                 </div>
 
-                {/* DECISION */}
-
                 <div>
 
-                  <label className="mb-2 block text-sm font-semibold">
+                  <label className="mb-2 block text-sm font-bold">
                     Décision
                   </label>
 
@@ -1529,6 +1784,7 @@ export default function JuryPage() {
                     }
 
                     isClearable
+
                     value={
                       DECISION_OPTIONS.find(
                         (
@@ -1561,7 +1817,7 @@ export default function JuryPage() {
 
               <label className="form-control">
 
-                <span className="mb-2 text-sm font-semibold">
+                <span className="mb-2 text-sm font-bold">
                   Notes de délibération
                 </span>
 
@@ -1576,14 +1832,14 @@ export default function JuryPage() {
                     )
                   }
                   className="textarea textarea-bordered min-h-32 w-full"
-                  placeholder="Observations ou notes de délibération..."
+                  placeholder="Observations, remarques ou notes de délibération..."
                 />
 
               </label>
 
-              {/* ACTIONS */}
+              {/* FOOTER */}
 
-              <div className="flex justify-end gap-2 border-t border-base-300 pt-5">
+              <div className="flex flex-col-reverse gap-2 border-t border-base-300 pt-5 sm:flex-row sm:justify-end">
 
                 <button
                   type="button"
@@ -1611,10 +1867,12 @@ export default function JuryPage() {
                       size={17}
                       className="animate-spin"
                     />
-                  ) : (
-                    <Plus
+                  ) : editingJury ? (
+                    <ShieldCheck
                       size={17}
                     />
+                  ) : (
+                    <Plus size={17} />
                   )}
 
                   {editingJury
@@ -1641,6 +1899,7 @@ export default function JuryPage() {
                 );
                 resetForm();
               }}
+              className="cursor-pointer"
             >
               close
             </button>

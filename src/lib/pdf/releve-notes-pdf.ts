@@ -1,970 +1,642 @@
-import {
-  PDFDocument,
-  StandardFonts,
-  rgb,
-  type PDFFont,
-  type PDFPage,
-} from "pdf-lib";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
-type ModulePdf = {
-  id: string;
-  code: string;
+const A4_WIDTH = 595.28;
+const A4_HEIGHT = 841.89;
+
+type ReleveModule = {
   nom: string;
-  position: number;
-  note: number;
-  noteMaximale: number;
-  pourcentage: number;
-  statut: string;
+  code: string;
+  note: number | null;
+  noteMaximale: number | null;
+  pourcentage: number | null;
   resultat: string;
-  commentaire?: string | null;
 };
 
-type ReleveNotesPdfData = {
+type ReleveJury = {
+  moyenne: number | null;
+  contribution: number | null;
+  nombreEvaluations: number;
+};
+
+export type ReleveNotesPdfData = {
   centre: {
     nom: string;
-    code?: string;
+    code?: string | null;
+    adresse?: string | null;
+    ville?: string | null;
+    pays?: string | null;
+    telephone?: string | null;
+    email?: string | null;
   };
 
   apprenant: {
     nom: string;
     prenom: string;
     numero?: string | null;
-    sexe?: string | null;
-    dateNaissance?: Date | string | null;
   };
 
   formation: {
-    code?: string | null;
     nom: string;
+    code?: string | null;
   };
 
   session: {
-    code: string;
     nom?: string | null;
-    dateDebut: Date | string;
-    dateFin: Date | string;
+    code: string;
+    dateDebut?: Date | string | null;
+    dateFin?: Date | string | null;
   };
 
-  resultat: {
-    moyenneGenerale: number;
-    tauxPresence?: number | null;
+  inscription?: {
+    numero: string;
+  };
 
-    nombreModules: number;
-    modulesReussis: number;
-    modulesEchoues: number;
+  modules: ReleveModule[];
+
+  resultat: {
+    moyenneEvaluations: number | null;
+    contributionEvaluations: number | null;
+
+    moyenneJury: number | null;
+    contributionJury: number | null;
+
+    moyenneGenerale: number | null;
 
     resultat: string;
     resultatLabel: string;
-    mention: string;
-
-    commentaire?: string | null;
+    mention?: string | null;
   };
 
-  modules: ModulePdf[];
+  jury?: ReleveJury;
 };
 
-/* ============================================================
-   DIMENSIONS A4
-============================================================ */
+function formatDate(value?: Date | string | null): string {
+  if (!value) return "-";
 
-const A4_WIDTH = 595.28;
-const A4_HEIGHT = 841.89;
+  const date = value instanceof Date ? value : new Date(value);
 
-/* ============================================================
-   HELPERS
-============================================================ */
+  if (Number.isNaN(date.getTime())) return "-";
 
-function toNumber(
-  value: unknown,
-  fallback = 0,
-): number {
-  const number =
-    typeof value === "number"
-      ? value
-      : Number(value);
-
-  return Number.isFinite(number)
-    ? number
-    : fallback;
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
 }
 
-function formatDate(
-  value?: Date | string | null,
-) {
-  if (!value) return "";
-
-  const date =
-    value instanceof Date
-      ? value
-      : new Date(value);
-
-  if (
-    Number.isNaN(
-      date.getTime(),
-    )
-  ) {
-    return "";
+function formatNumber(value: number | null | undefined, digits = 2): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "-";
   }
 
-  return new Intl.DateTimeFormat(
-    "fr-FR",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    },
-  ).format(date);
+  return value.toFixed(digits);
 }
 
-function drawCenteredText(
-  page: PDFPage,
-  text: string,
-  y: number,
-  font: PDFFont,
-  size: number,
-  color = rgb(0, 0, 0),
-) {
-  const textWidth =
-    font.widthOfTextAtSize(
-      text,
-      size,
-    );
+function getMentionLabel(mention?: string | null): string {
+  if (!mention) return "-";
 
-  page.drawText(text, {
-    x:
-      (page.getWidth() -
-        textWidth) /
-      2,
-    y,
-    size,
-    font,
-    color,
-  });
+  const labels: Record<string, string> = {
+    EXCELLENT: "Excellent",
+    TRES_BIEN: "Très bien",
+    BIEN: "Bien",
+    ASSEZ_BIEN: "Assez bien",
+    PASSABLE: "Passable",
+  };
+
+  return labels[mention] ?? mention;
 }
-
-function drawCellText(
-  page: PDFPage,
-  text: string,
-  x: number,
-  y: number,
-  width: number,
-  font: PDFFont,
-  size: number,
-  align:
-    | "left"
-    | "center"
-    | "right" = "left",
-  color = rgb(0, 0, 0),
-) {
-  const textWidth =
-    font.widthOfTextAtSize(
-      text,
-      size,
-    );
-
-  let textX = x + 5;
-
-  if (align === "center") {
-    textX =
-      x +
-      (width - textWidth) /
-        2;
-  }
-
-  if (align === "right") {
-    textX =
-      x +
-      width -
-      textWidth -
-      5;
-  }
-
-  page.drawText(text, {
-    x: textX,
-    y,
-    size,
-    font,
-    color,
-  });
-}
-
-/* ============================================================
-   GENERATION DU RELEVE
-============================================================ */
 
 export async function generateReleveNotesPdf(
-  data: ReleveNotesPdfData,
+  data: ReleveNotesPdfData
 ): Promise<Uint8Array> {
-  const pdf =
-    await PDFDocument.create();
+  const pdf = await PDFDocument.create();
 
-  /* ========================================================
-     POLICES
-  ======================================================== */
+  const regularFont = await pdf.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdf.embedFont(StandardFonts.HelveticaBold);
 
-  const regular =
-    await pdf.embedFont(
-      StandardFonts.Helvetica,
-    );
+  const page = pdf.addPage([A4_WIDTH, A4_HEIGHT]);
 
-  const bold =
-    await pdf.embedFont(
-      StandardFonts.HelveticaBold,
-    );
+  const margin = 40;
 
-  /* ========================================================
-     PAGE A4
-     
-     IMPORTANT :
-     pdf-lib n'accepte pas "A4" comme
-     argument de addPage().
-  ======================================================== */
+  let y = A4_HEIGHT - margin;
 
-  const page =
-    pdf.addPage([
-      A4_WIDTH,
-      A4_HEIGHT,
-    ]);
+  const drawText = (
+    text: string,
+    x: number,
+    yPosition: number,
+    size = 10,
+    bold = false
+  ) => {
+    page.drawText(text, {
+      x,
+      y: yPosition,
+      size,
+      font: bold ? boldFont : regularFont,
+      color: rgb(0.1, 0.1, 0.1),
+    });
+  };
 
-  const width =
-    page.getWidth();
+  const drawLine = (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ) => {
+    page.drawLine({
+      start: { x: x1, y: y1 },
+      end: { x: x2, y: y2 },
+      thickness: 0.7,
+      color: rgb(0.75, 0.75, 0.75),
+    });
+  };
 
-  const height =
-    page.getHeight();
+  // ============================================================
+  // EN-TÊTE CENTRE
+  // ============================================================
 
-  /* ========================================================
-     COULEURS
-  ======================================================== */
-
-  const green =
-    rgb(
-      0.08,
-      0.32,
-      0.20,
-    );
-
-  const gold =
-    rgb(
-      0.76,
-      0.60,
-      0.20,
-    );
-
-  const lightGreen =
-    rgb(
-      0.94,
-      0.97,
-      0.95,
-    );
-
-  const gray =
-    rgb(
-      0.40,
-      0.40,
-      0.40,
-    );
-
-  const border =
-    rgb(
-      0.78,
-      0.78,
-      0.78,
-    );
-
-  const dark =
-    rgb(
-      0.15,
-      0.15,
-      0.15,
-    );
-
-  const red =
-    rgb(
-      0.65,
-      0.15,
-      0.15,
-    );
-
-  /* ========================================================
-     HEADER
-  ======================================================== */
-
-  let y =
-    height - 50;
-
-  drawCenteredText(
-    page,
+  drawText(
     data.centre.nom.toUpperCase(),
+    margin,
     y,
-    bold,
     16,
-    green,
+    true
   );
 
   y -= 20;
 
-  drawCenteredText(
-    page,
-    "CENTRE DE FORMATION PROFESSIONNELLE ET DES MÉTIERS",
+  if (data.centre.code) {
+    drawText(`Code : ${data.centre.code}`, margin, y, 9);
+    y -= 14;
+  }
+
+  if (data.centre.adresse) {
+    drawText(data.centre.adresse, margin, y, 9);
+    y -= 14;
+  }
+
+  if (data.centre.ville || data.centre.pays) {
+    drawText(
+      [data.centre.ville, data.centre.pays]
+        .filter(Boolean)
+        .join(" - "),
+      margin,
+      y,
+      9
+    );
+
+    y -= 14;
+  }
+
+  if (data.centre.telephone || data.centre.email) {
+    drawText(
+      [data.centre.telephone, data.centre.email]
+        .filter(Boolean)
+        .join(" | "),
+      margin,
+      y,
+      9
+    );
+
+    y -= 14;
+  }
+
+  drawLine(margin, y, A4_WIDTH - margin, y);
+
+  y -= 35;
+
+  // ============================================================
+  // TITRE
+  // ============================================================
+
+  const title = "RELEVÉ DE NOTES";
+
+  const titleWidth = boldFont.widthOfTextAtSize(title, 18);
+
+  drawText(
+    title,
+    (A4_WIDTH - titleWidth) / 2,
     y,
-    bold,
-    9,
-    dark,
+    18,
+    true
   );
+
+  y -= 35;
+
+  // ============================================================
+  // APPRENANT
+  // ============================================================
+
+  drawText("APPRENANT", margin, y, 10, true);
 
   y -= 18;
 
-  page.drawLine({
-    start: {
-      x: 45,
-      y,
-    },
-
-    end: {
-      x:
-        width - 45,
-      y,
-    },
-
-    thickness: 2,
-    color: gold,
-  });
-
-  /* ========================================================
-     TITRE
-  ======================================================== */
-
-  y -= 38;
-
-  drawCenteredText(
-    page,
-    "RELEVÉ DE NOTES",
+  drawText(
+    `Nom complet : ${data.apprenant.prenom} ${data.apprenant.nom}`,
+    margin,
     y,
-    bold,
-    19,
-    green,
+    10
   );
 
-  y -= 32;
+  y -= 16;
 
-  drawCenteredText(
-    page,
-    "Document officiel de formation",
+  drawText(
+    `Numéro apprenant : ${data.apprenant.numero ?? "-"}`,
+    margin,
     y,
-    regular,
-    9,
-    gray,
+    10
   );
 
-  /* ========================================================
-     INFORMATIONS APPRENANT
-  ======================================================== */
+  y -= 16;
 
-  y -= 40;
-
-  const infoX = 45;
-
-  const infoWidth =
-    width - 90;
-
-  const infoHeight = 78;
-
-  page.drawRectangle({
-    x: infoX,
-    y:
-      y -
-      infoHeight,
-    width: infoWidth,
-    height: infoHeight,
-    color: rgb(
-      0.98,
-      0.98,
-      0.98,
-    ),
-    borderColor: border,
-    borderWidth: 1,
-  });
-
-  const fullName =
-    `${data.apprenant.prenom} ${data.apprenant.nom}`;
-
-  page.drawText(
-    `Apprenant : ${fullName}`,
-    {
-      x: infoX + 12,
-      y: y - 20,
-      size: 10,
-      font: bold,
-      color: dark,
-    },
+  drawText(
+    `Numéro inscription : ${data.inscription?.numero ?? "-"}`,
+    margin,
+    y,
+    10
   );
 
-  page.drawText(
-    `Matricule : ${
-      data.apprenant.numero ||
-      "N/A"
-    }`,
-    {
-      x: infoX + 12,
-      y: y - 40,
-      size: 9,
-      font: regular,
-      color: dark,
-    },
-  );
+  y -= 25;
 
-  page.drawText(
+  // ============================================================
+  // FORMATION
+  // ============================================================
+
+  drawText("FORMATION", margin, y, 10, true);
+
+  y -= 18;
+
+  drawText(
     `Formation : ${data.formation.nom}`,
-    {
-      x:
-        infoX +
-        infoWidth / 2,
-      y: y - 20,
-      size: 10,
-      font: bold,
-      color: dark,
-    },
+    margin,
+    y,
+    10
   );
 
-  page.drawText(
-    `Code : ${
-      data.formation.code ||
-      "N/A"
-    }`,
-    {
-      x:
-        infoX +
-        infoWidth / 2,
-      y: y - 40,
-      size: 9,
-      font: regular,
-      color: dark,
-    },
+  y -= 16;
+
+  drawText(
+    `Code formation : ${data.formation.code ?? "-"}`,
+    margin,
+    y,
+    10
   );
 
-  page.drawText(
+  y -= 16;
+
+  drawText(
     `Session : ${
-      data.session.nom ||
-      data.session.code
+      data.session.nom
+        ? `${data.session.nom} (${data.session.code})`
+        : data.session.code
     }`,
-    {
-      x: infoX + 12,
-      y: y - 60,
-      size: 9,
-      font: regular,
-      color: dark,
-    },
+    margin,
+    y,
+    10
   );
 
-  page.drawText(
+  y -= 16;
+
+  drawText(
     `Période : ${formatDate(
-      data.session.dateDebut,
-    )} - ${formatDate(
-      data.session.dateFin,
-    )}`,
-    {
-      x:
-        infoX +
-        infoWidth / 2,
-      y: y - 60,
-      size: 9,
-      font: regular,
-      color: dark,
-    },
+      data.session.dateDebut
+    )} - ${formatDate(data.session.dateFin)}`,
+    margin,
+    y,
+    10
   );
 
-  y -=
-    infoHeight +
-    25;
+  y -= 30;
 
-  /* ========================================================
-     TABLEAU DES NOTES
-  ======================================================== */
+  // ============================================================
+  // TABLEAU DES NOTES
+  // ============================================================
 
-  const tableX = 45;
+  drawText("DÉTAIL DES ÉVALUATIONS", margin, y, 10, true);
 
-  const tableWidth =
-    width - 90;
+  y -= 20;
 
-  const colModule = 180;
+  const tableX = margin;
+  const tableWidth = A4_WIDTH - margin * 2;
 
+  const colModule = 210;
   const colNote = 75;
-
   const colMax = 75;
+  const colPourcentage = 80;
+  const colResultat = tableWidth - colModule - colNote - colMax - colPourcentage;
 
-  const colPercent =
-    tableWidth -
-    colModule -
-    colNote -
-    colMax;
-
-  const headerHeight = 28;
+  const rowHeight = 24;
 
   page.drawRectangle({
     x: tableX,
-    y:
-      y -
-      headerHeight,
+    y: y - rowHeight + 4,
     width: tableWidth,
-    height: headerHeight,
-    color: green,
+    height: rowHeight,
+    color: rgb(0.93, 0.94, 0.96),
   });
 
-  let x = tableX;
+  drawText("Module", tableX + 6, y - 14, 9, true);
 
-  drawCellText(
-    page,
-    "Module",
-    x,
-    y - 18,
-    colModule,
-    bold,
-    9,
-    "left",
-    rgb(1, 1, 1),
-  );
-
-  x += colModule;
-
-  drawCellText(
-    page,
+  drawText(
     "Note",
-    x,
-    y - 18,
-    colNote,
-    bold,
+    tableX + colModule + 6,
+    y - 14,
     9,
-    "center",
-    rgb(1, 1, 1),
+    true
   );
 
-  x += colNote;
-
-  drawCellText(
-    page,
-    "Maximum",
-    x,
-    y - 18,
-    colMax,
-    bold,
+  drawText(
+    "Max.",
+    tableX + colModule + colNote + 6,
+    y - 14,
     9,
-    "center",
-    rgb(1, 1, 1),
+    true
   );
 
-  x += colMax;
-
-  drawCellText(
-    page,
+  drawText(
     "%",
-    x,
-    y - 18,
-    colPercent,
-    bold,
+    tableX + colModule + colNote + colMax + 6,
+    y - 14,
     9,
-    "center",
-    rgb(1, 1, 1),
+    true
   );
 
-  y -= headerHeight;
+  drawText(
+    "Résultat",
+    tableX +
+      colModule +
+      colNote +
+      colMax +
+      colPourcentage +
+      6,
+    y - 14,
+    9,
+    true
+  );
 
-  const rowHeight = 27;
+  y -= rowHeight;
 
-  /*
-   * Protection contre un tableau modules
-   * absent ou invalide.
-   */
-  const modules =
-    Array.isArray(data.modules)
-      ? data.modules
-      : [];
+  for (const module of data.modules) {
+    if (y < 150) {
+      const newPage = pdf.addPage([A4_WIDTH, A4_HEIGHT]);
 
-  modules.forEach(
-    (module, index) => {
-      const background =
-        index % 2 === 0
-          ? rgb(
-              1,
-              1,
-              1,
-            )
-          : rgb(
-              0.97,
-              0.97,
-              0.97,
-            );
+      y = A4_HEIGHT - margin;
 
-      page.drawRectangle({
-        x: tableX,
-        y:
-          y -
-          rowHeight,
-        width: tableWidth,
-        height: rowHeight,
-        color: background,
-        borderColor: border,
-        borderWidth: 0.5,
+      newPage.drawText("RELEVÉ DE NOTES — suite", {
+        x: margin,
+        y,
+        size: 12,
+        font: boldFont,
+        color: rgb(0.1, 0.1, 0.1),
       });
 
-      let currentX =
-        tableX;
+      y -= 30;
+    }
 
-      const moduleName =
-        module.code
-          ? `${module.code} — ${module.nom}`
-          : module.nom;
+    drawLine(tableX, y, tableX + tableWidth, y);
 
-      drawCellText(
-        page,
-        moduleName,
-        currentX,
-        y - 18,
-        colModule,
-        regular,
-        8,
-        "left",
-      );
+    drawText(
+      module.nom.length > 34
+        ? `${module.nom.substring(0, 31)}...`
+        : module.nom,
+      tableX + 6,
+      y - 16,
+      8
+    );
 
-      currentX += colModule;
+    drawText(
+      formatNumber(module.note),
+      tableX + colModule + 6,
+      y - 16,
+      8
+    );
 
-      const note =
-        toNumber(module.note);
+    drawText(
+      formatNumber(module.noteMaximale),
+      tableX + colModule + colNote + 6,
+      y - 16,
+      8
+    );
 
-      drawCellText(
-        page,
-        note.toFixed(2),
-        currentX,
-        y - 18,
-        colNote,
-        regular,
-        8,
-        "center",
-      );
+    drawText(
+      module.pourcentage === null
+        ? "-"
+        : `${formatNumber(module.pourcentage)} %`,
+      tableX + colModule + colNote + colMax + 6,
+      y - 16,
+      8
+    );
 
-      currentX += colNote;
+    drawText(
+      module.resultat,
+      tableX +
+        colModule +
+        colNote +
+        colMax +
+        colPourcentage +
+        6,
+      y - 16,
+      8
+    );
 
-      const noteMaximale =
-        toNumber(
-          module.noteMaximale,
-        );
+    y -= rowHeight;
+  }
 
-      drawCellText(
-        page,
-        noteMaximale.toFixed(2),
-        currentX,
-        y - 18,
-        colMax,
-        regular,
-        8,
-        "center",
-      );
+  drawLine(tableX, y, tableX + tableWidth, y);
 
-      currentX += colMax;
+  y -= 35;
 
-      const pourcentage =
-        toNumber(
-          module.pourcentage,
-        );
+  // ============================================================
+  // SYNTHÈSE 70 / 30
+  // ============================================================
 
-      drawCellText(
-        page,
-        `${pourcentage.toFixed(
-          2,
-        )} %`,
-        currentX,
-        y - 18,
-        colPercent,
-        bold,
-        8,
-        "center",
-        pourcentage >= 50
-          ? green
-          : red,
-      );
+  drawText("SYNTHÈSE DU RÉSULTAT", margin, y, 11, true);
 
-      y -= rowHeight;
-    },
-  );
+  y -= 22;
 
-  /* ========================================================
-     RESULTAT GLOBAL
-  ======================================================== */
-
-  y -= 28;
-
-  const resultHeight =
-    100;
+  const boxWidth = tableWidth;
+  const boxHeight = 120;
 
   page.drawRectangle({
-    x: 45,
-    y:
-      y -
-      resultHeight,
-    width:
-      width - 90,
-    height: resultHeight,
-    color: lightGreen,
-    borderColor: green,
-    borderWidth: 1.2,
+    x: margin,
+    y: y - boxHeight,
+    width: boxWidth,
+    height: boxHeight,
+    borderWidth: 1,
+    borderColor: rgb(0.8, 0.8, 0.8),
   });
 
-  const moyenneGenerale =
-    toNumber(
-      data.resultat
-        .moyenneGenerale,
-    );
+  const leftX = margin + 12;
+  const rightX = A4_WIDTH - margin - 150;
 
-  page.drawText(
-    "RÉSULTAT GLOBAL",
-    {
-      x: 58,
-      y: y - 22,
-      size: 11,
-      font: bold,
-      color: green,
-    },
+  drawText(
+    "Moyenne évaluations formation",
+    leftX,
+    y - 20,
+    9,
+    true
   );
 
-  page.drawText(
-    `Moyenne générale : ${moyenneGenerale.toFixed(
-      2,
-    )} %`,
-    {
-      x: 58,
-      y: y - 45,
-      size: 11,
-      font: bold,
-      color: dark,
-    },
+  drawText(
+    data.resultat.moyenneEvaluations === null
+      ? "-"
+      : `${formatNumber(data.resultat.moyenneEvaluations)} %`,
+    rightX,
+    y - 20,
+    10,
+    true
   );
 
-  page.drawText(
-    `Résultat : ${
-      data.resultat.resultatLabel
-    }`,
-    {
-      x:
-        width / 2,
-      y: y - 45,
-      size: 10,
-      font: bold,
-      color: dark,
-    },
+  drawText(
+    "Contribution des évaluations (70 %)",
+    leftX,
+    y - 42,
+    9
   );
 
-  page.drawText(
-    `Mention : ${
-      data.resultat.mention
-    }`,
-    {
-      x: 58,
-      y: y - 68,
-      size: 10,
-      font: bold,
-      color: dark,
-    },
+  drawText(
+    data.resultat.contributionEvaluations === null
+      ? "-"
+      : `${formatNumber(
+          data.resultat.contributionEvaluations
+        )} pts`,
+    rightX,
+    y - 42,
+    10,
+    true
   );
 
-  if (
-    data.resultat.tauxPresence !==
-      null &&
-    data.resultat.tauxPresence !==
-      undefined
-  ) {
-    const tauxPresence =
-      toNumber(
-        data.resultat
-          .tauxPresence,
-      );
-
-    page.drawText(
-      `Taux de présence : ${tauxPresence.toFixed(
-        2,
-      )} %`,
-      {
-        x:
-          width / 2,
-        y: y - 68,
-        size: 10,
-        font: regular,
-        color: dark,
-      },
-    );
-  }
-
-  y -=
-    resultHeight +
-    20;
-
-  /* ========================================================
-     STATISTIQUES MODULES
-  ======================================================== */
-
-  const nombreModules =
-    toNumber(
-      data.resultat
-        .nombreModules,
-    );
-
-  const modulesReussis =
-    toNumber(
-      data.resultat
-        .modulesReussis,
-    );
-
-  const modulesEchoues =
-    toNumber(
-      data.resultat
-        .modulesEchoues,
-    );
-
-  page.drawText(
-    `Modules : ${nombreModules}`,
-    {
-      x: 50,
-      y,
-      size: 9,
-      font: regular,
-      color: gray,
-    },
+  drawText(
+    "Moyenne du jury",
+    leftX,
+    y - 64,
+    9,
+    true
   );
 
-  page.drawText(
-    `Réussis : ${modulesReussis}`,
-    {
-      x: 190,
-      y,
-      size: 9,
-      font: regular,
-      color: green,
-    },
+  drawText(
+    data.resultat.moyenneJury === null
+      ? "-"
+      : `${formatNumber(data.resultat.moyenneJury)} %`,
+    rightX,
+    y - 64,
+    10,
+    true
   );
 
-  page.drawText(
-    `Échoués : ${modulesEchoues}`,
-    {
-      x: 300,
-      y,
-      size: 9,
-      font: regular,
-      color:
-        modulesEchoues > 0
-          ? red
-          : gray,
-    },
+  drawText(
+    "Contribution du jury (30 %)",
+    leftX,
+    y - 86,
+    9
   );
 
-  /* ========================================================
-     COMMENTAIRE
-  ======================================================== */
-
-  if (
-    data.resultat
-      .commentaire
-  ) {
-    y -= 25;
-
-    page.drawText(
-      "Observation :",
-      {
-        x: 50,
-        y,
-        size: 9,
-        font: bold,
-        color: dark,
-      },
-    );
-
-    const commentaire =
-      data.resultat
-        .commentaire
-        .replace(
-          /\s+/g,
-          " ",
-        )
-        .slice(0, 120);
-
-    page.drawText(
-      commentaire,
-      {
-        x: 120,
-        y,
-        size: 8,
-        font: regular,
-        color: gray,
-      },
-    );
-  }
-
-  /* ========================================================
-     SIGNATURE
-  ======================================================== */
-
-  page.drawText(
-    `Fait le ${formatDate(
-      new Date(),
-    )}`,
-    {
-      x:
-        width - 190,
-      y: 95,
-      size: 9,
-      font: regular,
-      color: gray,
-    },
+  drawText(
+    data.resultat.contributionJury === null
+      ? "-"
+      : `${formatNumber(
+          data.resultat.contributionJury
+        )} pts`,
+    rightX,
+    y - 86,
+    10,
+    true
   );
 
-  page.drawLine({
-    start: {
-      x:
-        width - 190,
-      y: 72,
-    },
+  y -= boxHeight + 20;
 
-    end: {
-      x:
-        width - 70,
-      y: 72,
-    },
+  // ============================================================
+  // RÉSULTAT FINAL
+  // ============================================================
 
-    thickness: 1,
-    color: rgb(
-      0.2,
-      0.2,
-      0.2,
-    ),
+  page.drawRectangle({
+    x: margin,
+    y: y - 70,
+    width: tableWidth,
+    height: 70,
+    borderWidth: 1.5,
+    borderColor: rgb(0.15, 0.15, 0.15),
   });
 
-  page.drawText(
-    "Le Directeur",
-    {
-      x:
-        width - 160,
-      y: 55,
-      size: 9,
-      font: bold,
-      color: dark,
-    },
+  drawText(
+    "RÉSULTAT FINAL",
+    margin + 15,
+    y - 22,
+    11,
+    true
   );
 
-  /* ========================================================
-     FOOTER
-  ======================================================== */
-
-  drawCenteredText(
-    page,
-    data.centre.code
-      ? `Code centre : ${data.centre.code}`
-      : "Document officiel",
-    32,
-    regular,
-    7,
-    gray,
+  drawText(
+    data.resultat.moyenneGenerale === null
+      ? "En attente"
+      : `${formatNumber(
+          data.resultat.moyenneGenerale
+        )} %`,
+    margin + 190,
+    y - 23,
+    14,
+    true
   );
 
-  /* ========================================================
-     GENERATION
-  ======================================================== */
+  drawText(
+    data.resultat.resultatLabel,
+    margin + 390,
+    y - 22,
+    10,
+    true
+  );
 
-  return pdf.save();
+  drawText(
+    `Mention : ${getMentionLabel(data.resultat.mention)}`,
+    margin + 15,
+    y - 48,
+    9
+  );
+
+  y -= 95;
+
+  // ============================================================
+  // JURY
+  // ============================================================
+
+  if (data.jury) {
+    drawText("JURY", margin, y, 10, true);
+
+    y -= 18;
+
+    drawText(
+      `Nombre d'évaluations du jury : ${data.jury.nombreEvaluations}`,
+      margin,
+      y,
+      9
+    );
+
+    y -= 16;
+  }
+
+  // ============================================================
+  // PIED DE PAGE
+  // ============================================================
+
+  drawLine(
+    margin,
+    55,
+    A4_WIDTH - margin,
+    55
+  );
+
+  drawText(
+    `Document généré le ${formatDate(new Date())}`,
+    margin,
+    38,
+    8
+  );
+
+  drawText(
+    data.centre.nom,
+    A4_WIDTH - margin - 150,
+    38,
+    8
+  );
+
+  return await pdf.save();
 }
