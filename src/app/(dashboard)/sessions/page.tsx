@@ -3,10 +3,8 @@ import {
     getSessionStats,
     getSessions,
 } from "@/actions/session.actions";
+
 import SessionListClient from "./SessionListClient";
-
-
-
 
 interface SessionsPageProps {
     searchParams: Promise<{
@@ -61,8 +59,8 @@ export default async function SessionsPage({
 
     if (!sessionsResult.success) {
         return (
-            <div className="p-6">
-                <div className="alert alert-error">
+            <div className="w-full min-w-0 p-4 sm:p-6">
+                <div className="alert alert-error w-full">
                     <span>
                         {sessionsResult.error ||
                             "Impossible de charger les sessions."}
@@ -78,8 +76,8 @@ export default async function SessionsPage({
 
     if (!formationsResult.success) {
         return (
-            <div className="p-6">
-                <div className="alert alert-error">
+            <div className="w-full min-w-0 p-4 sm:p-6">
+                <div className="alert alert-error w-full">
                     <span>
                         {formationsResult.error ||
                             "Impossible de charger les formations."}
@@ -93,7 +91,8 @@ export default async function SessionsPage({
     // DONNÉES
     // ============================================================
 
-    const sessions = sessionsResult.data ?? [];
+    const sessions =
+        sessionsResult.data ?? [];
 
     const formations =
         formationsResult.formations ?? [];
@@ -121,16 +120,18 @@ export default async function SessionsPage({
     // ============================================================
 
     return (
-        <SessionListClient
-            sessions={sessions}
-            formations={formations}
-            pagination={pagination}
-            stats={stats}
-            filters={{
-                query,
-                statut,
-                formationId,
-            }}
-        />
+        <div className="w-full min-w-0">
+            <SessionListClient
+                sessions={sessions}
+                formations={formations}
+                pagination={pagination}
+                stats={stats}
+                filters={{
+                    query,
+                    statut,
+                    formationId,
+                }}
+            />
+        </div>
     );
 }

@@ -1,7 +1,7 @@
-
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   BarChart3,
@@ -21,7 +21,6 @@ import {
   X,
   Receipt,
   WalletCards,
-  CalendarClock,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -132,12 +131,6 @@ const menuSections = [
       },
 
       {
-        label: "Échéances",
-        href: "/echeances",
-        icon: CalendarClock,
-      },
-
-      {
         label: "Rapports financiers",
         href: "/rapports/finance",
         icon: WalletCards,
@@ -173,6 +166,27 @@ export function Sidebar({
   mobile = false,
   onClose,
 }: SidebarProps) {
+  const pathname = usePathname();
+
+  /**
+   * Détermine si un élément du menu correspond
+   * à la page actuellement affichée.
+   *
+   * Exemple :
+   * /apprenants/123
+   * active également /apprenants
+   */
+  const isActive = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+
+    return (
+      pathname === href ||
+      pathname.startsWith(`${href}/`)
+    );
+  };
+
   return (
     <aside
       className={`
@@ -196,12 +210,8 @@ export function Sidebar({
       <div className="flex h-20 shrink-0 items-center justify-between border-b border-white/10 px-6">
         <Link
           href="/dashboard"
-          className="flex items-center gap-3"
-          onClick={
-            mobile
-              ? onClose
-              : undefined
-          }
+          onClick={mobile ? onClose : undefined}
+          className="flex items-center gap-3 cursor-pointer"
         >
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#0f2747]">
             <GraduationCap size={24} />
@@ -222,7 +232,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            className="btn btn-ghost btn-sm text-white hover:bg-white/10"
+            className="btn btn-ghost btn-sm cursor-pointer text-white hover:bg-white/10"
             aria-label="Fermer le menu"
           >
             <X size={20} />
@@ -235,62 +245,77 @@ export function Sidebar({
       ====================================================== */}
 
       <div className="flex-1 overflow-y-auto px-4 py-5">
-        {menuSections.map(
-          (section) => (
-            <div
-              key={section.title}
-              className="mb-6"
-            >
-              <p className="mb-2 px-3 text-[10px] font-bold tracking-[0.15em] text-white/40">
-                {section.title}
-              </p>
+        {menuSections.map((section) => (
+          <div
+            key={section.title}
+            className="mb-6"
+          >
+            <p className="mb-2 px-3 text-[10px] font-bold tracking-[0.15em] text-white/40">
+              {section.title}
+            </p>
 
-              <nav className="space-y-1">
-                {section.items.map(
-                  (item) => {
-                    const Icon =
-                      item.icon;
+            <nav className="space-y-1">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
 
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={
-                          mobile
-                            ? onClose
-                            : undefined
-                        }
-                        className="
-                          flex
-                          items-center
-                          gap-3
-                          rounded-xl
-                          px-3
-                          py-2.5
-                          text-sm
-                          text-white/75
-                          transition
-                          duration-200
-                          hover:bg-white/10
-                          hover:text-white
-                        "
-                      >
-                        <Icon
-                          size={18}
-                          strokeWidth={1.8}
-                        />
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={
+                      mobile
+                        ? onClose
+                        : undefined
+                    }
+                    className={`
+                      group
+                      flex
+                      items-center
+                      gap-3
+                      rounded-xl
+                      px-3
+                      py-2.5
+                      text-sm
+                      transition-all
+                      duration-200
+                      cursor-pointer
 
-                        <span>
-                          {item.label}
-                        </span>
-                      </Link>
-                    );
-                  },
-                )}
-              </nav>
-            </div>
-          ),
-        )}
+                      ${
+                        active
+                          ? `
+                            bg-white
+                            text-[#0f2747]
+                            font-semibold
+                            shadow-sm
+                          `
+                          : `
+                            text-white/75
+                            hover:bg-white/10
+                            hover:text-white
+                          `
+                      }
+                    `}
+                  >
+                    <Icon
+                      size={18}
+                      strokeWidth={active ? 2.2 : 1.8}
+                      className={
+                        active
+                          ? "text-[#0f2747]"
+                          : "text-white/70 group-hover:text-white"
+                      }
+                    />
+
+                    <span className="truncate">
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        ))}
       </div>
 
       {/* =====================================================
@@ -305,7 +330,7 @@ export function Sidebar({
               ? onClose
               : undefined
           }
-          className="
+          className={`
             flex
             items-center
             gap-3
@@ -313,13 +338,25 @@ export function Sidebar({
             px-3
             py-2.5
             text-sm
-            text-white/70
-            transition
-            hover:bg-white/10
-            hover:text-white
-          "
+            transition-all
+            duration-200
+            cursor-pointer
+
+            ${
+              isActive("/parametres")
+                ? "bg-white font-semibold text-[#0f2747] shadow-sm"
+                : "text-white/70 hover:bg-white/10 hover:text-white"
+            }
+          `}
         >
-          <Settings size={18} />
+          <Settings
+            size={18}
+            strokeWidth={
+              isActive("/parametres")
+                ? 2.2
+                : 1.8
+            }
+          />
 
           <span>
             Paramètres

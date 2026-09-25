@@ -139,40 +139,13 @@ function formatPercentage(
   return `${value.toFixed(2)} %`;
 }
 
-function formatDate(
-  value: string | Date | null | undefined
-): string {
-  if (!value) {
-    return "—";
-  }
-
-  const date =
-    value instanceof Date
-      ? value
-      : new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "—";
-  }
-
-  return date.toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
-
 function getApprenantName(
   item: ResultatItem
 ): string {
-  const prenom =
-    item.apprenant?.prenom ?? "";
+  const prenom = item.apprenant?.prenom ?? "";
+  const nom = item.apprenant?.nom ?? "";
 
-  const nom =
-    item.apprenant?.nom ?? "";
-
-  const fullName =
-    `${prenom} ${nom}`.trim();
+  const fullName = `${prenom} ${nom}`.trim();
 
   return fullName || "Apprenant inconnu";
 }
@@ -180,10 +153,7 @@ function getApprenantName(
 function getFormationName(
   item: ResultatItem
 ): string {
-  return (
-    item.formation?.nom ??
-    "Formation inconnue"
-  );
+  return item.formation?.nom ?? "Formation inconnue";
 }
 
 function getSessionName(
@@ -402,13 +372,6 @@ export default function ResultatsPage() {
             ? response.data
             : [];
 
-        /*
-         * Protection importante :
-         * on normalise les données reçues afin que
-         * le rendu ne tente jamais de lire
-         * item.formation.nom ou item.apprenant.nom
-         * sur undefined.
-         */
         const normalized =
           data.map((item: any) => ({
             ...item,
@@ -682,7 +645,7 @@ export default function ResultatsPage() {
     }, [resultats]);
 
   /* ==========================================================
-     TÉLÉCHARGEMENT RELEVÉ
+     RELEVÉ
   ========================================================== */
 
   const handleReleve =
@@ -731,9 +694,7 @@ export default function ResultatsPage() {
           "Relevé de notes généré."
         );
       } catch (error) {
-        console.error(
-          error
-        );
+        console.error(error);
 
         toast.error(
           "Erreur lors de la génération du relevé."
@@ -744,7 +705,7 @@ export default function ResultatsPage() {
     };
 
   /* ==========================================================
-     TÉLÉCHARGEMENT BREVET
+     BREVET
   ========================================================== */
 
   const handleBrevet =
@@ -793,9 +754,7 @@ export default function ResultatsPage() {
           "Brevet généré."
         );
       } catch (error) {
-        console.error(
-          error
-        );
+        console.error(error);
 
         toast.error(
           "Erreur lors de la génération du brevet."
@@ -811,8 +770,8 @@ export default function ResultatsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="w-full min-h-screen bg-slate-50">
+        <div className="w-full px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex min-h-[500px] items-center justify-center">
             <div className="flex flex-col items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
@@ -834,27 +793,31 @@ export default function ResultatsPage() {
   ========================================================== */
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="w-full min-h-screen bg-slate-50">
+      <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
 
         {/* ====================================================
             HEADER
         ==================================================== */}
 
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
+        <div className="mb-6 flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+          <div className="min-w-0">
             <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              <GraduationCap className="h-4 w-4" />
-              Formation
-              <ChevronRight className="h-3.5 w-3.5" />
-              Résultats
+              <GraduationCap className="h-4 w-4 shrink-0" />
+
+              <span>Formation</span>
+
+              <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+
+              <span>Résultats</span>
             </div>
 
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
               Résultats des apprenants
             </h1>
 
-            <p className="mt-1 max-w-2xl text-sm text-slate-500">
+            <p className="mt-1 max-w-3xl text-sm text-slate-500">
               Les évaluations de formation représentent
               <strong className="mx-1 text-slate-700">
                 70 %
@@ -870,7 +833,7 @@ export default function ResultatsPage() {
           <button
             type="button"
             onClick={loadResultats}
-            className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             <RefreshCw className="h-4 w-4" />
             Actualiser
@@ -881,10 +844,10 @@ export default function ResultatsPage() {
             KPI
         ==================================================== */}
 
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mb-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                   Résultats
@@ -895,14 +858,14 @@ export default function ResultatsPage() {
                 </p>
               </div>
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100">
                 <GraduationCap className="h-5 w-5 text-slate-600" />
               </div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
                   Réussites
@@ -913,14 +876,14 @@ export default function ResultatsPage() {
                 </p>
               </div>
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
                 <CheckCircle2 className="h-5 w-5 text-emerald-600" />
               </div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-red-100 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-red-600">
                   Échecs
@@ -931,14 +894,14 @@ export default function ResultatsPage() {
                 </p>
               </div>
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50">
                 <XCircle className="h-5 w-5 text-red-600" />
               </div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
                   Moyenne finale
@@ -951,7 +914,7 @@ export default function ResultatsPage() {
                 </p>
               </div>
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50">
                 <Award className="h-5 w-5 text-blue-600" />
               </div>
             </div>
@@ -962,7 +925,7 @@ export default function ResultatsPage() {
             EXPLICATION 70 / 30
         ==================================================== */}
 
-        <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="mb-6 grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
 
           <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-5">
             <div className="flex items-start gap-4">
@@ -970,7 +933,7 @@ export default function ResultatsPage() {
                 <BookOpen className="h-5 w-5 text-blue-700" />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <h2 className="font-bold text-blue-900">
                   Évaluations de formation — 70 %
                 </h2>
@@ -990,7 +953,7 @@ export default function ResultatsPage() {
                 <Scale className="h-5 w-5 text-violet-700" />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <h2 className="font-bold text-violet-900">
                   Jury — 30 %
                 </h2>
@@ -1009,10 +972,11 @@ export default function ResultatsPage() {
             FILTRES
         ==================================================== */}
 
-        <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+        <div className="mb-6 w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
 
-            <div className="md:col-span-2">
+          <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-4">
+
+            <div className="min-w-0 md:col-span-2">
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                 Rechercher
               </label>
@@ -1034,7 +998,7 @@ export default function ResultatsPage() {
               </div>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                 Résultat
               </label>
@@ -1070,7 +1034,7 @@ export default function ResultatsPage() {
               </select>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                 État
               </label>
@@ -1109,15 +1073,13 @@ export default function ResultatsPage() {
               affiché(s)
             </span>
 
-            {statistiques.attenteJury >
-              0 && (
+            {statistiques.attenteJury > 0 && (
               <span className="rounded-full bg-amber-50 px-2.5 py-1 font-semibold text-amber-700">
                 {statistiques.attenteJury} en attente du jury
               </span>
             )}
 
-            {statistiques.attenteEvaluations >
-              0 && (
+            {statistiques.attenteEvaluations > 0 && (
               <span className="rounded-full bg-blue-50 px-2.5 py-1 font-semibold text-blue-700">
                 {statistiques.attenteEvaluations} en attente d'évaluations
               </span>
@@ -1129,9 +1091,10 @@ export default function ResultatsPage() {
             TABLE
         ==================================================== */}
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-          <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex w-full flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+
             <div>
               <h2 className="font-bold text-slate-900">
                 Résultats
@@ -1142,60 +1105,62 @@ export default function ResultatsPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <div className="flex shrink-0 items-center gap-2 text-xs text-slate-400">
               <Users className="h-4 w-4" />
+
               {resultatsFiltres.length} apprenant(s)
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="w-full overflow-x-auto">
 
-            <table className="w-full min-w-[1250px] text-left text-sm">
+            <table className="w-full min-w-[1200px] table-auto text-left text-sm">
 
               <thead className="border-b border-slate-100 bg-slate-50/80">
+
                 <tr>
 
-                  <th className="px-4 py-3 font-semibold text-slate-600">
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold text-slate-600">
                     Apprenant
                   </th>
 
-                  <th className="px-4 py-3 font-semibold text-slate-600">
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold text-slate-600">
                     Formation
                   </th>
 
-                  <th className="px-4 py-3 font-semibold text-slate-600">
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold text-slate-600">
                     Évaluations
                     <span className="ml-1 text-blue-500">
                       70 %
                     </span>
                   </th>
 
-                  <th className="px-4 py-3 font-semibold text-slate-600">
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold text-slate-600">
                     Jury
                     <span className="ml-1 text-violet-500">
                       30 %
                     </span>
                   </th>
 
-                  <th className="px-4 py-3 font-semibold text-slate-600">
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold text-slate-600">
                     Résultat final
                   </th>
 
-                  <th className="px-4 py-3 font-semibold text-slate-600">
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold text-slate-600">
                     État
                   </th>
 
-                  <th className="px-4 py-3 text-right font-semibold text-slate-600">
+                  <th className="whitespace-nowrap px-4 py-3 text-right font-semibold text-slate-600">
                     Actions
                   </th>
 
                 </tr>
+
               </thead>
 
               <tbody className="divide-y divide-slate-100">
 
-                {resultatsFiltres.length ===
-                0 ? (
+                {resultatsFiltres.length === 0 ? (
                   <tr>
                     <td
                       colSpan={7}
@@ -1215,6 +1180,7 @@ export default function ResultatsPage() {
                           Aucun résultat ne correspond
                           aux critères sélectionnés.
                         </p>
+
                       </div>
                     </td>
                   </tr>
@@ -1222,9 +1188,7 @@ export default function ResultatsPage() {
                   resultatsFiltres.map(
                     (item) => {
                       const etat =
-                        getFinalStatus(
-                          item
-                        );
+                        getFinalStatus(item);
 
                       const Icon =
                         getResultatIcon(
@@ -1243,28 +1207,22 @@ export default function ResultatsPage() {
 
                       return (
                         <tr
-                          key={
-                            item.id
-                          }
+                          key={item.id}
                           className="transition hover:bg-slate-50/70"
                         >
 
                           {/* APPRENANT */}
 
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-middle">
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex min-w-[190px] items-center gap-3">
 
                               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600">
                                 {(
-                                  item
-                                    .apprenant
-                                    ?.prenom ??
+                                  item.apprenant?.prenom ??
                                   "?"
                                 )
-                                  .charAt(
-                                    0
-                                  )
+                                  .charAt(0)
                                   .toUpperCase()}
                               </div>
 
@@ -1278,9 +1236,7 @@ export default function ResultatsPage() {
 
                                 <p className="mt-0.5 text-xs text-slate-400">
                                   N°{" "}
-                                  {item
-                                    .apprenant
-                                    ?.numero ??
+                                  {item.apprenant?.numero ??
                                     "—"}
                                 </p>
 
@@ -1292,25 +1248,29 @@ export default function ResultatsPage() {
 
                           {/* FORMATION */}
 
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-middle">
 
-                            <p className="font-medium text-slate-800">
-                              {getFormationName(
-                                item
-                              )}
-                            </p>
+                            <div className="min-w-[170px]">
 
-                            <p className="mt-0.5 text-xs text-slate-400">
-                              {getSessionName(
-                                item
-                              )}
-                            </p>
+                              <p className="truncate font-medium text-slate-800">
+                                {getFormationName(
+                                  item
+                                )}
+                              </p>
+
+                              <p className="mt-0.5 truncate text-xs text-slate-400">
+                                {getSessionName(
+                                  item
+                                )}
+                              </p>
+
+                            </div>
 
                           </td>
 
-                          {/* ÉVALUATIONS 70% */}
+                          {/* ÉVALUATIONS */}
 
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-middle">
 
                             <div className="w-44">
 
@@ -1357,9 +1317,9 @@ export default function ResultatsPage() {
 
                           </td>
 
-                          {/* JURY 30% */}
+                          {/* JURY */}
 
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-middle">
 
                             <div className="w-44">
 
@@ -1408,9 +1368,10 @@ export default function ResultatsPage() {
 
                           {/* FINAL */}
 
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-middle">
 
-                            <div>
+                            <div className="min-w-[110px]">
+
                               <p className="text-lg font-bold text-slate-900">
                                 {formatPercentage(
                                   item.moyenneGenerale
@@ -1422,46 +1383,52 @@ export default function ResultatsPage() {
                                   item.mention
                                 )}
                               </p>
+
                             </div>
 
                           </td>
 
                           {/* ETAT */}
 
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-middle">
 
-                            <span
-                              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${getResultatBadgeClass(
-                                item.resultat
-                              )}`}
-                            >
-                              <Icon className="h-3.5 w-3.5" />
+                            <div className="min-w-[150px]">
 
-                              {getResultatLabel(
-                                item
+                              <span
+                                className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${getResultatBadgeClass(
+                                  item.resultat
+                                )}`}
+                              >
+                                <Icon className="h-3.5 w-3.5" />
+
+                                {getResultatLabel(
+                                  item
+                                )}
+                              </span>
+
+                              {etat ===
+                                "PARTIEL" && (
+                                <p className="mt-1.5 text-[11px] text-amber-600">
+                                  Résultat incomplet
+                                </p>
                               )}
-                            </span>
 
-                            {etat ===
-                              "PARTIEL" && (
-                              <p className="mt-1.5 text-[11px] text-amber-600">
-                                Résultat incomplet
-                              </p>
-                            )}
+                            </div>
 
                           </td>
 
                           {/* ACTIONS */}
 
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 align-middle">
 
-                            <div className="flex justify-end gap-2">
+                            <div className="flex min-w-[300px] justify-end gap-2">
 
                               <Link
                                 href={`/resultats/${item.id}`}
-                                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+                                className="inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
                               >
                                 Détails
+
                                 <ChevronRight className="h-3.5 w-3.5" />
                               </Link>
 
@@ -1476,7 +1443,7 @@ export default function ResultatsPage() {
                                     item
                                   )
                                 }
-                                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
                               >
                                 {processingId ===
                                 `${item.id}-releve` ? (
@@ -1492,7 +1459,7 @@ export default function ResultatsPage() {
                                 type="button"
                                 disabled={
                                   processingId ===
-                                  `${item.id}-brevet` ||
+                                    `${item.id}-brevet` ||
                                   item.moyenneGenerale ===
                                     null
                                 }
@@ -1501,7 +1468,7 @@ export default function ResultatsPage() {
                                     item
                                   )
                                 }
-                                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
                               >
                                 {processingId ===
                                 `${item.id}-brevet` ? (
@@ -1524,7 +1491,9 @@ export default function ResultatsPage() {
                 )}
 
               </tbody>
+
             </table>
+
           </div>
         </div>
 
@@ -1532,17 +1501,17 @@ export default function ResultatsPage() {
             FORMULE
         ==================================================== */}
 
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mt-6 w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3">
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100">
                 <Scale className="h-5 w-5 text-slate-600" />
               </div>
 
-              <div>
+              <div className="min-w-0">
 
                 <p className="text-sm font-bold text-slate-900">
                   Formule de calcul
@@ -1557,7 +1526,7 @@ export default function ResultatsPage() {
 
             </div>
 
-            <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
+            <div className="w-fit max-w-full rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
 
               <span className="text-blue-600">
                 Évaluations × 70 %
